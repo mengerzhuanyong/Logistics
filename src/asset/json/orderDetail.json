@@ -1,0 +1,51 @@
+{
+    "code": 1,
+    "msg": "请求成功",
+    "data": {
+        "id": 1,
+        "sid": 1,
+        "uid": 1,
+        "seid": 1,
+        "code": "20180130337901",
+        "style": "1",
+        "volume": "1",
+        "weight": "1",
+        "num": "1",
+        "cate": "易碎品",
+        "img1": "http:\/\/suya.3todo.com\/public\/uploads\/20180206\/a9ce7aedb7b6ac3375d2f2371bcb276b.png",
+        "img2": "http:\/\/suya.3todo.com\/public\/uploads\/20180206\/a9ce7aedb7b6ac3375d2f2371bcb276b.png",
+        "img3": "http:\/\/suya.3todo.com\/public1",
+        "price": "1",
+        "cid": 1,
+        "coupon": "1",
+        "relprice": "1",
+        "remark": "1",
+        "status": "2",
+        "is_car": 0,
+        "createtime": "0",
+        "shipper": {
+            "id": 1,
+            "uid": 1,
+            "style": 1,
+            "name": "大梦",
+            "phone": "15066886007",
+            "address": "青岛光谷软件园27号楼",
+            "createtime": ""
+        },
+        "receiver": {
+            "id": 2,
+            "uid": 1,
+            "style": 2,
+            "name": "投道科技",
+            "phone": "15066886666",
+            "address": "青岛光谷软件园27号楼",
+            "createtime": ""
+        },
+        "storeName": 1,
+        "time": "10 - 20点班次",
+        "service": "青岛  至  济南",
+        "statusName": "配送中",
+        "serviceCar": "私家车",
+        "carVisible": "true"
+    }
+}

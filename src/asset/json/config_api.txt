@@ -1,0 +1,204 @@
+
+/************      公共配置说明      ************/
+
+1. 主域名:http://suya.3todo.com
+/************    2.6接口    ************/
+1.头像修改: user/upfile/upload
+  请求方式: POST
+  请求参数: image : base64
+            uid: 用户id
+2.头像昵称: user/user/upName
+  请求方式: POST
+  请求参数: username : 昵称
+            uid: 用户id
+3.手机号 user/user/upMobile
+  请求方式: POST
+  请求参数: mobile : 手机号
+            uid: 用户id
+            code: 验证码
+  短信接口:user/user/sendSMS
+  请求方式: POST
+  请求参数: mobile : 手机号
+
+/************    1.30接口    ************/
+1.我要合作：user/index/coop
+  请求方式：GET；
+  数据格式：页面
+
+2.用户反馈：user/index/message
+  请求方式：POST
+  请求参数：uid  用户id
+  		   phone 手机号
+  		   style 1 类型 1用户 2门店
+  		   content 内容
+  		   name    标题
+
+3.地址列表：user/address/index
+  请求方式：GET
+  请求参数：uid 用户id
+  		   style 类型  1发件人 2收货人
+  数据格式：{"code":1,"msg":"请求成功","data":[{"id":1,"uid":1,"style":1,"name":"1","phone":"1","address":"1","createtime":""}]}
+
+4.添加地址：user/address/add
+  请求方式：POST
+  请求参数：uid 用户id
+  		   style 类型  1发件人 2收货人
+  		   name：姓名
+  		   phone:电话
+  		   address 地址
+
+5.修改地址：user/address/edit
+  请求方式：POST
+  请求参数：id 地址id
+  		   uid 用户id
+  		   style 类型  1发件人 2收货人
+  		   name：姓名
+  		   phone:电话
+  		   address 地址
+
+6.删除地址：user/address/del
+  请求方式：GET
+  请求参数：id 地址id
+
+7.我的收藏：user/personal/collect
+  请求方式：GET
+  请求参数： uid  用户id
+
+
+/************    1.29接口    ************/
+1.订单状态接口：user/order/status
+  请求方式 ：get
+  数据格式：{"code":1,"msg":"请求成功！","data":[{"name":"未付款","status":0},{"name":"进行中","status":2},{"name":"待评价","status":3},{"name":"已完成","status":4},{"name":"退款\/售后","status":5}]}
+
+/************    1.15页面所需接口    ************/
+1.短信接口：user/login/sendSMS
+  请求方式 ：post
+  接口说明： mobile 手机号
+2.登录接口： user/login/index
+  请求方式 ：post
+  接口说明： mobile 手机号
+  			password 密码
+3.注册接口：user/login/register
+  请求方式 ：post
+  接口说明：mobile 手机号
+  		   code   验证码
+  		   password 密码
+  		   repassword 2次密码
+4.找回密码接口：user/login/forget
+  请求方式 ：post
+  接口说明：mobile 手机号
+  		   code   验证码
+  		   password 密码
+  		   relpassword 2次密码
+/************    1.13页面所需接口    ************/
+1.订单详情页
+	请求接口:/user/order/detail/id/1
+	请求方式 GET
+	接口说明: id    订单id
+	返回结果  orderDetail.json
+2.订单评论页
+	请求接口:/user/order/detail/evaluate
+	请求方式:  POST
+	接口说明:	uid   用户id
+	       		sid   店铺id
+	       		oid   订单id
+	       		count 评价内容
+	       		score  评分
+3.我的优惠券
+	请求接口: /user/order/coupon/uid/1/
+	接口说明: uid	用户id
+	返回结果: couData.json
+
+
+
+/************    1.12页面所需接口    ************/
+1.商家详情页
+	请求接口: /user/index/detail/id/1
+	请求方式: GET
+	接口说明: id:    门店id
+	返回结果: storeDetail.json
+2.下单支付页
+	2.1 下单接口
+		请求接口  /user/order/create
+		请求方式  POST
+		接口说明: sid    	门店id
+				 uid    	用户id
+				 seid   	服务id
+				 style  	货物信息  1 单品   2 多种物品
+				 volume		体积
+				 weight		重量
+				 cate       物品类型
+				 img1/2/3   货物图片
+				 shipper    发货人id
+				 receicver  收货人id
+				 price      价格
+				 cid        优惠券id
+				 coupon		优惠价格
+				 relprice	结算价格
+				 remark		备注
+		返回结果: 订单id,已经订单编号code
+	2.2 物品类型请求接口
+		请求接口: /user/order/cate/sid/1
+		请求方式	: GET
+    请求参数：sid 服务id
+		返回结果: {
+				  "code": 0,
+				  "msg": "获取成功!",
+				  "data": [
+				    {
+				      "id": 2,
+				      "name": "易碎品"
+				    }
+				  ]
+				}
+	2.3 优惠券请求接口
+		请求接口: /user/order/coupon/uid/1/price/1
+		请求方式: GET
+		接口说明: uid	用户id
+				 price  订单价格
+		返回结果: couData.json
+  2.4 价格计算
+     请求接口：/user/order/compute_price/sid/1/volumes/1
+     请求方式：GET
+     请求参数：sid     服务id
+              volumes 体积
+
+/************    1.11页面所需接口    ************/
+
+1. 订单列表页
+    请求接口: /user/order/index/status/1/uid/1
+    请求方式: GET
+    接口说明:
+        id: 1        // 用户ID
+        status: 0    // 0:未支付 1:待接单 2:配送中 3:待评价 4:已完成 5:退款申请 6:退款订单
+    返回结果: orderData.json
+
+2. 个人中心页面
+    请求接口:  /user/personal/index/uid/1
+    请求方式:  GET
+    接口说明:
+        uid: 1    // 用户ID
+    返回结果: mineData.json
+
+3. 商家列表页面
+    请求接口: /user/index/store/style/1
+    请求方式: GET
+    接口说明:
+        style: 1    // 1:当日到 2:次日达 3:航空物流
+        longitude: x,y    // 经纬度
+    返回结果: businessList.json
+
+3. 商家列表搜索
+    请求方式: POST
+    参数说明:
+        start：xx    // 开始
+        end：xx        // 开始
+    返回结果: businessList.json
+
+/************    1.10页面所需接口    ************/
+
+1. 首页
+    请求接口: /user/order/index/
+    请求方式: GET
+    接口说明:
+    返回结果: homeData.json

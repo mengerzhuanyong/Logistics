@@ -1,0 +1,66 @@
+{
+    "code": 200,
+    "msg": "获取成功",
+    "data": [
+        {
+            "id": 1,
+            "istop": 1,
+            "name": "顺丰速递",
+            "logo": "require('../../asset/images/icons/icon_delivery_now.png')",
+            "star": {
+                "tens_digit": 4,
+                "digit": 5
+            },
+            "disinfo": "免费上门取件",
+            "tags": [
+                {"name": 2},
+                {"name": "优质商家"},
+            ],
+            "distance": "距离1.5km",
+            "services": [
+                { "id": 1, "router": "黄岛 - 北京"},
+                { "id": 2, "router": "黄岛 - 上海"},
+            ],
+        },
+        {
+            "id": 2,
+            "istop": 1,
+            "name": "顺丰速递",
+            "logo": "require('../../asset/images/icons/icon_delivery_now.png')",
+            "star": {
+                "tens_digit": 4,
+                "digit": 5
+            },
+            "disinfo": "免费上门取件",
+            "tags": [
+                {"name": 2},
+                {"name": "优质商家"},
+            ],
+            "distance": "距离1.5km",
+            "services": [
+                { "id": 1, "router": "黄岛 - 北京"},
+                { "id": 2, "router": "黄岛 - 上海"},
+            ],
+        },
+        {
+            "id": 3,
+            "istop": 0,
+            "name": "顺丰速递",
+            "logo": "require('../../asset/images/icons/icon_delivery_now.png')",
+            "star": {
+                "tens_digit": 4,
+                "digit": 5
+            },
+            "disinfo": "免费上门取件",
+            "tags": [
+                {"name": 2},
+                {"name": "优质商家"},
+            ],
+            "distance": "距离1.5km",
+            "services": [
+                { "id": 1, "router": "黄岛 - 北京"},
+                { "id": 2, "router": "黄岛 - 上海"},
+            ],
+        },
+    ]
+}
