@@ -75,8 +75,9 @@ export default class Login extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -159,10 +160,10 @@ export default class Login extends Component {
             })
     }
 
-    onPushToNextPage = (webTitle, component) => {
+    onPushToNextPage = (pageTitle, component) => {
         let { navigate } = this.props.navigation;
         navigate(component, {
-            webTitle: webTitle,
+            pageTitle: pageTitle,
             reloadData: () => this.loadNetData(),
         })
     }

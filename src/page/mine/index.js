@@ -71,8 +71,9 @@ export default class Mine extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -148,13 +149,13 @@ export default class Mine extends Component {
             })
     }
 
-    onPushNavigator = (webTitle, compent) => {
+    onPushNavigator = (pageTitle, compent) => {
         let { user, loginState } = this.state;
         const { navigate } = this.props.navigation;
         if (loginState) {
             navigate(compent, {
                 user: user,
-                webTitle: webTitle,
+                pageTitle: pageTitle,
                 reloadData: () => this.loadNetData(),
             })
         }else{
@@ -165,7 +166,7 @@ export default class Mine extends Component {
     handleOpenImagePicker = () => {
         SYImagePicker.removeAllPhoto();
         SYImagePicker.showImagePicker({imageCount: 1, isRecordSelected: true, enableBase64: true}, (err, img) => {
-            console.log(img);
+            // console.log(img);
             if (!err) {
                 this.setState({
                     uploading: true,
@@ -181,7 +182,7 @@ export default class Mine extends Component {
             image: source,
             uid: user.uid,
         };
-        this.netRequest.fetchPost(url, data, true)
+        this.netRequest.fetchPost(url, data)
             .then(result => {
                 user.avatar = source;
                 this.updateState({

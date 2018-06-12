@@ -40,6 +40,9 @@ export default class Banner extends Component {
 
     static defaultProps = {
         // item: HomeNavigation
+        item: '',
+        index: '',
+        onSetModal: () => {},
     }
 
     componentDidMount() {
@@ -90,7 +93,7 @@ export default class Banner extends Component {
             start: '',
             end: '',
             disinfo: disinfo,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         });
     }
@@ -187,7 +190,7 @@ export default class Banner extends Component {
 
     render(){
         const { item, index, tagsPosition } = this.state;
-        const { onPushToBusiness } = this.props;
+        const { onPushToBusiness, onSetModal } = this.props;
         // console.log(tagsPosition);
         return (
             <TouchableOpacity
@@ -202,10 +205,10 @@ export default class Banner extends Component {
                     {/*this.renderShopTitle(tagsPosition, item)*/}
                     <View style={[styles.shopInfoItem]}>
                         <Text style={[styles.shopName]} numberOfLines={2} onLayout={(event) => this.onLayoutText(event)}>{item.name}</Text>
-                        {!tagsPosition && GlobalStyles.width >= 360 && <ShopTagsView tags={item.tags} page_flage={'list'} onLayout={(event) => this.onLayoutTags(event)} />}
+                        {!tagsPosition && GlobalStyles.width >= 360 && <ShopTagsView onSetModal={() => onSetModal()} tags={item.tags} page_flage={'list'} onLayout={(event) => this.onLayoutTags(event)} />}
                     </View>
                     {(tagsPosition || GlobalStyles.width < 359) && <View style={[styles.shopInfoItem, {flex: 1,}]}>
-                        <ShopTagsView tags={item.tags} page_flage={'list'} onLayout={(event) => this.onLayoutTags(event)} />
+                        <ShopTagsView onSetModal={() => onSetModal()} tags={item.tags} page_flage={'list'} onLayout={(event) => this.onLayoutTags(event)} />
                     </View>}
                     {GlobalStyles.width < 359 && <View style={styles.shopInfoItem}>
                         <Text style={styles.shopDistance}>{item.distance}</Text>
@@ -357,7 +360,12 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#080',
     },
-    shopRouterView: {},
+    shopRouterView: {
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
     shopRouterCon: {
         color: '#888'
     },
@@ -367,6 +375,7 @@ const styles = StyleSheet.create({
         color: GlobalStyles.themeColor
     },
     featuresView: {
+        flexWrap: 'wrap',
         justifyContent: 'flex-start',
     },
     featuresItem: {
@@ -374,12 +383,12 @@ const styles = StyleSheet.create({
         marginRight: 6,
         borderWidth: 1 / PixelRatio.get(),
         borderRadius: 3,
-        borderColor: '#ff0000ba',
+        borderColor: GlobalStyles.themeColor,
         paddingVertical: 3,
         paddingHorizontal: 6,
     },
     featuresItemName: {
         fontSize: 12,
-        color: '#ff0000ba',
+        color: GlobalStyles.themeColor,
     },
 });

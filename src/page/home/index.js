@@ -23,6 +23,7 @@ import GlobalStyles from '../../constant/GlobalStyle'
 import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
+import ModalView from '../../component/common/shopTagPoup'
 import { toastShort, consoleLog } from '../../util/utilsToast'
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
 import FooterComponent from '../../component/common/footerComponent'
@@ -30,19 +31,22 @@ import EmptyComponent from '../../component/common/EmptyComponent'
 import {Menu, Button} from 'teaset'
 import {Geolocation} from 'react-native-baidu-map'
 import {checkFloat} from '../../util/utilsRegularMatch'
+import {HorizontalLine, VerticalLine} from '../../component/common/commonLine'
 
 import BannerView from '../../component/common/Banner'
 import HotNews from '../../component/common/HotNews'
+import shopTagsModalContent from '../../component/common/shopTagsModalContent'
 import NavigatorItem from '../../component/home/navigatorItem'
 import BusinessItem from '../../component/common/businessItem'
 import NavigationsData from '../../asset/json/systemNavigations.json'
 
 const isIos = Platform.OS === 'ios';
+
 export default class Home extends Component {
 
     constructor(props) {
         super(props);
-        this.state =  {
+        this.state = {
             ready: false,
             showFoot: 0,
             loadMore: false,
@@ -51,6 +55,11 @@ export default class Home extends Component {
             refreshing: false,
             companyListData: [],
             navigations: NavigationsData.data.indexNavigations,
+            servicesNavigations: [
+                {id: 1, name: '行业动态', link: ''},
+                {id: 2, name: '速芽动态', link: ''},
+                {id: 3, name: '开心一刻', link: ''},
+            ],
             bannerData: [],
             hotNewsData: [],
             appkey: 'AppKey',
@@ -64,9 +73,18 @@ export default class Home extends Component {
             lat: '',
             address: '当前位置',
             addressLine: 1,
-        }
+            modalVisible: false,
+            MODALVIEW_CONFIG: {
+                title: '速芽物流',
+                modalText: '速芽物流信息弹窗',
+                modalContent: <View />,
+                cancelBtnName: '取消',
+                confirmBtnName: '电话咨询',
+            },
+        };
         this.netRequest = new NetRequest();
         this.showSortMenu = this.showSortMenu.bind(this);
+        this.lastActionTime = 0;
     }
 
     /**
@@ -107,8 +125,9 @@ export default class Home extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -117,6 +136,36 @@ export default class Home extends Component {
         }
         this.setState(state);
     };
+
+    modalVisible = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible,
+        })
+        // console.log(this.state.modalVisible);
+    };
+
+    /**
+     * 拨打电话
+     * @Author   Menger
+     * @DateTime 2018-02-27
+     */
+    makeCall = () => {
+        // let { businessInfo } = this.state;
+        // let url = 'tel: ' + '15066886007';
+        // // console.log(businessInfo.mobile);
+        // this.modalVisible();
+        // Linking.canOpenURL(url)
+        //     .then(supported => {
+        //         if (!supported) {
+        //             // console.log('Can\'t handle url: ' + url);
+        //         } else {
+        //             return Linking.openURL(url);
+        //         }
+        //     })
+        //     .catch((err)=>{
+        //         // console.log('An error occurred', err)
+        //     });
+    }
 
     getLocation = () => {
         Geolocation.getCurrentPosition()
@@ -133,7 +182,7 @@ export default class Home extends Component {
                 }
             })
             .catch(e => {
-                console.log(e, '获取地理位置失败，请稍后重试！');
+                // console.log(e, '获取地理位置失败，请稍后重试！');
             })
     };
 
@@ -201,7 +250,8 @@ export default class Home extends Component {
             .then( result => {
                 if (result && result.code == 1) {
                     this.updateState({
-                        navigations: result.data.indexNavigations
+                        navigations: result.data.indexNavigations,
+                        servicesNavigations: result.data.servicesNavigations
                     })
                 }
             })
@@ -212,9 +262,9 @@ export default class Home extends Component {
 
     loadNetData = (sort, page) => {
         let url = NetApi.index + page + '/sort/' + sort;
-        return this.netRequest.fetchGet(url)
+        return this.netRequest.fetchGet(url, true)
             .then( result => {
-                console.log(result);
+                // console.log(result);
                 return result;
             })
             .catch( error => {
@@ -291,7 +341,7 @@ export default class Home extends Component {
         item = item.item;
         const { navigate } = this.props.navigation;
         navigate('BusinessDetail', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             item: item,
             reloadData: () => this.freshNetData(1),
         })
@@ -301,9 +351,24 @@ export default class Home extends Component {
         const { navigate } = this.props.navigation;
         navigate(compent, {
             navItem: nav,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.freshNetData(1),
         })
+    };
+
+    onPushToNextPage = (pageTitle, page, params = {}) => {
+        let nowTime = new Date().getTime();
+        if ((nowTime - this.lastActionTime) <= 500 && true) {
+            // console.warn('间隔时间内重复点击了');
+            return false;
+        }
+        this.lastActionTime = nowTime;
+        let {navigate} = this.props.navigation;
+        navigate(page, {
+            pageTitle: pageTitle,
+            reloadData: () => this.loadNetData(),
+            ...params,
+        });
     };
 
     renderCompanyItem = (item) => {
@@ -312,6 +377,7 @@ export default class Home extends Component {
                 item = {item}
                 {...this.props}
                 onPushToBusiness = {()=> this.onPushToBusiness(item)}
+                onSetModal = {()=> this.modalVisible()}
             />
         )
     };
@@ -328,7 +394,7 @@ export default class Home extends Component {
     };
 
     renderHeaderView() {
-        let { navigations, bannerData, hotNewsData } = this.state;
+        let { navigations, bannerData, hotNewsData, servicesNavigations } = this.state;
         return (
             <View style={styles.container}>
                 <NavigationBar
@@ -397,6 +463,38 @@ export default class Home extends Component {
                     />}
                 </View>
                 <HotNews hotNewsData = {hotNewsData} />
+                <View style={styles.hotServicesView}>
+                    <View style={styles.hotServicesTitleView}>
+                        <Image source={GlobalIcons.icon_hot} style={styles.titleIcon}/>
+                        <Text style={styles.servicesTitleName}>热门服务</Text>
+                    </View>
+                    <HorizontalLine lineStyle={styles.servicesHorLine} />
+                    <View style={styles.hotServicesContentView}>
+                        <TouchableOpacity
+                            style={styles.hotServicesItemView}
+                            onPress = {() => this.onPushToNextPage(servicesNavigations[0].name, 'CooperateDetail', {webUrl: servicesNavigations[0].link})}
+                        >
+                            <Text style={styles.itemName}>{servicesNavigations[0].name}</Text>
+                            <Image source={GlobalIcons.icon_trend} style={styles.itemIcon}/>
+                        </TouchableOpacity>
+                        <VerticalLine lineStyle={styles.verLine} />
+                        <TouchableOpacity
+                            style={styles.hotServicesItemView}
+                            onPress = {() => this.onPushToNextPage(servicesNavigations[1].name, 'CooperateDetail', {webUrl: servicesNavigations[1].link})}
+                        >
+                            <Text style={styles.itemName}>{servicesNavigations[1].name}</Text>
+                            <Image source={GlobalIcons.logo} style={styles.itemIcon}/>
+                        </TouchableOpacity>
+                        <VerticalLine lineStyle={styles.verLine} />
+                        <TouchableOpacity
+                            style={styles.hotServicesItemView}
+                            onPress = {() => this.onPushToNextPage(servicesNavigations[2].name, 'CooperateDetail', {webUrl: servicesNavigations[2].link})}
+                        >
+                            <Text style={styles.itemName}>{servicesNavigations[2].name}</Text>
+                            <Image source={GlobalIcons.icon_happy} style={styles.itemIcon}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
                 <View style={styles.shopListHeadView}>
                     <View style={styles.shopListViewTitle}>
                         <View style={[GlobalStyles.horLine, styles.horLine]} />
@@ -452,7 +550,7 @@ export default class Home extends Component {
                 lng: data.longitude,
             });
         }
-        console.log(lat, lng);
+        // console.log(lat, lng);
         this.dropLoadMore(data.latitude, data.longitude);
     }
 
@@ -495,7 +593,7 @@ export default class Home extends Component {
     };
 
     render(){
-        let { ready, refreshing, companyListData, lat } = this.state;
+        let { ready, refreshing, companyListData, modalVisible,lat, MODALVIEW_CONFIG } = this.state;
         let titleViewStyle = {
             marginLeft: 15,
         };
@@ -524,6 +622,13 @@ export default class Home extends Component {
                         ListEmptyComponent = {this.renderEmptyView}
                     />
                     : <ActivityIndicatorItem />
+                }
+                {modalVisible &&
+                    <ModalView
+                        show = {modalVisible}
+                        cancelFoo = {() => this.modalVisible()}
+                        confirmFoo = {() => this.makeCall()}
+                    />
                 }
             </View>
         );
@@ -646,5 +751,69 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#666',
         fontWeight: '600',
-    }
+    },
+    servicesHorLine: {
+        backgroundColor: '#ddd',
+        width: GlobalStyles.width,
+    },
+    hotServicesView: {
+        marginTop: 10,
+        backgroundColor: '#fff',
+    },
+    hotServicesTitleView: {
+        marginVertical: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    titleIcon: {
+        width: 22,
+        height: 22,
+        marginRight: 6,
+        resizeMode: 'contain',
+    },
+    servicesTitleName: {
+        fontSize: 16,
+        color: '#333',
+    },
+    hotServicesContentView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // width: GlobalStyles.width + 1,
+    },
+    verLine: {
+        height: 88,
+        backgroundColor: '#ddd',
+    },
+    hotServicesItemView: {
+        flex: 1,
+        height: 88,
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    itemName: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 10,
+    },
+    itemIcon: {
+        width: 44,
+        height: 44,
+        resizeMode: 'contain',
+    },
+    // modalStyle: {
+    //     borderRadius: 0,
+    //     paddingTop: 20,
+    //     marginHorizontal: 30,
+    // },
+    // modalTitleStyle: {
+    //     color: '#999',
+    //     fontWeight: '400',
+    // },
+    // modalContextStyle: {
+    //     marginBottom: 20,
+    //     color: GlobalStyles.themeColor,
+    // },
 });

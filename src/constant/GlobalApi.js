@@ -21,6 +21,8 @@ module.exports = {
     postLongitude: 'user/index/navigation',                                                             // 首页
     getBanner: 'user/index/banner',                                                                     // 首页
 
+    phone: 'user/index/mobile',
+
     loginIn: 'user/login/login',                                                                        // 登录
     wechatLogin: 'user/loginApi/wxlogin',
     wechatTokenLogin: 'user/loginApi/wexinToken',
@@ -36,6 +38,7 @@ module.exports = {
     businessList: 'user/index/store/',
     businessDetail: 'user/index/detail/id/',
     businessService: 'user/index/store_service',
+    businessServiceAddress: 'user/index/service_points',
 
     orderSubmit: 'user/order/create',
     orderList: 'user/order/index/status/',

@@ -5044,9 +5044,9 @@ tar@^2.2.1:
     fstream "^1.0.2"
     inherits "2"
 
-teaset@^0.5.6:
-  version "0.5.6"
-  resolved "http://registry.npm.taobao.org/teaset/download/teaset-0.5.6.tgz#46582cfeaf81bed95052d74c143b5f1c71271eac"
+teaset@^0.5.8:
+  version "0.5.8"
+  resolved "http://registry.npm.taobao.org/teaset/download/teaset-0.5.8.tgz#947aa12f96fdb9ba87ed744218b0570318c575bb"
   dependencies:
     prop-types "^15.5.10"
     react-native-deprecated-custom-components "github:facebookarchive/react-native-custom-components"

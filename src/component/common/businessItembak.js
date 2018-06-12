@@ -89,7 +89,7 @@ export default class Banner extends Component {
             start: '',
             end: '',
             disinfo: disinfo,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         });
     }
@@ -97,7 +97,7 @@ export default class Banner extends Component {
     onLayoutView = (event) => {
         //获取根View的宽高，以及左上角的坐标值
         let {x, y, width, height} = event.nativeEvent.layout;
-        console.log('onLayoutView',width);
+        // console.log('onLayoutView',width);
         this.updateState({
             titleWidth: width
         });
@@ -115,7 +115,7 @@ export default class Banner extends Component {
     onLayoutText = (event) => {
         //获取根View的宽高，以及左上角的坐标值
         let {x, y, width, height} = event.nativeEvent.layout;
-        console.log('onLayoutText',width);
+        // console.log('onLayoutText',width);
         this.updateState({
             nameWidth: width
         }, () => this.renderShopTitle());
@@ -133,7 +133,7 @@ export default class Banner extends Component {
     onLayoutTags = (event) => {
         //获取根View的宽高，以及左上角的坐标值
         let {x, y, width, height} = event.nativeEvent.layout;
-        console.log('onLayoutTags',width);
+        // console.log('onLayoutTags',width);
         this.updateState({
             tagsWidth: width
         }, () => this.renderShopTitle());
@@ -150,9 +150,9 @@ export default class Banner extends Component {
 
     renderShopTitle = () => {
         let {titleWidth, nameWidth, tagsWidth, tagsPosition, item} = this.state;
-        console.log(titleWidth, nameWidth, tagsWidth);
+        // console.log(titleWidth, nameWidth, tagsWidth);
         let widthStatus = titleWidth - nameWidth - tagsWidth;
-        console.log(item.name,'----', widthStatus);
+        // console.log(item.name,'----', widthStatus);
         if (widthStatus >= 0) {
             // this.updateState({
             //     tagsPosition: false

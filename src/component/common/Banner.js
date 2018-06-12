@@ -102,7 +102,7 @@ export default class Banner extends Component {
                     horizontal={true}
                     removeClippedSubviews={false}
                     showsPagination={true}
-                    autoplayTimeout={8}
+                    autoplayTimeout={6}
                     height={180}
                     width={GlobalStyles.width}
                     style={{paddingTop:0,marginTop:0}}

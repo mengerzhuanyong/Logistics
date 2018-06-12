@@ -53,7 +53,7 @@ export default class MineCouponUsed extends Component {
     }
 
     static navigationOptions = ({ navigation, screenProps }) => ({
-        title: navigation.state.params.webTitle,
+        title: navigation.state.params.pageTitle,
     });
 
     /**
@@ -90,8 +90,9 @@ export default class MineCouponUsed extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -203,7 +204,7 @@ export default class MineCouponUsed extends Component {
         const { navigate } = this.props.navigation;
         navigate(component, {
             status: status,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         })
     }

@@ -21,7 +21,6 @@ import {
 
 const {width, height, scale} = Dimensions.get('window');
 
-// 类
 export default class PopModel extends Component {
     // 构造函数
     constructor(props) {
@@ -33,14 +32,18 @@ export default class PopModel extends Component {
         show: false,
         title: '系统提示',
         contentText: '这是一个系统信息',
+        contentView: null,
         cancelBtnName: '取消',
         confirmBtnName: '确定',
         cancelFoo: () => {},
         confirmFoo: () => {},
+        style: {},
+        titleStyle: {},
+        contentStyle: {},
     };
 
     render() {
-        const {show, title, contentText, cancelBtnName, confirmBtnName, cancelFoo, confirmFoo} = this.props;
+        const {show, title, contentText, contentView, cancelBtnName, confirmBtnName, cancelFoo, confirmFoo, style, titleStyle, contentStyle} = this.props;
         return (
             <View style={styles.container}>
                 <Modal
@@ -50,23 +53,24 @@ export default class PopModel extends Component {
                     onShow={() => {}}
                     onRequestClose={() => {}} >
                     <TouchableHighlight style={styles.modalStyle} onPress={cancelFoo}>
-                        <View style={styles.subView}>
-                            <Text style={styles.titleText}>{title}</Text>
-                            <Text style={styles.contentText}>{contentText}</Text>
+                        <View style={[styles.subView, style]}>
+                            {!contentView && <Text style={[styles.titleText, titleStyle]}>{title}</Text>}
+                            {!contentView && <Text style={[styles.contentText, contentStyle]}>{contentText}</Text>}
+                            {contentView && contentView}
                             <View style={styles.horizontalLine}/>
                             <View style={styles.buttonView}>
                                 <TouchableHighlight
                                     underlayColor='transparent'
                                     style={styles.buttonStyle}
                                     onPress={cancelFoo}>
-                                    <Text style={styles.buttonText}>取消</Text>
+                                    <Text style={styles.buttonText}>{cancelBtnName}</Text>
                                 </TouchableHighlight>
                                 <View style={styles.verticalLine}/>
                                 <TouchableHighlight
                                     underlayColor='transparent'
                                     style={styles.buttonStyle}
                                     onPress={confirmFoo}>
-                                    <Text style={styles.buttonText}>确定</Text>
+                                    <Text style={styles.buttonText}>{confirmBtnName}</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
@@ -85,7 +89,7 @@ export default class PopModel extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#ececf0',
@@ -99,8 +103,7 @@ const styles = StyleSheet.create({
     },
     // modal上子View的样式
     subView: {
-        marginLeft: 60,
-        marginRight: 60,
+        marginHorizontal: 60,
         backgroundColor: '#fff',
         alignSelf: 'stretch',
         justifyContent: 'center',

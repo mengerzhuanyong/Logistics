@@ -79,8 +79,9 @@ export default class MineInfoSetting extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -90,11 +91,11 @@ export default class MineInfoSetting extends Component {
         this.setState(state);
     };
 
-    onPushNextPage = (webTitle, compent) => {
+    onPushNextPage = (pageTitle, compent) => {
         const { navigate } = this.props.navigation;
         navigate(compent, {
             user: this.state.user,
-            webTitle: webTitle,
+            pageTitle: pageTitle,
             reloadData: () => this.loadNetData(),
         })
     }

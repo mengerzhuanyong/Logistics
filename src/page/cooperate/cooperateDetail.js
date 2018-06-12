@@ -82,11 +82,11 @@ export default class CooperateDetail extends Component {
 
     render() {
         let {params} = this.props.navigation.state;
-        let webTitle = params && params.webTitle ? params.webTitle : '我要合作';
+        let pageTitle = params && params.pageTitle ? params.pageTitle : '我要合作';
         return (
             <View style={styles.container}>
                 <NavigationBar
-                    title = {webTitle}
+                    title = {pageTitle}
                     leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
                 />
                 <WebView

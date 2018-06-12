@@ -54,7 +54,7 @@ const UtilMap = {
 
         Linking.canOpenURL(url).then(supported => {
             if (!supported) {
-                console.log('Can\'t handle url: ' + url);
+                // console.log('Can\'t handle url: ' + url);
                 return Linking.openURL(webUrl).catch(e => console.warn(e));
             } else {
                 return Linking.openURL(url).catch(e => console.warn(e));

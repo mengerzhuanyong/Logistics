@@ -58,6 +58,7 @@ import MineCollect from '../page/mine/mineCollect'
 import BusinessList from '../page/business'
 import BusinessDetail from '../page/business/businessDetail'
 import BusinessServiceList from '../page/business/businessServiceList'
+import BusinessServiceAddList from '../page/business/businessServiceAddList'
 
 const TabNavScreen = TabNavigator(
     {
@@ -164,6 +165,9 @@ const App = StackNavigator(
         },
         BusinessServiceList: {
             screen: BusinessServiceList
+        },
+        BusinessServiceAddList: {
+            screen: BusinessServiceAddList
         },
         Flow: {
             screen: Flow

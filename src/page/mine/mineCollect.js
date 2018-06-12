@@ -80,8 +80,9 @@ export default class MineCoupon extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -173,7 +174,7 @@ export default class MineCoupon extends Component {
         item = item.item;
         const { navigate } = this.props.navigation;
         navigate('BusinessDetail', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             item: item,
             reloadData: () => this.freshNetData(),
         })

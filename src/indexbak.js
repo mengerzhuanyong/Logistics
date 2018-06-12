@@ -76,13 +76,13 @@ export default class Index extends Component {
 
     setBadge() {
         JPushModule.setBadge(0, (badgeNumber) => {
-            console.log(badgeNumber);
+            // console.log(badgeNumber);
             alert(badgeNumber);
         })
     }
 
     jumpSecondActivity = () => {
-        console.log('jump to SecondActivity');
+        // console.log('jump to SecondActivity');
         this.props.navigation.navigate('Mine');
     }
 
@@ -107,26 +107,26 @@ export default class Index extends Component {
             this.setState({
                 pushMsg: map.message
             })
-            console.log('extras: ' + map.extras)
+            // console.log('extras: ' + map.extras)
         })
 
         JPushModule.addReceiveNotificationListener(map => {
-            console.log('alertContent: ' + map.alertContent)
-            console.log('extras: ' + map.extras)
+            // console.log('alertContent: ' + map.alertContent)
+            // console.log('extras: ' + map.extras)
             // var extra = JSON.parse(map.extras);
             // console.log(extra.key + ": " + extra.value);
         })
 
         JPushModule.addReceiveOpenNotificationListener(map => {
-            console.log('Opening notification!')
-            console.log('map.extra: ' + map.extras)
+            // console.log('Opening notification!')
+            // console.log('map.extra: ' + map.extras)
             this.jumpSecondActivity();
             this.setBadge();
             // JPushModule.jumpToPushActivity("SecondActivity");
         })
 
         JPushModule.addGetRegistrationIdListener(registrationId => {
-            console.log('Device register succeed, registrationId ' + registrationId)
+            // console.log('Device register succeed, registrationId ' + registrationId)
         })
     }
 
@@ -136,7 +136,7 @@ export default class Index extends Component {
         JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
         JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
         JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
-        console.log("Will clear all notifications");
+        // console.log("Will clear all notifications");
         JPushModule.clearAllNotifications();
     }
 

@@ -28,6 +28,7 @@ import UtilMap from '../../util/utilsMap'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
+import ModalView from '../../component/common/shopTagPoup'
 
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
 import BusinessItem from '../../component/common/businessItem'
@@ -48,7 +49,7 @@ export default class BusinessDetail extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        this.state =  {
+        this.state = {
             user: global.user ? global.user.userData : '',
             start: '',
             end: '',
@@ -66,8 +67,10 @@ export default class BusinessDetail extends Component {
                 lat: '',
             },
             canBack: false,
-        }
+            modalVisible: false,
+        };
         this.netRequest = new NetRequest();
+        this.lastActionTime = 0;
     }
 
     static defaultProps = {
@@ -84,7 +87,7 @@ export default class BusinessDetail extends Component {
     refreshing = false;
 
     // static navigationOptions = ({ navigation, screenProps }) => ({
-    //     title: navigation.state.params.webTitle,
+    //     title: navigation.state.params.pageTitle,
     // });
 
 
@@ -110,8 +113,9 @@ export default class BusinessDetail extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -119,6 +123,13 @@ export default class BusinessDetail extends Component {
             return;
         }
         this.setState(state);
+    };
+
+    modalVisible = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible,
+        })
+        // console.log(this.state.modalVisible);
     };
 
     getLocalUser = () => {
@@ -137,7 +148,7 @@ export default class BusinessDetail extends Component {
         let { user, item } = this.state;
         user = user != '' ? user : global.user.userData;
         let url = NetApi.businessDetail + item.id + '/uid/' + user.uid;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then( result => {
                 this.updateState({
                     loading: true,
@@ -231,7 +242,7 @@ export default class BusinessDetail extends Component {
             start: start,
             end: end,
             disinfo: businessInfo.disinfo,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         });
     }
@@ -241,9 +252,10 @@ export default class BusinessDetail extends Component {
      * @Author   Menger
      * @DateTime 2018-02-27
      */
-    makeCall = (data) => {
+    makeCall = () => {
         let { businessInfo } = this.state;
         let url = 'tel: ' + businessInfo.mobile;
+        this.modalVisible();
         // console.log(businessInfo.mobile);
         Linking.canOpenURL(url)
             .then(supported => {
@@ -267,6 +279,21 @@ export default class BusinessDetail extends Component {
         }
     }
 
+    onPushToNextPage = (pageTitle, page, params = {}) => {
+        let nowTime = new Date().getTime();
+        if ((nowTime - this.lastActionTime) <= 500 && true) {
+            // console.warn('间隔时间内重复点击了');
+            return false;
+        }
+        this.lastActionTime = nowTime;
+        // console.log(pageTitle, page);
+        let {navigate} = this.props.navigation;
+        navigate(page, {
+            pageTitle: pageTitle,
+            ...params,
+        });
+    };
+
     onPushToFlow = (item) => {
         item = item.item;
         const { navigate } = this.props.navigation;
@@ -274,7 +301,7 @@ export default class BusinessDetail extends Component {
         navigate('Flow', {
             sid: this.state.item.id,
             item: item,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         });
     }
@@ -285,6 +312,19 @@ export default class BusinessDetail extends Component {
                 item = {item}
                 onPushToFlow = {() => this.onPushToFlow(item)}
             />
+        )
+    }
+
+    renderServiceAddressItem = ({item}) => {
+        return (
+            <View style={{height: 40, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text style={{fontSize: 14, color: '#666',}}>{item.name}</Text>
+                <TouchableOpacity
+                    onPress={() => this.pushToNavigation(item)}
+                >
+                    <Text style={{fontSize: 13, color: '#888'}}>查看地图</Text>
+                </TouchableOpacity>
+            </View>
         )
     }
 
@@ -303,6 +343,24 @@ export default class BusinessDetail extends Component {
                 <View style={styles.sortView}>
                     <Text style={styles.sortTips}>排序</Text>
                 </View>
+            </View>
+        )
+    }
+
+    renderServicesAddFooterView = () => {
+        // return this.state.loadMore && <ActivityIndicatorItem />;
+        if (this.state.service.length <= 0) {
+            return null;
+        }
+        return (
+            <View style={styles.listFooterView}>
+                <View style={[GlobalStyles.horLine, styles.listFooterHorLine]} />
+                <TouchableOpacity
+                    style = {styles.listFooterBtnView}
+                    onPress = {() => this.onPushToNextPage('门店服务点', 'BusinessServiceAddList', {item: this.state.item})}
+                >
+                    <Text style={styles.listFooterBtnName}>点击查看全部</Text>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -346,7 +404,7 @@ export default class BusinessDetail extends Component {
     }
 
     renderSeparator = () => {
-        return <View style={GlobalStyles.horLine} />;
+        return <View style={[GlobalStyles.horLine, styles.separatorStyle]} />;
     }
 
     collectBusiness = () => {
@@ -407,7 +465,7 @@ export default class BusinessDetail extends Component {
     }
 
     render(){
-        const { loading, ready, refreshing, businessInfo, isCollect, service, addressInfo } = this.state;
+        const { loading, ready, refreshing, businessInfo, isCollect, service, addressInfo, modalVisible, MODALVIEW_CONFIG } = this.state;
         let navigationBarStyle = {
             zIndex: 2,
             backgroundColor: 'transparent',
@@ -428,7 +486,7 @@ export default class BusinessDetail extends Component {
                         scrollEventThrottle = {10}
                     >
                         <View style={GlobalStyles.bannerViewWrap}>
-                            <Image source={{uri: businessInfo.logo}} style={GlobalStyles.bannerImg} />
+                            <Image source={{uri: businessInfo.img}} style={GlobalStyles.bannerImg} />
                         </View>
                         <View style={styles.shopInfoView}>
                             <View style={styles.shopInfoItem}>
@@ -447,11 +505,13 @@ export default class BusinessDetail extends Component {
                                         <Text style={styles.companyName}>: {businessInfo.company}</Text>
                                     </View>}
                                 </View>
-                                <ShopTagsView tags={businessInfo.tags} page_flag={'detail'} />
+                                <ShopTagsView tags={businessInfo.tags} page_flag={'detail'} onSetModal = {()=> this.modalVisible()} />
                             </View>
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
                             <View style={styles.shopInfoItem}>
-                                <TouchableOpacity style={styles.shopAddressView} onPress={() => this.pushToNavigation(addressInfo)}>
+                                <TouchableOpacity style={styles.shopAddressView}
+                                    onPress={() => this.pushToNavigation(addressInfo)}
+                                >
                                     <Image source={GlobalIcons.icon_place} style={styles.shopPlaceIcon} />
                                     <View style={styles.shopAddressDetail}>
                                         <Text style={styles.shopAddressCon} numberOfLines={2}>{businessInfo.dress}</Text>
@@ -468,20 +528,46 @@ export default class BusinessDetail extends Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                        {businessInfo.service_points.length > 0 && <View style={{marginBottom: 10,}}>
+                            <View style={styles.searchView}>
+                                <View style={styles.searchTitleView}>
+                                    <Text style={styles.searchTitle}>所有服务点</Text>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]} />
+                            </View>
+                            {ready ?
+                                <FlatList
+                                    style = {styles.shopListView}
+                                    keyExtractor = { item => item.id}
+                                    data = {businessInfo.service_points}
+                                    extraData = {this.state}
+                                    renderItem = {(item) => this.renderServiceAddressItem(item)}
+                                    onEndReachedThreshold = {0.1}
+                                    onEndReached = {(info) => this.dropLoadMore(info)}
+                                    onRefresh = {this.freshNetData}
+                                    refreshing = {refreshing}
+                                    ItemSeparatorComponent={this.renderSeparator}
+                                    // ListHeaderComponent = {this.renderServicesHeaderView}
+                                    ListFooterComponent = {this.renderServicesAddFooterView}
+                                    ListEmptyComponent = {this.renderServiceEmptyView}
+                                />
+                                : <ActivityIndicatorItem />
+                            }
+                        </View>}
 
-                        <View style={styles.searchView}>
+                        <View style={[styles.searchView,]}>
                             <View style={styles.searchTitleView}>
-                                <Text style={styles.searchTitle}>所有线路搜索</Text>
+                                <Text style={styles.searchTitle}>所有线路</Text>
                                 <Text style={styles.searchTitleConTips}>优惠信息：{businessInfo.disinfo}</Text>
                             </View>
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
-                            <View style={styles.searchContentView}>
+                            {1 > 2 && <View style={styles.searchContentView}>
                                 <View style={styles.searchInputView}>
                                     <View style={styles.searchInputItemView}>
                                         <View style={[styles.searchItemIcon, styles.searchStartIcon]} />
                                         <TextInput
                                             style = {styles.searchInputItem}
-                                            placeholder = "请输入发货地(城市名称)"
+                                            placeholder = "发货地(城市名称)"
                                             placeholderTextColor = '#888'
                                             underlineColorAndroid = {'transparent'}
                                             onChangeText = {(text)=>{
@@ -496,7 +582,7 @@ export default class BusinessDetail extends Component {
                                         <View style={[styles.searchItemIcon, styles.searchEndIcon]} />
                                         <TextInput
                                             style = {styles.searchInputItem}
-                                            placeholder = "请输入目的地(城市名称)"
+                                            placeholder = "目的地(城市名称)"
                                             placeholderTextColor = '#888'
                                             underlineColorAndroid = {'transparent'}
                                             onChangeText = {(text)=>{
@@ -513,7 +599,7 @@ export default class BusinessDetail extends Component {
                                 >
                                     <Text style={styles.searchBtnItem}>确认</Text>
                                 </TouchableOpacity>
-                            </View>
+                            </View>}
                         </View>
                         {ready ?
                             <FlatList
@@ -533,7 +619,7 @@ export default class BusinessDetail extends Component {
                             />
                             : <ActivityIndicatorItem />
                         }
-                        <View style={styles.shopRemarkTipsView}>
+                        <View style={[styles.shopRemarkTipsView,]}>
                             <View style={styles.shopListViewTitle}>
                                 <Text style={styles.titleName}>温馨提示：</Text>
                             </View>
@@ -543,7 +629,7 @@ export default class BusinessDetail extends Component {
                         </View>
                         {ready ?
                             <FlatList
-                                style = {[styles.shopListView, {marginBottom: 64}]}
+                                style = {[styles.shopListView, {marginTop: 10, marginBottom: 64}]}
                                 keyExtractor = { item => item.id}
                                 data = {businessInfo.evaluate}
                                 extraData = {this.state}
@@ -565,6 +651,13 @@ export default class BusinessDetail extends Component {
                         <Spinner style={styles.spinner} isVisible={loading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
                     </View>
                 }
+                {modalVisible &&
+                    <ModalView
+                        show = {modalVisible}
+                        cancelFoo = {() => this.modalVisible()}
+                        confirmFoo = {() => this.makeCall()}
+                    />
+                }
             </View>
         );
     }
@@ -581,14 +674,20 @@ const styles = StyleSheet.create({
         // paddingBottom: 64,
     },
     companyType: {
-        marginVertical: 3,
         marginRight: 6,
+        marginTop: 5,
+        fontSize: 13,
         borderWidth: 1 / PixelRatio.get(),
         borderRadius: 3,
-        borderColor: '#123',
-        paddingVertical: 3,
-        paddingHorizontal: 6,
+        borderColor: GlobalStyles.themeColor,
+        paddingVertical: 2,
+        paddingHorizontal: 3,
         color: GlobalStyles.themeColor,
+    },
+    companyName: {
+        fontSize: 13,
+        marginTop: 5,
+        color: '#333',
     },
     leftButtonIcon: {
         width: 26,
@@ -634,10 +733,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 15,
         justifyContent: 'space-between',
-    },
-    companyName: {
-        fontSize: 14,
-        marginTop: 5,
     },
     shopName: {
         fontSize: 16,
@@ -705,7 +800,7 @@ const styles = StyleSheet.create({
     },
     searchView: {
         paddingTop: 15,
-        paddingBottom: 5,
+        // paddingBottom: 5,
         paddingHorizontal: 15,
         backgroundColor: '#fff',
     },
@@ -771,7 +866,7 @@ const styles = StyleSheet.create({
     },
     shopListView: {
         flex: 1,
-        marginTop: 10,
+        marginTop: -10,
         backgroundColor: '#fff',
     },
     shopListViewTitle: {
@@ -824,4 +919,8 @@ const styles = StyleSheet.create({
         color: '#555',
         lineHeight: 20,
     },
+    separatorStyle: {
+        marginLeft: 15,
+        width: GlobalStyles.width - 30,
+    }
 });

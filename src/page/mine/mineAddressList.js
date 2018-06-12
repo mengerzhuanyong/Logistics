@@ -88,8 +88,9 @@ export default class MineAddressList extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -105,7 +106,7 @@ export default class MineAddressList extends Component {
         const { navigate } = this.props.navigation;
         navigate('MineAddressEdit', {
             item: item,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.freshNetData(),
         });
     }
@@ -233,7 +234,7 @@ export default class MineAddressList extends Component {
     onPushToAddress = () => {
         const { navigate } = this.props.navigation;
         navigate('MineAddressAdd', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.freshNetData(),
         });
     }

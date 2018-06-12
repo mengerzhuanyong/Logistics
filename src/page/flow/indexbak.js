@@ -53,7 +53,7 @@ export default class Flow extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        console.log(params);
+        // console.log(params);
         this.state =  {
             sid: params ? params.sid : '',   // 门店ID
             uid: global.user ? global.user.userData.uid : '',
@@ -126,8 +126,9 @@ export default class Flow extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -144,7 +145,7 @@ export default class Flow extends Component {
             // orderPrice: '50',
             PAGE_FLAG: 'FLOW',
             updateContent: this.updateContent,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         })
     };
@@ -253,14 +254,14 @@ export default class Flow extends Component {
         // console.log('请求',data);
         this.netRequest.fetchPost(url, data)
             .then( result => {
-                console.log('获取成功', result);
+                // console.log('获取成功', result);
                 if (result && result.code == 1) {
                     relprice = parseFloat(result.data).toFixed(2) - parseInt(this.state.coupon);
                     this.updateState({
                         price: result.data,
                         relprice: relprice,
                     })
-                    console.log('relprice', relprice);
+                    // console.log('relprice', relprice);
                 }
             })
             .catch( error => {
@@ -468,7 +469,7 @@ export default class Flow extends Component {
                     this.timer = setTimeout(() => {
                         this.props.navigation.navigate("OrderDetail", {
                             orderid: result.data,
-                            webTitle: '订单详情',
+                            pageTitle: '订单详情',
                             PAGE_FLAG: 'FLOW',
                             reloadData: () => this.loadNetData(),
                         });
@@ -669,7 +670,7 @@ export default class Flow extends Component {
                                         >
                                             <View style={styles.paymentMethodTitleView}>
                                                 <Image source={GlobalIcons.icon_phone} style={styles.paymentMethodIcon} />
-                                                <Text style={styles.cargoAttributesTitle}>立即咨询：{this.state.mobile}</Text>
+                                                <Text style={styles.cargoAttributesTitle}>询价咨询：{this.state.mobile}</Text>
                                             </View>
                                             <Image source={arrowRight} style={styles.arrowRightIcon} />
                                         </TouchableOpacity>

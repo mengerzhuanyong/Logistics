@@ -78,8 +78,9 @@ export default class Home extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -185,7 +186,7 @@ export default class Home extends Component {
         item = item.item;
         const { navigate } = this.props.navigation;
         navigate('BusinessDetail', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             item: item,
             reloadData: () => this.freshNetData(1),
         })
@@ -195,7 +196,7 @@ export default class Home extends Component {
         const { navigate } = this.props.navigation;
         navigate(compent, {
             navItem: nav,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.freshNetData(1),
         })
     };

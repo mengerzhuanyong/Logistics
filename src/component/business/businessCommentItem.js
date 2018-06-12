@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         marginRight: 10,
-        resizeMode: 'contain',
+        resizeMode: 'cover',
     },
     commentUserInfoCon: {
         height: 60,

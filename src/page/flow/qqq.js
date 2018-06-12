@@ -32,7 +32,7 @@ function() {
                         >
                             <View style={styles.paymentMethodTitleView}>
                                 <Image source={GlobalIcons.icon_phone} style={styles.paymentMethodIcon} />
-                                <Text style={styles.cargoAttributesTitle}>立即咨询：{this.state.mobile}</Text>
+                                <Text style={styles.cargoAttributesTitle}>询价咨询：{this.state.mobile}</Text>
                             </View>
                             <Image source={arrowRight} style={styles.arrowRightIcon} />
                         </TouchableOpacity>

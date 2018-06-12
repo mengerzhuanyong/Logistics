@@ -55,7 +55,7 @@ export default class Test extends Component {
                 }
             })
             .catch( error => {
-                console.log('获取出错', error);
+                // console.log('获取出错', error);
             })
     }
 
@@ -67,7 +67,7 @@ export default class Test extends Component {
             let cate = category[i].name;
             data.push(cate);
         }
-        console.log('data', data);
+        // console.log('data', data);
         return data;
     }
 
@@ -83,7 +83,7 @@ export default class Test extends Component {
                 this.updateState({
                     category: pickedValue
                 })
-                console.log(pickedValue);
+                // console.log(pickedValue);
             },
             onPickerCancel: pickedValue => {
 

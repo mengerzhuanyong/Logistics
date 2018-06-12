@@ -153,10 +153,10 @@ export default class Login extends Component {
             })
     }
 
-    onPushToNextPage = (webTitle, component) => {
+    onPushToNextPage = (pageTitle, component) => {
         let { navigate } = this.props.navigation;
         navigate(component, {
-            webTitle: webTitle,
+            pageTitle: pageTitle,
             reloadData: () => this.loadNetData(),
         })
     }

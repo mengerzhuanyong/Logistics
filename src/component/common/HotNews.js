@@ -12,8 +12,10 @@ import {
     Platform,
     TextInput,
     StyleSheet,
+    ScrollView,
     TouchableOpacity
 } from 'react-native'
+import {Carousel} from 'teaset'
 import Swiper from 'react-native-swiper'
 import { toastShort, consoleLog } from '../../util/utilsToast'
 import NetApi from '../../constant/GlobalApi'
@@ -66,7 +68,7 @@ export default class hotNews extends Component {
     }
 
     updateState = (state) => {
-        if (!this) { return };
+        if (!this) { return }
         this.setState(state);
     }
 
@@ -74,54 +76,39 @@ export default class hotNews extends Component {
 
     }
 
-    renderHotNewsView = (row) => {
-        if(this.state.swiperShow) {
-            if(row.length <= 0) {
-                return;
-            }
-            let hotNews = row.map((obj,index)=>{
-                return (
-                    <TouchableOpacity
-                        style={GlobalStyles.bannerViewWrap}
-                        key={"bubble_"+index}
-                        activeOpacity = {1}
-                        onPress={() => {}}
-                    >
-                        <View style={GlobalStyles.bannerViewWrap}>
-                            <Image source={{uri: obj.logo}} style={styles.hotNewsItemPicture} />
-                        </View>
-                    </TouchableOpacity>
-                )
-            });
-            return (
-                <Swiper
-                    index={0}
-                    loop={true}
-                    autoplay={true}
-                    horizontal={true}
-                    removeClippedSubviews={false}
-                    showsPagination={false}
-                    autoplayTimeout={8}
-                    height={isIos ? 60 : 60}
-                    width={GlobalStyles.width}
-                    style={{paddingTop:0,marginTop:0}}
-                    lazy={true}
-                    dot = {<View style={GlobalStyles.bannerDot} />}
-                    activeDot = {<View style={GlobalStyles.bannerActiveDot} />}
-                >
-                    {hotNews}
-                </Swiper>
-            )
+    renderSlider = (row) => {
+        if(row.length <= 0) {
+            return;
         }
-    }
+        let sliders = row.map((obj,index)=>{
+            return (
+                <TouchableOpacity
+                    style={GlobalStyles.bannerViewWrap}
+                    key={"bubble_"+index}
+                    activeOpacity = {1}
+                    onPress={() => {}}
+                >
+                    <View style={GlobalStyles.bannerViewWrap}>
+                        <Image source={{uri: obj.logo}} style={styles.hotNewsItemPicture} />
+                    </View>
+                </TouchableOpacity>
+            )
+        });
+        return sliders;
+    };
 
     render(){
         const { hotNews } = this.state;
         return (
             <View style={[styles.container]}>
-                <View style={[styles.bannerContainer]}>
-                    {this.renderHotNewsView(hotNews)}
-                </View>
+                <ScrollView>
+                    <Carousel
+                        horizontal={false}
+                        style={styles.bannerContainer}
+                    >
+                        {this.renderSlider(hotNews)}
+                    </Carousel>
+                </ScrollView>
             </View>
         );
     }

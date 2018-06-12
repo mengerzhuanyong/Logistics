@@ -32,7 +32,7 @@ export default class BaiduMap extends Component {
                 });
             })
             .catch(e => {
-                console.log(e, '获取地理位置失败，请稍后重试！');
+                // console.log(e, '获取地理位置失败，请稍后重试！');
             })
     };
 

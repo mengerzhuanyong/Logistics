@@ -142,7 +142,7 @@ export default class OrderDetail extends Component {
         let { orderid } = this.state;
         let url = NetApi.orderDetail + orderid;
         // return this.netRequest.fetchGet(url)
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then( result => {
                 // return result;
                 if (result && result.code == 1) {
@@ -236,7 +236,7 @@ export default class OrderDetail extends Component {
         } else {
             let url = NetApi.orderOnDelivery + orderid;
             const {navigate, state} = this.props.navigation;
-            this.netRequest.fetchGet(url, true)
+            this.netRequest.fetchGet(url)
                 .then( result => {
                     if (result && result.code == 1) {
                         setTimeout(() => {
@@ -293,7 +293,7 @@ export default class OrderDetail extends Component {
         navigate(component, {
             item: item,
             orderid: item.id,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         })
     }
@@ -405,7 +405,7 @@ export default class OrderDetail extends Component {
         // console.log('订单信息----',data);
         type = parseInt(data.pay_class);
         reBack = parseInt(data.status);
-        let {paymentType} = this.state;
+        let {paymentType, orderInfo} = this.state;
         if (reBack == 6) {
             if (type == 1) {
                 return (
@@ -454,7 +454,7 @@ export default class OrderDetail extends Component {
                         <Image source={paymentType == 2 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
                     </TouchableOpacity>
                     <View style={[GlobalStyles.horLine, styles.horLine]} />
-                    <TouchableOpacity
+                    {orderInfo.premiums === '0.00' && <TouchableOpacity
                         style = {styles.chargeTypeItem}
                         onPress = {() => this.onSelectedPayment(3)}
                     >
@@ -463,7 +463,7 @@ export default class OrderDetail extends Component {
                             <Text style={styles.itemTitle}>货到付款</Text>
                         </View>
                         <Image source={paymentType == 3 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </View>
             );
         } else if (type === 1) {
@@ -581,7 +581,7 @@ export default class OrderDetail extends Component {
                                         <Text style={styles.orderCargoInfoConText}>货物类型：</Text>
                                         <Text style={styles.orderCargoInfoConText}>{orderInfo.cate}</Text>
                                     </View> : null}
-                                    {orderInfo.carVisible &&<View style={styles.orderCargoInfoCon}>
+                                    {1 > 2 && orderInfo.carVisible &&<View style={styles.orderCargoInfoCon}>
                                         <Text style={styles.orderCargoInfoConText}>代取/送服务车型：</Text>
                                         <Text style={styles.orderCargoInfoConText}>{orderInfo.serviceCar}</Text>
                                     </View>}
@@ -615,6 +615,12 @@ export default class OrderDetail extends Component {
                                     </View>
                                 );
                             })}
+
+                            {orderInfo.premiums !== '0.00' && <View style={styles.orderMoneyInfoItem}>
+                                <Text style={styles.orderMoneyInfoTitle}>运输保险费：</Text>
+                                <Text style={styles.orderMoneyInfoCon}>¥ {orderInfo.premiums}</Text>
+                            </View>}
+
                             {orderInfo.coupon > 0 && <View style={styles.orderMoneyInfoItem}>
                                 <Text style={styles.orderMoneyInfoTitle}>优惠券：</Text>
                                 <Text style={styles.orderMoneyInfoCon}>¥ -{parseFloat(orderInfo.coupon).toFixed(2)}</Text>

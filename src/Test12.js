@@ -29,7 +29,7 @@ export default class App extends Component<{}> {
 
     handleOpenImagePicker = () => {
         SYImagePicker.showImagePicker({imageCount: 1, isRecordSelected: true, enableBase64: true}, (err, photos) => {
-            console.log(err, photos);
+            // console.log(err, photos);
             if (!err) {
                 this.setState({
                     photos
@@ -59,7 +59,7 @@ export default class App extends Component<{}> {
     handlePromiseSelectPhoto = () => {
         SYImagePicker.asyncShowImagePicker({imageCount: 3, enableBase64: true})
             .then(photos => {
-                console.log(photos);
+                // console.log(photos);
                 const arr = photos.map(v=>{
                     return { ...v, enableBase64:true}
                 });
@@ -75,7 +75,7 @@ export default class App extends Component<{}> {
 
     handleLaunchCamera = () => {
         SYImagePicker.openCamera({isCrop: true, showCropCircle: false, showCropFrame: false}, (err, photos) => {
-            console.log(err, photos);
+            // console.log(err, photos);
             if (!err) {
                 this.setState({
                     photos: [...this.state.photos, ...photos]

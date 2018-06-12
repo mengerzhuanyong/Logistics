@@ -25,6 +25,7 @@ import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
+import ModalView from '../../component/common/shopTagPoup'
 import {Menu, Button} from 'teaset'
 
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
@@ -41,7 +42,7 @@ export default class BusinessIndex extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        this.state =  {
+        this.state = {
             ready: false,
             showFoot: 0,
             start: '0',
@@ -54,13 +55,14 @@ export default class BusinessIndex extends Component {
             businessListData: [],
             canBack: false,
             notLimit: false,
-        }
+            modalVisible: false,
+        };
         this.netRequest = new NetRequest();
     }
 
     static defaultProps = {
         type: '1',
-    }
+    };
 
     /**
      * 初始化状态
@@ -99,6 +101,36 @@ export default class BusinessIndex extends Component {
         }
         this.setState(state);
     };
+
+    modalVisible = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible,
+        })
+        // console.log(this.state.modalVisible);
+    };
+
+    /**
+     * 拨打电话
+     * @Author   Menger
+     * @DateTime 2018-02-27
+     */
+    makeCall = () => {
+        // let { businessInfo } = this.state;
+        // let url = 'tel: ' + '15066886007';
+        // this.modalVisible();
+        // // console.log(businessInfo.mobile);
+        // Linking.canOpenURL(url)
+        //     .then(supported => {
+        //         if (!supported) {
+        //             // console.log('Can\'t handle url: ' + url);
+        //         } else {
+        //             return Linking.openURL(url);
+        //         }
+        //     })
+        //     .catch((err)=>{
+        //         // console.log('An error occurred', err)
+        //     });
+    }
 
     loadNetData = (sort, page) => {
         let {type, start, end, notLimit} = this.state;
@@ -201,7 +233,7 @@ export default class BusinessIndex extends Component {
         item = item.item;
         const { navigate } = this.props.navigation;
         navigate('BusinessDetail', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             item: item,
             reloadData: () => this.loadNetData(),
         })
@@ -223,6 +255,7 @@ export default class BusinessIndex extends Component {
             <BusinessItem
                 item = {item}
                 {...this.props}
+                onSetModal = {()=> this.modalVisible()}
                 onPushToBusiness = {()=> this.onPushToBusiness(item)}
             />
         )
@@ -276,8 +309,8 @@ export default class BusinessIndex extends Component {
     renderTitleView = () => {
         const { params } = this.props.navigation.state;
         let { navItem } = params;
-        let titleView = <View style={styles.webTitleView}>
-            <Text style={styles.webTitle}>{navItem.name}</Text>
+        let titleView = <View style={styles.pageTitleView}>
+            <Text style={styles.pageTitle}>{navItem.name}</Text>
             {navItem.remark != '' && <Text style={styles.webTips}>({navItem.remark})</Text>}
         </View>;
 
@@ -285,7 +318,7 @@ export default class BusinessIndex extends Component {
     }
 
     render(){
-        const { ready, error, refreshing, businessListData } = this.state;
+        const { ready, error, refreshing, businessListData, modalVisible, MODALVIEW_CONFIG } = this.state;
         return (
             <View style={styles.container}>
                 <NavigationBar
@@ -300,7 +333,7 @@ export default class BusinessIndex extends Component {
                             </View>
                             <TextInput
                                 style = {styles.searchInputItem}
-                                placeholder = "请输入发货地(城市名称)"
+                                placeholder = "发货地(城市名称)"
                                 placeholderTextColor = '#888'
                                 underlineColorAndroid = {'transparent'}
                                 onChangeText = {(text)=>{
@@ -317,7 +350,7 @@ export default class BusinessIndex extends Component {
                             </View>
                             <TextInput
                                 style = {styles.searchInputItem}
-                                placeholder = "请输入目的地(城市名称)"
+                                placeholder = "目的地(城市名称)"
                                 placeholderTextColor = '#888'
                                 underlineColorAndroid = {'transparent'}
                                 onChangeText = {(text)=>{
@@ -353,6 +386,13 @@ export default class BusinessIndex extends Component {
                     />
                     : <ActivityIndicatorItem />
                 }
+                {modalVisible &&
+                    <ModalView
+                        show = {modalVisible}
+                        cancelFoo = {() => this.modalVisible()}
+                        confirmFoo = {() => this.makeCall()}
+                    />
+                }
             </View>
         );
     }
@@ -363,11 +403,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: GlobalStyles.bgColor,
     },
-    webTitleView: {
+    pageTitleView: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    webTitle: {
+    pageTitle: {
         color: '#fff',
         fontSize: 16,
     },

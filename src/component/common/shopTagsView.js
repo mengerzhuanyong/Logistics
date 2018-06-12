@@ -31,7 +31,8 @@ export default class ShopRankView extends Component {
         },
         page_flag: 'list',
         // tagsPosition: false,
-    }
+        onSetModal: () => {},
+    };
 
     updateState = (state) => {
         if (!this) {
@@ -41,6 +42,7 @@ export default class ShopRankView extends Component {
     };
 
     renderShopTags = (data) => {
+        let {onSetModal} = this.props;
         if(data.length <= 0) {
             return;
         }
@@ -50,10 +52,7 @@ export default class ShopRankView extends Component {
                     <TouchableOpacity
                         key = {"tags"+index}
                         style = {styles.tagsButton}
-                        onPress = {() => {
-                            // toastShort('💎: 缴纳1000元押金💎💎: 缴纳1000元押金💎💎💎: 缴纳1000元押金💎💎💎💎: 缴纳1000元押金', 'center', styles.toastText, styles.toastContainer);
-                            toastShort(obj.tips, 'center', styles.toastText, styles.toastContainer);
-                        }}
+                        onPress = {onSetModal}
                     >
                         <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                     </TouchableOpacity>
@@ -63,9 +62,7 @@ export default class ShopRankView extends Component {
                     <TouchableOpacity
                         key = {"tags"+index}
                         style = {styles.tagsButton}
-                        onPress = {() => {
-                            toastShort(obj.tips, 'center', styles.toastText, styles.toastContainer);
-                        }}
+                        onPress = {onSetModal}
                     >
                         <Image source={GlobalIcons.icon_excellent} style={[styles.shopTagsIcon, GlobalStyles.ml_10]} />
                     </TouchableOpacity>
@@ -75,9 +72,7 @@ export default class ShopRankView extends Component {
                     <TouchableOpacity
                         key = {"tags"+index}
                         style = {styles.tagsButton}
-                        onPress = {() => {
-                            toastShort(obj.tips, 'center', styles.toastText, styles.toastContainer);
-                        }}
+                        onPress = {onSetModal}
                     >
                         <Text style={styles.tagsName}>冷藏</Text><Text style={styles.shopTagSnow}>❄️</Text>
                     </TouchableOpacity>

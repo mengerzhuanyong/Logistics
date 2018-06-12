@@ -56,8 +56,9 @@ export default class Cooperate extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -74,7 +75,7 @@ export default class Cooperate extends Component {
                 this.updateState({
                     navigations: result.data
                 })
-                console.log(result);
+                // console.log(result);
             })
             .catch( error => {
                 // consoleLog('登录出错', error);
@@ -85,12 +86,12 @@ export default class Cooperate extends Component {
         alert(123);
     };
 
-    onPushNavigator = (webTitle, compent, link) => {
+    onPushNavigator = (pageTitle, compent, link) => {
         let { user, loginState } = this.state;
         let { navigate } = this.props.navigation;
         navigate(compent, {
             user: user,
-            webTitle: webTitle,
+            pageTitle: pageTitle,
             webUrl: link,
         })
     }
@@ -123,12 +124,12 @@ export default class Cooperate extends Component {
                         onPushNavigator = {() => this.onPushNavigator('服务点加盟', 'CooperateDetail', navigations[2].link)}
                     />
                     <View style={[GlobalStyles.horLine, styles.horLine]} />
-                    <NavigatorItem
+                    {1> 2 && <NavigatorItem
                         leftIcon = {false}
                         leftTitle = {navigations[3].name}
                         onPushNavigator = {() => this.onPushNavigator('货车加盟', 'CooperateDetail', navigations[3].link)}
-                    />
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
+                        // <View style={[GlobalStyles.horLine, styles.horLine]} />
+                    />}
                     <NavigatorItem
                         leftIcon = {false}
                         leftTitle = {navigations[4].name}

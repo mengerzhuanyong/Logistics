@@ -59,8 +59,9 @@ export default class Order extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -261,7 +262,7 @@ export class OrderDetailTab extends Component {
     onPushToOrderDetail = () => {
         const { navigate } = this.props.navigation;
         navigate('OrderDetail', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.freshNetData(),
         })
     }
@@ -269,7 +270,7 @@ export class OrderDetailTab extends Component {
     onPushToOrderComment = () => {
         const { navigate } = this.props.navigation;
         navigate('OrderComment', {
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.freshNetData(),
         })
     }

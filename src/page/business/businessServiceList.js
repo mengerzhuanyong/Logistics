@@ -43,7 +43,7 @@ export default class BusinessDetail extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        console.log(params);
+        // console.log(params);
         this.state =  {
             uid: global.user.userData.uid,
             service: [],
@@ -100,8 +100,9 @@ export default class BusinessDetail extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     updateState = (state) => {
@@ -124,7 +125,7 @@ export default class BusinessDetail extends Component {
         return this.netRequest.fetchPost(url, data)
         // return this.netRequest.fetchGet(url)
             .then( result => {
-                console.log('服务列表', result);
+                // console.log('服务列表', result);
                 return result;
             })
             .catch( error => {
@@ -193,7 +194,7 @@ export default class BusinessDetail extends Component {
         navigate('Flow', {
             sid: this.state.item.id,
             item: item,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         });
     }
@@ -231,7 +232,7 @@ export default class BusinessDetail extends Component {
                             <View style={[styles.searchItemIcon, styles.searchStartIcon]} />
                             <TextInput
                                 style = {styles.searchInputItem}
-                                placeholder = "请输入发货地(城市名称)"
+                                placeholder = "发货地(城市名称)"
                                 placeholderTextColor = '#888'
                                 underlineColorAndroid = {'transparent'}
                                 onChangeText = {(text)=>{
@@ -246,7 +247,7 @@ export default class BusinessDetail extends Component {
                             <View style={[styles.searchItemIcon, styles.searchEndIcon]} />
                             <TextInput
                                 style = {styles.searchInputItem}
-                                placeholder = "请输入目的地(城市名称)"
+                                placeholder = "目的地(城市名称)"
                                 placeholderTextColor = '#888'
                                 underlineColorAndroid = {'transparent'}
                                 onChangeText = {(text)=>{

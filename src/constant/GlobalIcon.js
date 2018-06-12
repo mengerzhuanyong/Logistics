@@ -9,6 +9,9 @@ module.exports = {
     // ICONS
     anquanbaohu: require('../asset/img/icon/anquanbaohu.png'),
     icon_about: require('../asset/img/icon/icon_about.png'),
+    icon_hot: require('../asset/img/icon/icon_hot.png'),
+    icon_trend: require('../asset/img/icon/icon_trend.png'),
+    icon_happy: require('../asset/img/icon/icon_happy.png'),
     icon_address_receive: require('../asset/img/icon/icon_address_receive.png'),
     icon_address_send: require('../asset/img/icon/icon_address_send.png'),
     icon_alipay: require('../asset/img/icon/icon_alipay.png'),

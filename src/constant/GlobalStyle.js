@@ -104,11 +104,13 @@ module.exports = {
     bannerViewWrap: {
         flex: 1,
         position: 'relative',
+        // backgroundColor: themeColor,
     },
     bannerImg: {
         width: width,
-        height: 180,
-        resizeMode: 'cover'
+        height: 220,
+        resizeMode: 'cover',
+        // backgroundColor: themeColor,
     },
     bannerDot: {
         width: 8,

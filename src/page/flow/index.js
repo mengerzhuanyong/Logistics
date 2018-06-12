@@ -17,12 +17,13 @@ import {
     TouchableOpacity,
     DeviceEventEmitter,
 } from 'react-native'
+import {Select, PullPicker} from 'teaset'
 import Spinner from 'react-native-spinkit'
 import SYImagePicker from 'react-native-syan-image-picker'
 import * as Progress from 'react-native-progress'
 import ImagePicker from 'react-native-image-picker'
 import * as CustomKeyboard from 'react-native-yusha-customkeyboard'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {ACTION_MINE, ACTION_FLOW} from '../../constant/EventActions'
 import ModalDropdown from 'react-native-modal-dropdown'
 import NetRequest from '../../util/utilsRequest'
@@ -31,7 +32,7 @@ import GlobalStyles from '../../constant/GlobalStyle'
 import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
-import { toastShort, consoleLog } from '../../util/utilsToast'
+import {toastShort, consoleLog} from '../../util/utilsToast'
 
 const isIos = Platform.OS === 'ios';
 const selectedIcon = GlobalIcons.icon_checked;
@@ -54,7 +55,7 @@ export default class Flow extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        console.log(params);
+        // console.log(params);
         this.state = {
             sid: params ? params.sid : '',   // 门店ID
             uid: global.user ? global.user.userData.uid : '',
@@ -66,7 +67,7 @@ export default class Flow extends Component {
             volume: '',
             count: '',
             weight: '',
-            cate: '',
+            cate: '2',
             charteredCar: '0',
             img1: '',
             img2: '',
@@ -92,14 +93,17 @@ export default class Flow extends Component {
             shipperAdd: '',
             receiverAdd: '',
             couponInfo: '',
-            categoryText: '请选择物品类型',
+            categoryText: '常规品',
             canPress: true,
             otherType: '',
             canBack: false,
+            insurance: null,
+            money_arr: [],
             deliveryFee: [
                 {name: '取件费', value: '10', is_selected: 0},
                 {name: '送件费', value: '20', is_selected: 0},
-            ]
+            ],
+            premiums_link: '',
         };
         this.netRequest = new NetRequest();
     }
@@ -108,14 +112,14 @@ export default class Flow extends Component {
     charteredCar = '0';
     price = '0';
 
-    componentDidMount(){
+    componentDidMount() {
         this.loadNetData();
         if (global.user) {
             this.setState({
                 uid: global.user.userData.uid
             });
         }
-        
+
         this.backTimer = setTimeout(() => {
             this.setState({
                 canBack: true
@@ -123,7 +127,7 @@ export default class Flow extends Component {
         }, 1000);
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.backTimer && clearTimeout(this.backTimer);
         this.timer && clearTimeout(this.timer);
         DeviceEventEmitter.emit('ACTION_MINE', ACTION_MINE.A_RESTART);
@@ -131,26 +135,28 @@ export default class Flow extends Component {
     }
 
     onBack = () => {
-        this.props.navigation.state.params.reloadData();
-        this.props.navigation.goBack();
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
     };
 
     selectContent = (component) => {
-        const { navigate } = this.props.navigation;
+        const {navigate} = this.props.navigation;
         navigate(component, {
             orderPrice: this.state.price,
             // orderPrice: '50',
             PAGE_FLAG: 'FLOW',
             updateContent: this.updateContent,
-            webTitle: 'webTitle',
+            pageTitle: 'pageTitle',
             reloadData: () => this.loadNetData(),
         })
     };
 
-    onPushToNextPage = (pageTitle, page) => {
+    onPushToNextPage = (pageTitle, page, params = {}) => {
         let {navigate} = this.props.navigation;
         navigate(page, {
             pageTitle: pageTitle,
+            ...params,
         });
     };
 
@@ -183,8 +189,8 @@ export default class Flow extends Component {
     renderRow = (rowData) => {
         // console.log(rowData);
         return (
-            <View style = {styles.dropdownRow}>
-                <Text style = {styles.dropdownRowText}>{rowData.name}</Text>
+            <View style={styles.dropdownRow}>
+                <Text style={styles.dropdownRowText}>{rowData.name}</Text>
             </View>
         );
     }
@@ -201,20 +207,24 @@ export default class Flow extends Component {
 
     loadNetData = () => {
         let url = NetApi.orderTips + this.state.sid;
-        this.netRequest.fetchGet(url, true)
-            .then( result => {
-                console.log(result);
+        this.netRequest.fetchGet(url)
+            .then(result => {
+                // console.log(result);
                 if (result && result.code == 1) {
                     this.setState({
                         unit: result.data.unit,
                         category: result.data.cate,
+                        cate: result.data.cate_id,
+                        money_arr: result.data.money_arr,
+                        categoryText: result.data.cate_name,
                         mobile: result.data.service.mobile,
                         carPrice: result.data.service.carprice,
+                        premiums_link: result.data.premiums_link,
                     })
                 }
                 // console.log('获取成功', result);
             })
-            .catch( error => {
+            .catch(error => {
                 // console.log('获取出错', error);
             })
     }
@@ -225,7 +235,7 @@ export default class Flow extends Component {
      * @return   {订单价格}
      */
     getPrices = (style, charteredCar) => {
-        let { seid, volume, deliveryFee} = this.state;
+        let {seid, volume, deliveryFee} = this.state;
         this.setState({
             price: '',
         });
@@ -266,21 +276,21 @@ export default class Flow extends Component {
             value2 = deliveryFee[1].value;
         }
         deliveryFeeValue = (parseFloat(value1).toFixed(2) * 100 + parseFloat(value2).toFixed(2) * 100) / 100;
-        console.log(value1, value2, deliveryFeeValue);
-        style == 1 && this.netRequest.fetchPost(url, data, true)
-            .then( result => {
+        // console.log(value1, value2, deliveryFeeValue);
+        style == 1 && this.netRequest.fetchPost(url, data)
+            .then(result => {
                 if (result && result.code == 1) {
-                    relprice = (parseFloat(result.data).toFixed(2) * 100 - parseInt(this.state.coupon) * 100 + parseFloat(deliveryFeeValue).toFixed(2) * 100 ) / 100;
-                    console.log('deliveryFeeValue', deliveryFeeValue);
-                    console.log('relprice', relprice);
-                    console.log('获取成功', result);
+                    relprice = (parseFloat(result.data).toFixed(2) * 100 - parseInt(this.state.coupon) * 100 + parseFloat(deliveryFeeValue).toFixed(2) * 100) / 100;
+                    // console.log('deliveryFeeValue', deliveryFeeValue);
+                    // console.log('relprice', relprice);
+                    // console.log('获取成功', result);
                     this.setState({
                         price: result.data,
                         relprice: relprice,
                     })
                 }
             })
-            .catch( error => {
+            .catch(error => {
                 // console.log('获取出错', error);
             })
     };
@@ -299,7 +309,7 @@ export default class Flow extends Component {
     };
 
     pickerImages = async () => {
-        let { img1, img2, img3 } = this.state;
+        let {img1, img2, img3} = this.state;
         if (img1 != '' && img2 != '' && img3 != '') {
             toastShort("超出数量限制，请先删除一些图片");
             return;
@@ -343,14 +353,14 @@ export default class Flow extends Component {
     }
 
     handleOpenImagePicker = () => {
-        let { img1, img2, img3 } = this.state;
+        let {img1, img2, img3} = this.state;
         if (img1 != '' && img2 != '' && img3 != '') {
             toastShort("超出数量限制，请先删除一些图片");
             return;
         }
         SYImagePicker.removeAllPhoto();
         SYImagePicker.showImagePicker({imageCount: 1, isRecordSelected: true, enableBase64: true}, (err, img) => {
-            console.log(img);
+            // console.log(img);
             if (!err) {
                 this.setState({
                     uploading: true,
@@ -360,7 +370,7 @@ export default class Flow extends Component {
     };
 
     uploadImages = (source) => {
-        let { img1, img2, img3 } = this.state;
+        let {img1, img2, img3} = this.state;
         let url = NetApi.orderUpload;
         let data = {
             image: source
@@ -453,10 +463,13 @@ export default class Flow extends Component {
     }
 
     doSubmitOrder = () => {
-        let { sid, uid, seid, shipper, receiver, style, cargoName, volume,
-              count, weight, cate, charteredCar, img1, img2, img3,
-              substitutePickup, substituteSend, businessPickup, remark,
-              cid, coupon, price, relprice, agree, carPrice, otherType, deliveryFee } = this.state;
+        let {
+            sid, uid, seid, shipper, receiver, style, cargoName, volume,
+            count, weight, cate, charteredCar, img1, img2, img3,
+            substitutePickup, substituteSend, businessPickup, remark,
+            cid, coupon, price, relprice, agree, carPrice, otherType, deliveryFee,
+            insurance, money_arr
+        } = this.state;
         let url = NetApi.orderSubmit;
 
         let data = {
@@ -486,6 +499,7 @@ export default class Flow extends Component {
             agree: agree,
             otherType: otherType,
             deliveryFee: deliveryFee,
+            premiums: insurance,
         };
         // console.log(this.checkStatus(data));
         let status = this.checkStatus(data);
@@ -496,14 +510,14 @@ export default class Flow extends Component {
             canPress: false,
         });
         this.netRequest.fetchPost(url, data)
-            .then( result => {
+            .then(result => {
                 // console.log('下单成功', result);
                 if (result && result.code == 1) {
                     toastShort(result.msg);
                     this.timer = setTimeout(() => {
                         this.props.navigation.navigate("OrderDetail", {
                             orderid: result.data,
-                            webTitle: '订单详情',
+                            pageTitle: '订单详情',
                             PAGE_FLAG: 'FLOW',
                             reloadData: () => this.loadNetData(),
                         });
@@ -512,7 +526,7 @@ export default class Flow extends Component {
                     toastShort(result.msg);
                 }
             })
-            .catch( error => {
+            .catch(error => {
                 toastShort('error');
                 this.setState({
                     canPress: true,
@@ -522,7 +536,7 @@ export default class Flow extends Component {
     };
 
     calculatorPrices = () => {
-        let { style, charteredCar, price, carPrice, relprice, coupon, deliveryFee} = this.state;
+        let {style, charteredCar, price, carPrice, relprice, coupon, deliveryFee} = this.state;
         if ((this.style == 1 && this.charteredCar == 0) || this.style == 2) {
             relprice = price - coupon;
             // console.log('111------', relprice);
@@ -547,7 +561,7 @@ export default class Flow extends Component {
      * @DateTime 2018-02-27
      */
     makeCall = (data) => {
-        let { mobile } = this.state;
+        let {mobile} = this.state;
         let url = 'tel: ' + mobile;
         // console.log(mobile);
         Linking.canOpenURL(url)
@@ -558,7 +572,7 @@ export default class Flow extends Component {
                     return Linking.openURL(url);
                 }
             })
-            .catch((err)=>{
+            .catch((err) => {
                 // console.log('An error occurred', err)
             });
     };
@@ -574,78 +588,87 @@ export default class Flow extends Component {
                 <View>
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
-                            <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon} />
-                            <TextInput
-                                style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                placeholder = "* 请输入物品名称"
-                                // keyboardType = {'numeric'}
-                                defaultValue = {cargoName}
-                                placeholderTextColor = '#666'
-                                underlineColorAndroid = {'transparent'}
-                                // onBlur = {() => this.getPrices(1, charteredCar)}
-                                onChangeText = {(text)=>{
-                                    this.setState({
-                                        cargoName: text
-                                    })
-                                }}
-                            />
-                        </View>
-                    </View>
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
-                    <View style={styles.paymentMethodItem}>
-                        <View style={styles.paymentMethodTitleView}>
-                            <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon} />
-                            <CustomKeyboard.CustomTextInput
-                                style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                placeholder = "* 请输入物品体积"
-                                customKeyboardType = "numberKeyBoardWithDot"
-                                defaultValue = {volume}
-                                placeholderTextColor = '#666'
-                                underlineColorAndroid = {'transparent'}
-                                onBlur = {() => style === 1 && this.getPrices(1, charteredCar)}
-                                onChangeText = {(text)=>{
-                                    this.setState({
-                                        volume: text
-                                    })
-                                }}
-                            />
-                        </View>
-                        <Text style={styles.cargoAttributesUnit}>{unit.volumes}</Text>
-                    </View>
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
-                    {charteredCar == 0 && <View>
-                        <View style={styles.paymentMethodItem}>
-                            <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon} />
-                                <CustomKeyboard.CustomTextInput
-                                    style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                    placeholder = "* 请输入物品数量"
-                                    customKeyboardType = "numberKeyBoardWithDot"
-                                    defaultValue = {count}
-                                    placeholderTextColor = '#666'
-                                    underlineColorAndroid = {'transparent'}
-                                    onChangeText = {(text)=>{
+                            <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon}/>
+                            <View style={styles.rightContent}>
+                                <Text style={styles.textSymbol}>*</Text>
+                                <TextInput
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入物品名称"
+                                    // keyboardType = {'numeric'}
+                                    defaultValue={cargoName}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
+                                    // onBlur = {() => this.getPrices(1, charteredCar)}
+                                    onChangeText={(text) => {
                                         this.setState({
-                                            count: text
+                                            cargoName: text
                                         })
                                     }}
                                 />
                             </View>
+                        </View>
+                    </View>
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                    <View style={styles.paymentMethodItem}>
+                        <View style={styles.paymentMethodTitleView}>
+                            <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon}/>
+                            <View style={styles.rightContent}>
+                                <Text style={styles.textSymbol}>*</Text>
+                                <CustomKeyboard.CustomTextInput
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入每件商品体积"
+                                    customKeyboardType="numberKeyBoardWithDot"
+                                    defaultValue={volume}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
+                                    onBlur={() => style === 1 && this.getPrices(1, charteredCar)}
+                                    onChangeText={(text) => {
+                                        this.setState({
+                                            volume: text
+                                        })
+                                    }}
+                                />
+                            </View>
+                        </View>
+                        <Text style={styles.cargoAttributesUnit}>{unit.volumes}</Text>
+                    </View>
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                    {charteredCar == 0 && <View>
+                        <View style={styles.paymentMethodItem}>
+                            <View style={styles.paymentMethodTitleView}>
+                                <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon}/>
+                                <View style={styles.rightContent}>
+                                    <Text style={styles.textSymbol}>*</Text>
+                                    <CustomKeyboard.CustomTextInput
+                                        style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                        placeholder="请输入物品数量"
+                                        customKeyboardType="numberKeyBoardWithDot"
+                                        defaultValue={count}
+                                        placeholderTextColor='#666'
+                                        underlineColorAndroid={'transparent'}
+                                        onChangeText={(text) => {
+                                            this.setState({
+                                                count: text
+                                            })
+                                        }}
+                                    />
+                                </View>
+                            </View>
                             <Text style={styles.cargoAttributesUnit}>{unit.num}</Text>
                         </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
+                        <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     </View>}
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
-                            <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon} />
+                            <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
                             <CustomKeyboard.CustomTextInput
-                                style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                placeholder = "请输入物品重量"
-                                customKeyboardType = "numberKeyBoardWithDot"
-                                defaultValue = {weight}
-                                placeholderTextColor = '#666'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
+                                style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                placeholder="请输入物品重量"
+                                customKeyboardType="numberKeyBoardWithDot"
+                                defaultValue={weight}
+                                placeholderTextColor='#666'
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(text) => {
                                     this.setState({
                                         weight: text
                                     })
@@ -654,38 +677,60 @@ export default class Flow extends Component {
                         </View>
                         <Text style={styles.cargoAttributesUnit}>{unit.weight}</Text>
                     </View>
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
-                    <ModalDropdown
-                        style = {[styles.paymentMethodItem, styles.selectView]}
-                        textStyle = {styles.cargoAttributesTitle}
-                        dropdownStyle = {styles.dropdownStyle}
-                        defaultValue = {'请选择物品类型'}
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                    <View style={styles.paymentMethodTitleView}>
+                        <Image source={GlobalIcons.icon_cargo_type} style={styles.paymentMethodIcon}/>
+                        <Select
+                            style={{flex: 1, borderWidth: 0, paddingLeft: 0,}}
+                            value={categoryText}
+                            valueStyle={{flex: 1, color: '#555', textAlign: 'left'}}
+                            items={category}
+                            getItemValue={(item, index) => item.id}
+                            getItemText={(item, index) => item.name}
+                            iconTintColor='#666'
+                            placeholder='请选择物品类型'
+                            pickerTitle='物品类型选择'
+                            onSelected={(item, index) => {
+                                console.log(item);
+                                this.setState({
+                                    cate: item.id,
+                                    categoryText: item.name
+                                })
+                            }}
+                        />
+                    </View>
+
+                    {1 > 2 && <ModalDropdown
+                        style={[styles.paymentMethodItem, styles.selectView]}
+                        textStyle={styles.cargoAttributesTitle}
+                        dropdownStyle={styles.dropdownStyle}
+                        defaultValue={'请选择物品类型'}
                         renderRow={this.renderRow.bind(this)}
-                        options = {category}
-                        renderButtonText = {(rowData) => this.renderButtonText(rowData)}
+                        options={category}
+                        renderButtonText={(rowData) => this.renderButtonText(rowData)}
                     >
                         <View style={styles.selectViewWrap}>
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_cargo_type} style={styles.paymentMethodIcon} />
+                                <Image source={GlobalIcons.icon_cargo_type} style={styles.paymentMethodIcon}/>
                                 <Text style={styles.cargoAttributesTitle}>{categoryText}</Text>
                             </View>
-                            <Image source={arrowRight} style={styles.arrowRightIcon} />
+                            <Image source={arrowRight} style={styles.arrowRightIcon}/>
                         </View>
-                    </ModalDropdown>
+                    </ModalDropdown>}
                     {cate == '1' && <View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
+                        <View style={[GlobalStyles.horLine, styles.horLine]}/>
                         <View style={styles.paymentMethodItem}>
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon} />
+                                <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon}/>
                                 <TextInput
-                                    style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                    placeholder = "请输入物品类型"
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入物品类型"
                                     // keyboardType = {'numeric'}
-                                    defaultValue = {otherType}
-                                    placeholderTextColor = '#666'
-                                    underlineColorAndroid = {'transparent'}
+                                    defaultValue={otherType}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
                                     // onBlur = {() => this.getPrices(1, charteredCar)}
-                                    onChangeText = {(text)=>{
+                                    onChangeText={(text) => {
                                         this.setState({
                                             otherType: text
                                         })
@@ -702,69 +747,75 @@ export default class Flow extends Component {
                     {this.state.charteredCar == 0 &&
                     <View>
                         <TouchableOpacity
-                            style = {styles.paymentMethodItem}
-                            onPress = {() => this.makeCall()}
+                            style={styles.paymentMethodItem}
+                            onPress={() => this.makeCall()}
                         >
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_phone} style={styles.paymentMethodIcon} />
-                                <Text style={styles.cargoAttributesTitle}>立即咨询：{this.state.mobile}</Text>
+                                <Image source={GlobalIcons.icon_phone} style={styles.paymentMethodIcon}/>
+                                <Text style={styles.cargoAttributesTitle}>询价咨询：{this.state.mobile}</Text>
                             </View>
-                            <Image source={arrowRight} style={styles.arrowRightIcon} />
+                            <Image source={arrowRight} style={styles.arrowRightIcon}/>
                         </TouchableOpacity>
                     </View>
                     }
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
-                            <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon} />
-                            <TextInput
-                                style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                placeholder = "* 请输入物品名称"
-                                // keyboardType = {'numeric'}
-                                defaultValue = {this.state.cargoName}
-                                placeholderTextColor = '#666'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
-                                    this.setState({
-                                        cargoName: text
-                                    })
-                                }}
-                            />
+                            <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon}/>
+                            <View style={styles.rightContent}>
+                                <Text style={styles.textSymbol}>*</Text>
+                                <TextInput
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入物品名称"
+                                    // keyboardType = {'numeric'}
+                                    defaultValue={this.state.cargoName}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
+                                    onChangeText={(text) => {
+                                        this.setState({
+                                            cargoName: text
+                                        })
+                                    }}
+                                />
+                            </View>
                         </View>
                     </View>
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
-                            <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon} />
-                            <CustomKeyboard.CustomTextInput
-                                style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                placeholder = "* 请输入物品体积"
-                                customKeyboardType = "numberKeyBoardWithDot"
-                                defaultValue = {this.state.volume}
-                                placeholderTextColor = '#666'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
-                                    this.setState({
-                                        volume: text
-                                    })
-                                }}
-                            />
+                            <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon}/>
+                            <View style={styles.rightContent}>
+                                <Text style={styles.textSymbol}>*</Text>
+                                <CustomKeyboard.CustomTextInput
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入货物总体积"
+                                    customKeyboardType="numberKeyBoardWithDot"
+                                    defaultValue={this.state.volume}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
+                                    onChangeText={(text) => {
+                                        this.setState({
+                                            volume: text
+                                        })
+                                    }}
+                                />
+                            </View>
                         </View>
                         <Text style={styles.cargoAttributesUnit}>{this.state.unit.volumes}</Text>
                     </View>
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     {this.state.charteredCar == 0 && <View>
                         <View style={styles.paymentMethodItem}>
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon} />
+                                <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon}/>
                                 <CustomKeyboard.CustomTextInput
-                                    style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                    placeholder = "请输入物品数量"
-                                    customKeyboardType = "numberKeyBoardWithDot"
-                                    defaultValue = {this.state.count}
-                                    placeholderTextColor = '#666'
-                                    underlineColorAndroid = {'transparent'}
-                                    onChangeText = {(text)=>{
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入物品数量"
+                                    customKeyboardType="numberKeyBoardWithDot"
+                                    defaultValue={this.state.count}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
+                                    onChangeText={(text) => {
                                         this.setState({
                                             count: text
                                         })
@@ -773,19 +824,19 @@ export default class Flow extends Component {
                             </View>
                             <Text style={styles.cargoAttributesUnit}>{this.state.unit.num}</Text>
                         </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
+                        <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     </View>}
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
-                            <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon} />
+                            <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
                             <CustomKeyboard.CustomTextInput
-                                style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                placeholder = "请输入物品重量"
-                                customKeyboardType = "numberKeyBoardWithDot"
-                                defaultValue = {this.state.weight}
-                                placeholderTextColor = '#666'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
+                                style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                placeholder="请输入物品重量"
+                                customKeyboardType="numberKeyBoardWithDot"
+                                defaultValue={this.state.weight}
+                                placeholderTextColor='#666'
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(text) => {
                                     this.setState({
                                         weight: text
                                     })
@@ -794,37 +845,59 @@ export default class Flow extends Component {
                         </View>
                         <Text style={styles.cargoAttributesUnit}>{this.state.unit.weight}</Text>
                     </View>
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
-                    <ModalDropdown
-                        style = {[styles.paymentMethodItem, styles.selectView]}
-                        textStyle = {styles.cargoAttributesTitle}
-                        dropdownStyle = {styles.dropdownStyle}
-                        defaultValue = { '请选择物品类型'}
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                    <View style={styles.paymentMethodTitleView}>
+                        <Image source={GlobalIcons.icon_cargo_type} style={styles.paymentMethodIcon}/>
+                        <Select
+                            style={{flex: 1, borderWidth: 0, paddingLeft: 0,}}
+                            value={categoryText}
+                            valueStyle={{flex: 1, color: '#555', textAlign: 'left'}}
+                            items={category}
+                            getItemValue={(item, index) => item.id}
+                            getItemText={(item, index) => item.name}
+                            iconTintColor='#8a6d3b'
+                            placeholder='请选择物品类型'
+                            pickerTitle='物品类型选择'
+                            placeholderTextColor={'#666'}
+                            onSelected={(item, index) => {
+                                console.log(item);
+                                this.setState({
+                                    cate: item.id,
+                                    categoryText: item.name
+                                })
+                            }}
+                        />
+                    </View>
+                    {1 > 2 && <ModalDropdown
+                        style={[styles.paymentMethodItem, styles.selectView]}
+                        textStyle={styles.cargoAttributesTitle}
+                        dropdownStyle={styles.dropdownStyle}
+                        defaultValue={'请选择物品类型'}
                         renderRow={this.renderRow.bind(this)}
-                        options = {category}
-                        renderButtonText = {(rowData) => this.renderButtonText(rowData)}
+                        options={category}
+                        renderButtonText={(rowData) => this.renderButtonText(rowData)}
                     >
                         <View style={styles.selectViewWrap}>
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_cargo_type} style={styles.paymentMethodIcon} />
+                                <Image source={GlobalIcons.icon_cargo_type} style={styles.paymentMethodIcon}/>
                                 <Text style={styles.cargoAttributesTitle}>{categoryText}</Text>
                             </View>
-                            <Image source={arrowRight} style={styles.arrowRightIcon} />
+                            <Image source={arrowRight} style={styles.arrowRightIcon}/>
                         </View>
-                    </ModalDropdown>
+                    </ModalDropdown>}
                     {cate == '1' && <View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
+                        <View style={[GlobalStyles.horLine, styles.horLine]}/>
                         <View style={styles.paymentMethodItem}>
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon} />
+                                <Image source={GlobalIcons.icon_cargo} style={styles.paymentMethodIcon}/>
                                 <TextInput
-                                    style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                    placeholder = "请输入物品类型"
+                                    style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                    placeholder="请输入物品类型"
                                     // keyboardType = {'numeric'}
-                                    defaultValue = {this.state.otherType}
-                                    placeholderTextColor = '#666'
-                                    underlineColorAndroid = {'transparent'}
-                                    onChangeText = {(text)=>{
+                                    defaultValue={this.state.otherType}
+                                    placeholderTextColor='#666'
+                                    underlineColorAndroid={'transparent'}
+                                    onChangeText={(text) => {
                                         this.setState({
                                             otherType: text
                                         })
@@ -834,34 +907,37 @@ export default class Flow extends Component {
                         </View>
                     </View>}
                     {this.state.charteredCar == 0 && <View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        <View style = {styles.paymentMethodItem}>
+                        <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                        <View style={styles.paymentMethodItem}>
                             <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_money} style={styles.paymentMethodIcon} />
-                                <TextInput
-                                    style = {[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                    placeholder = "* 输入咨询后的订单价格"
-                                    keyboardType = {'numeric'}
-                                    placeholderTextColor = '#666'
-                                    underlineColorAndroid = {'transparent'}
-                                    onChangeText = {(text)=>{
-                                        let value1 = 0;
-                                        let value2 = 0;
-                                        if (deliveryFee[0].is_selected === 1) {
-                                            value1 = deliveryFee[0].value;
-                                        }
-                                        if (deliveryFee[1].is_selected === 1) {
-                                            value2 = deliveryFee[1].value;
-                                        }
-                                        deliveryFeeValue = (parseFloat(value1).toFixed(2) * 100 + parseFloat(value2).toFixed(2) * 100) / 100;
-                                        let relprice = (parseFloat(text).toFixed(2) * 100 - parseInt(this.state.coupon) * 100 + parseFloat(deliveryFeeValue).toFixed(2) * 100 ) / 100;
-                                        // console.log(relprice);
-                                        this.setState({
-                                            price: text,
-                                            relprice: relprice,
-                                        })
-                                    }}
-                                />
+                                <Image source={GlobalIcons.icon_money} style={styles.paymentMethodIcon}/>
+                                <View style={styles.rightContent}>
+                                    <Text style={styles.textSymbol}>*</Text>
+                                    <TextInput
+                                        style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
+                                        placeholder="输入咨询后的订单价格"
+                                        keyboardType={'numeric'}
+                                        placeholderTextColor='#666'
+                                        underlineColorAndroid={'transparent'}
+                                        onChangeText={(text) => {
+                                            let value1 = 0;
+                                            let value2 = 0;
+                                            if (deliveryFee[0].is_selected === 1) {
+                                                value1 = deliveryFee[0].value;
+                                            }
+                                            if (deliveryFee[1].is_selected === 1) {
+                                                value2 = deliveryFee[1].value;
+                                            }
+                                            deliveryFeeValue = (parseFloat(value1).toFixed(2) * 100 + parseFloat(value2).toFixed(2) * 100) / 100;
+                                            let relprice = (parseFloat(text).toFixed(2) * 100 - parseInt(this.state.coupon) * 100 + parseFloat(deliveryFeeValue).toFixed(2) * 100) / 100;
+                                            // console.log(relprice);
+                                            this.setState({
+                                                price: text,
+                                                relprice: relprice,
+                                            })
+                                        }}
+                                    />
+                                </View>
                             </View>
                             <Text style={styles.cargoAttributesUnit}>元</Text>
                         </View>
@@ -879,12 +955,12 @@ export default class Flow extends Component {
                 {name: '送件费', value: '0', is_selected: 0},
             ];
         }
-        let delivery = data.map((obj,index) => {
+        let delivery = data.map((obj, index) => {
             return (
                 <TouchableOpacity
                     key={obj.name}
                     style={styles.deliverFeeView}
-                    onPress = {() => {
+                    onPress={() => {
                         data[index].is_selected = obj.is_selected === 1 ? 0 : 1;
                         let price = 0;
                         if (obj.is_selected === 1) {
@@ -896,401 +972,464 @@ export default class Flow extends Component {
                             deliveryFee: data,
                             relprice: price,
                         });
-                        console.log('取件', relprice);
+                        // console.log('取件', relprice);
                     }}
                 >
                     <Text style={styles.deliverFeeTitle}>{obj.name}{obj.value}元</Text>
-                    <Image source={obj.is_selected === 1 ? GlobalIcons.icon_checked : GlobalIcons.icon_check} style={GlobalStyles.checkedIcon}/>
+                    <Image source={obj.is_selected === 1 ? GlobalIcons.icon_checked : GlobalIcons.icon_check}
+                           style={GlobalStyles.checkedIcon}/>
                 </TouchableOpacity>
             );
         });
         return delivery;
     };
 
-    render(){
-        let { uploading, img1, img2, img3, shipperAdd, receiverAdd, category, categoryText, cate, canPress, charteredCar, style, deliveryFee } = this.state;
+    render() {
+        let {
+            uploading, img1, img2, img3, shipperAdd, receiverAdd,
+            category, categoryText, cate, canPress, charteredCar, style, deliveryFee,
+            insurance, money_arr, premiums_link} = this.state;
+        insurance = insurance ? `${insurance}元` : insurance;
         return (
             <View style={styles.container}>
                 <NavigationBar
-                    title = {'我要发货'}
-                    leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
+                    title={'我要发货'}
+                    leftButton={UtilsView.getLeftButton(() => {
+                        this.state.canBack && this.onBack()
+                    })}
                 />
                 <ScrollView style={GlobalStyles.hasFixedContainer}>
-                <KeyboardAwareScrollView>
-                    <CustomKeyboard.AwareCusKeyBoardScrollView>
-                    <View style={[styles.containerItemView, styles.addressInfoView]}>
-                        <View style={styles.addressLeftView}>
-                            <View style={[GlobalStyles.placeViewIcon, GlobalStyles.placeStartIcon, styles.placeViewIcon]}>
-                                <Text style={GlobalStyles.placeText}>发</Text>
-                            </View>
-                            <View style={[GlobalStyles.verLine, styles.verLine]} />
-                            <View style={[GlobalStyles.placeViewIcon, GlobalStyles.placeEndIcon, styles.placeViewIcon]}>
-                                <Text style={GlobalStyles.placeText}>收</Text>
-                            </View>
-                        </View>
-                        <View style={styles.addressRightView}>
-                            <View style={styles.addressDetailView}>
-                                <View style={styles.addressDetailLeft}>
-                                    <Text style={styles.addressUserInfo}>{shipperAdd ? `${shipperAdd.name} ${shipperAdd.phone}` : '发货人'}</Text>
-                                    <Text style={styles.addressDetailCon}>{shipperAdd ? shipperAdd.address : '请选择发货地址'}</Text>
-                                </View>
-                                <View style={[GlobalStyles.verLine, styles.verLine]} />
-                                <TouchableOpacity
-                                    style = {styles.addressDetailRight}
-                                    onPress = {() => this.selectContent('MineAddressShipperList')}
-                                >
-                                    <Text style={styles.addressDetailRightCon}>地址簿</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={[GlobalStyles.horLine, styles.horLine]} />
-                            <View style={styles.addressDetailView}>
-                                <View style={styles.addressDetailLeft}>
-                                    <Text style={styles.addressUserInfo}>{receiverAdd ? `${receiverAdd.name} ${receiverAdd.phone}` : '收货人'}</Text>
-                                    <Text style={styles.addressDetailCon}>{receiverAdd ? receiverAdd.address : '请选择收货地址'}</Text>
-                                </View>
-                                <View style={[GlobalStyles.verLine, styles.verLine]} />
-                                <TouchableOpacity
-                                    style = {styles.addressDetailRight}
-                                    onPress = {() => this.selectContent('MineAddressList')}
-                                >
-                                    <Text style={styles.addressDetailRightCon}>地址簿</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={[styles.containerItemView, styles.cargoInfoView]}>
-                        <View style={styles.containerItemTitleView}>
-                            <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>添加物品信息</Text>
-                            <View style={styles.containerItemTitleRight}>
-                                <TouchableOpacity
-                                    style = {[styles.cargoTypeItem, style == '1' && styles.cargoTypeItemCur]}
-                                    onPress = {() => {
-                                        let price = this.state.charteredCar == 1 ? this.state.carPrice : this.state.price;
-                                        this.setState({
-                                            coupon: 0,
-                                            style: 1,
-                                            price: this.state.price,
-                                        })
-                                        this.getPrices(1, this.state.charteredCar);
-                                    }}
-                                >
-                                    <Text style={[styles.cargoTypeItemCon, style == '1' && styles.cargoTypeItemConCur]}>单个计算</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style = {[styles.cargoTypeItem, style == '2' && styles.cargoTypeItemCur]}
-                                    onPress = {() => {
-                                        this.setState({
-                                            coupon: 0,
-                                            style: 2,
-                                            price: this.state.price,
-                                        })
-                                        this.getPrices(2, this.state.charteredCar);
-                                    }}
-                                >
-                                    <Text style={[styles.cargoTypeItemCon, style == '2' && styles.cargoTypeItemConCur]}>整体计算</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style = {[styles.cargoTypeItem, style == '3' && styles.cargoTypeItemCur]}
-                                    onPress = {() => {
-                                        let relprice = parseFloat(this.state.carPrice).toFixed(2) - parseInt(this.state.coupon);
-                                        this.setState({
-                                            coupon: 0,
-                                            style: 3,
-                                            price: this.state.carPrice,
-                                            relprice: relprice,
-                                        })
-                                        this.getPrices(3, this.state.charteredCar);
-                                    }}
-                                >
-                                    <Text style={[styles.cargoTypeItemCon, style == '3' && styles.cargoTypeItemConCur]}>整车</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style = {[styles.cargoTypeItem, style == '4' && styles.cargoTypeItemCur]}
-                                    onPress = {() => {
-                                        this.setState({
-                                            coupon: 0,
-                                            style: 4,
-                                            price: this.state.price,
-                                        })
-                                        this.getPrices(4, this.state.charteredCar);
-                                    }}
-                                >
-                                    <Text style={[styles.cargoTypeItemCon, style == '4' && styles.cargoTypeItemConCur]}>国际物流</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        {this.renderCargoInfoView(parseInt(style, 10))}
-                    </View>
-
-                    <View style={[styles.containerItemView, styles.cargoAlbumView]}>
-                        <View style={styles.containerItemTitleView}>
-                            <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>添加物品照片</Text>
-                        </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        <View style={[styles.containerItemConView, styles.cargoPictureView]}>
-                            {uploading && img1 === '' ?
-                                <Spinner style={styles.spinner} isVisible={uploading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
-                                :
-                                img1 != '' && <TouchableOpacity
-                                    style = {styles.uploadPicView}
-                                    onPress = {() => {
-                                        this.setState({
-                                            img1: '',
-                                        })
-                                    }}
-                                >
-                                    <View style={styles.deleteIcon}>
-                                        <Image source={GlobalIcons.icon_delete} style={styles.deleteIconCon} />
+                    <KeyboardAwareScrollView>
+                        <CustomKeyboard.AwareCusKeyBoardScrollView>
+                            <View style={[styles.containerItemView, styles.addressInfoView]}>
+                                <View style={styles.addressLeftView}>
+                                    <View
+                                        style={[GlobalStyles.placeViewIcon, GlobalStyles.placeStartIcon, styles.placeViewIcon]}>
+                                        <Text style={GlobalStyles.placeText}>发</Text>
                                     </View>
-                                    <Image source={{uri: img1}} style={[GlobalStyles.uploadIcon, styles.uploadImages]} />
-                                </TouchableOpacity>
-                            }
-                            {uploading && img1 != '' && img2 === '' ?
-                                <Spinner style={styles.spinner} isVisible={uploading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
-                                :
-                                img2 != '' && <TouchableOpacity
-                                    style = {styles.uploadPicView}
-                                    onPress = {() => {
+                                    <View style={[GlobalStyles.verLine, styles.verLine]}/>
+                                    <View
+                                        style={[GlobalStyles.placeViewIcon, GlobalStyles.placeEndIcon, styles.placeViewIcon]}>
+                                        <Text style={GlobalStyles.placeText}>收</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.addressRightView}>
+                                    <View style={styles.addressDetailView}>
+                                        <View style={styles.addressDetailLeft}>
+                                            <Text
+                                                style={styles.addressUserInfo}>{shipperAdd ? `${shipperAdd.name} ${shipperAdd.phone}` : '发货人'}</Text>
+                                            <Text
+                                                style={styles.addressDetailCon}>{shipperAdd ? shipperAdd.address : '请选择发货地址'}</Text>
+                                        </View>
+                                        <View style={[GlobalStyles.verLine, styles.verLine]}/>
+                                        <TouchableOpacity
+                                            style={styles.addressDetailRight}
+                                            onPress={() => this.selectContent('MineAddressShipperList')}
+                                        >
+                                            <Text style={styles.addressDetailRightCon}>地址簿</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                    <View style={styles.addressDetailView}>
+                                        <View style={styles.addressDetailLeft}>
+                                            <Text
+                                                style={styles.addressUserInfo}>{receiverAdd ? `${receiverAdd.name} ${receiverAdd.phone}` : '收货人'}</Text>
+                                            <Text
+                                                style={styles.addressDetailCon}>{receiverAdd ? receiverAdd.address : '请选择收货地址'}</Text>
+                                        </View>
+                                        <View style={[GlobalStyles.verLine, styles.verLine]}/>
+                                        <TouchableOpacity
+                                            style={styles.addressDetailRight}
+                                            onPress={() => this.selectContent('MineAddressList')}
+                                        >
+                                            <Text style={styles.addressDetailRightCon}>地址簿</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={[styles.containerItemView, styles.cargoInfoView]}>
+                                <View style={styles.containerItemTitleView}>
+                                    <Text
+                                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>添加物品信息</Text>
+                                    <View style={styles.containerItemTitleRight}>
+                                        <TouchableOpacity
+                                            style={[styles.cargoTypeItem, style == '1' && styles.cargoTypeItemCur]}
+                                            onPress={() => {
+                                                let price = this.state.charteredCar == 1 ? this.state.carPrice : this.state.price;
+                                                this.setState({
+                                                    coupon: 0,
+                                                    style: 1,
+                                                    price: this.state.price,
+                                                })
+                                                this.getPrices(1, this.state.charteredCar);
+                                            }}
+                                        >
+                                            <Text
+                                                style={[styles.cargoTypeItemCon, style == '1' && styles.cargoTypeItemConCur]}>单个计算</Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            style={[styles.cargoTypeItem, style == '2' && styles.cargoTypeItemCur]}
+                                            onPress={() => {
+                                                this.setState({
+                                                    coupon: 0,
+                                                    style: 2,
+                                                    price: this.state.price,
+                                                })
+                                                this.getPrices(2, this.state.charteredCar);
+                                            }}
+                                        >
+                                            <Text
+                                                style={[styles.cargoTypeItemCon, style == '2' && styles.cargoTypeItemConCur]}>整体计算</Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            style={[styles.cargoTypeItem, style == '3' && styles.cargoTypeItemCur]}
+                                            onPress={() => {
+                                                let relprice = parseFloat(this.state.carPrice).toFixed(2) - parseInt(this.state.coupon);
+                                                this.setState({
+                                                    coupon: 0,
+                                                    style: 3,
+                                                    price: this.state.carPrice,
+                                                    relprice: relprice,
+                                                })
+                                                this.getPrices(3, this.state.charteredCar);
+                                            }}
+                                        >
+                                            <Text
+                                                style={[styles.cargoTypeItemCon, style == '3' && styles.cargoTypeItemConCur]}>整车</Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            style={[styles.cargoTypeItem, style == '4' && styles.cargoTypeItemCur]}
+                                            onPress={() => {
+                                                this.setState({
+                                                    coupon: 0,
+                                                    style: 4,
+                                                    price: this.state.price,
+                                                })
+                                                this.getPrices(4, this.state.charteredCar);
+                                            }}
+                                        >
+                                            <Text
+                                                style={[styles.cargoTypeItemCon, style == '4' && styles.cargoTypeItemConCur]}>国际物流</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                {this.renderCargoInfoView(parseInt(style, 10))}
+                            </View>
+
+                            <View style={[styles.containerItemView, styles.cargoAlbumView]}>
+                                <View style={styles.containerItemTitleView}>
+                                    <Text
+                                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>添加物品照片</Text>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                <View style={[styles.containerItemConView, styles.cargoPictureView]}>
+                                    {uploading && img1 === '' ?
+                                        <Spinner style={styles.spinner} isVisible={uploading} size={50}
+                                                 type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
+                                        :
+                                        img1 != '' && <TouchableOpacity
+                                            style={styles.uploadPicView}
+                                            onPress={() => {
+                                                this.setState({
+                                                    img1: '',
+                                                })
+                                            }}
+                                        >
+                                            <View style={styles.deleteIcon}>
+                                                <Image source={GlobalIcons.icon_delete} style={styles.deleteIconCon}/>
+                                            </View>
+                                            <Image source={{uri: img1}}
+                                                   style={[GlobalStyles.uploadIcon, styles.uploadImages]}/>
+                                        </TouchableOpacity>
+                                    }
+                                    {uploading && img1 != '' && img2 === '' ?
+                                        <Spinner style={styles.spinner} isVisible={uploading} size={50}
+                                                 type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
+                                        :
+                                        img2 != '' && <TouchableOpacity
+                                            style={styles.uploadPicView}
+                                            onPress={() => {
+                                                this.setState({
+                                                    img2: '',
+                                                })
+                                            }}
+                                        >
+                                            <View style={styles.deleteIcon}>
+                                                <Image source={GlobalIcons.icon_delete} style={styles.deleteIconCon}/>
+                                            </View>
+                                            <Image source={{uri: img2}}
+                                                   style={[GlobalStyles.uploadIcon, styles.uploadImages]}/>
+                                        </TouchableOpacity>
+                                    }
+                                    {uploading && img1 != '' && img2 != '' && img3 === '' ?
+                                        <Spinner style={styles.spinner} isVisible={uploading} size={50}
+                                                 type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
+                                        :
+                                        img3 != '' && <TouchableOpacity
+                                            style={styles.uploadPicView}
+                                            onPress={() => {
+                                                this.setState({
+                                                    img3: '',
+                                                })
+                                            }}
+                                        >
+                                            <View style={styles.deleteIcon}>
+                                                <Image source={GlobalIcons.icon_delete} style={styles.deleteIconCon}/>
+                                            </View>
+                                            <Image source={{uri: img3}}
+                                                   style={[GlobalStyles.uploadIcon, styles.uploadImages]}/>
+                                        </TouchableOpacity>
+                                    }
+                                    <TouchableOpacity
+                                        style={GlobalStyles.uploadView}
+                                        onPress={() => this.handleOpenImagePicker()}
+                                    >
+                                        <Image source={GlobalIcons.images_bg_upload} style={GlobalStyles.uploadIcon}/>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            {1 > 2 && <View style={[styles.containerItemView, styles.deliveryCarView]}>
+                                <View style={styles.containerItemTitleView}>
+                                    <Text
+                                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>代取/送服务车型</Text>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                <View style={[styles.containerItemConView, styles.deliveryCarConView]}>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_1_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>摩托车</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_2_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>私家车</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_3_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>小型面包车</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_4_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>小型货车</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_5_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>中型货车</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_6_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>大型货车</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryCarItem}
+                                        activeOpacity={1}
+                                        onPress={() => this.onPressAlert()}
+                                    >
+                                        <Image source={GlobalIcons.icon_car_7_2} style={styles.deliveryCarIcon}/>
+                                        <Text style={styles.deliveryCarName}>大型厢车</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                <View style={[styles.containerItemConView, styles.deliveryTypeView]}>
+                                    <TouchableOpacity
+                                        style={styles.deliveryTypeItem}
+                                        onPress={() => {
+                                            this.onPressAlert();
+                                            // let state = this.state.substitutePickup == '1' ? 0 : 1;
+                                            // this.setState({
+                                            //     substitutePickup: state,
+                                            // })
+                                        }}
+                                    >
+                                        <Text style={styles.deliveryTypeName}>代取件</Text>
+                                        <View style={[GlobalStyles.verLine, styles.deliveryTypeVerLine]}/>
+                                        <View
+                                            style={[styles.deliveryTypeIconView, this.state.substitutePickup == 1 && styles.deliveryTypeIconViewCur]}>
+                                            <Image source={GlobalIcons.icon_tick}
+                                                   style={[styles.deliveryTypeIcon, this.state.substitutePickup == 1 && styles.deliveryTypeIconCur]}/>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.deliveryTypeItem}
+                                        onPress={() => {
+                                            this.onPressAlert();
+                                            // let state = this.state.substituteSend == '1' ? 0 : 1;
+                                            // this.setState({
+                                            //     substituteSend: state,
+                                            // })
+                                        }}
+                                    >
+                                        <Text style={styles.deliveryTypeName}>代送件</Text>
+                                        <View style={[GlobalStyles.verLine, styles.deliveryTypeVerLine]}/>
+                                        <View
+                                            style={[styles.deliveryTypeIconView, this.state.substituteSend == 1 && styles.deliveryTypeIconViewCur]}>
+                                            <Image source={GlobalIcons.icon_tick}
+                                                   style={[styles.deliveryTypeIcon, this.state.substituteSend == 1 && styles.deliveryTypeIconCur]}/>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>}
+
+                            <View style={[styles.containerItemView, styles.deliveryCarView]}>
+                                <View style={styles.containerItemTitleView}>
+                                    <Text
+                                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>小件取送费</Text>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                {this.renderDeliveryFee(deliveryFee)}
+                            </View>
+
+                            <View style={[styles.containerItemView, styles.deliveryCarView]}>
+                                {1 > 2 && <TouchableOpacity
+                                    style={styles.containerItemTitleView}
+                                    onPress={() => {
+                                        let state = this.state.businessPickup == '1' ? 0 : 1;
                                         this.setState({
-                                            img2: '',
+                                            businessPickup: state,
                                         })
                                     }}
                                 >
-                                    <View style={styles.deleteIcon}>
-                                        <Image source={GlobalIcons.icon_delete} style={styles.deleteIconCon} />
+                                    <Text
+                                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>是否商家取件，资费与商家协商</Text>
+                                    <View style={styles.containerItemTitleRight}>
+                                        <Image source={this.state.businessPickup == '1' ? selectedIcon : selectIcon}
+                                               style={GlobalStyles.checkedIcon}/>
                                     </View>
-                                    <Image source={{uri: img2}} style={[GlobalStyles.uploadIcon, styles.uploadImages]} />
+                                </TouchableOpacity>}
+                                <View style={styles.containerItemTitleView}>
+                                    <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>其他</Text>
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                <View style={styles.containerItemConView}>
+                                    <TextInput
+                                        style={styles.inputItemCon}
+                                        multiline={true}
+                                        placeholder="其他注意事项..."
+                                        placeholderTextColor='#888'
+                                        underlineColorAndroid={'transparent'}
+                                        onChangeText={(text) => {
+                                            this.setState({
+                                                remark: text
+                                            })
+                                        }}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={[styles.containerItemView, styles.deliveryCouponView]}>
+                                <TouchableOpacity
+                                    style={styles.containerItemTitleView}
+                                    onPress={() => this.selectContent('MineCoupon')}
+                                >
+                                    <View style={styles.containerItemTitleLeft}>
+                                        <Text style={styles.containerItemTitle}>选择优惠券</Text>
+                                    </View>
+                                    <View style={styles.containerItemTitleRight}>
+                                        {this.state.coupon != '0' && <Text
+                                            style={[styles.containerItemTitleConText, styles.deliveryCouponConText]}>¥ {parseFloat(this.state.coupon).toFixed(2)}</Text>}
+                                        <Image source={arrowRight} style={styles.arrowRightIcon}/>
+                                    </View>
                                 </TouchableOpacity>
-                            }
-                            {uploading && img1 != '' && img2 != '' && img3 === '' ?
-                                <Spinner style={styles.spinner} isVisible={uploading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
-                                :
-                                img3 != '' && <TouchableOpacity
-                                    style = {styles.uploadPicView}
-                                    onPress = {() => {
+                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                                <View
+                                    style={styles.containerItemTitleView}
+                                >
+                                    <View style={[styles.containerItemTitleLeft, {flexDirection: 'row'}]}>
+                                        <Text style={styles.containerItemTitle}>货物保险费</Text>
+                                        <TouchableOpacity
+                                            onPress = {() => this.onPushToNextPage('保险须知', 'CooperateDetail', {webUrl: premiums_link})}
+                                        >
+                                            <Text style={[styles.containerItemTitle, {color: GlobalStyles.themeColor}]}>《保险须知》</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <Select
+                                        style={{flex: 1, borderWidth: 0,}}
+                                        value={insurance}
+                                        valueStyle={{flex: 1, color: '#555', textAlign: 'right'}}
+                                        items={money_arr}
+                                        getItemValue={(item, index) => item.value}
+                                        getItemText={(item, index) => item.value + '元'}
+                                        pickerTitle='货物保险费'
+                                        placeholder='请选择'
+                                        placeholderTextColor='#666'
+                                        onSelected={(item, index) => this.setState({
+                                            insurance: item.value
+                                        })}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={[styles.containerItemView, styles.deliveryTotalMoneyView]}>
+                                <View style={styles.containerItemTitleView}>
+                                    <View style={styles.containerItemTitleLeft}>
+                                        <Text style={styles.containerItemTitle}>总计费用</Text>
+                                    </View>
+                                    <View style={styles.containerItemTitleRight}>
+                                        <Text
+                                            style={[styles.containerItemTitleConText, styles.deliveryTotalMoneyText]}>¥ {parseFloat(this.state.relprice).toFixed(2)}</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={[styles.containerItemView, styles.flowProtocolView]}>
+                                <TouchableOpacity
+                                    style={styles.flowProtocolBtnView}
+                                    onPress={() => {
+                                        let state = this.state.agree == '1' ? 0 : 1;
                                         this.setState({
-                                            img3: '',
+                                            agree: state,
                                         })
                                     }}
                                 >
-                                    <View style={styles.deleteIcon}>
-                                        <Image source={GlobalIcons.icon_delete} style={styles.deleteIconCon} />
-                                    </View>
-                                    <Image source={{uri: img3}} style={[GlobalStyles.uploadIcon, styles.uploadImages]} />
+                                    <Image source={this.state.agree == '1' ? selectedIcon : selectIcon}
+                                           style={GlobalStyles.checkedIcon}/>
+                                    <Text style={styles.flowProtocolBtnCon}>我已阅读并同意</Text>
                                 </TouchableOpacity>
-                            }
-                            <TouchableOpacity
-                                style = {GlobalStyles.uploadView}
-                                onPress = {() => this.handleOpenImagePicker()}
-                            >
-                                <Image source={GlobalIcons.images_bg_upload} style={GlobalStyles.uploadIcon} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                        {1> 2 && <View style={[styles.containerItemView, styles.deliveryCarView]}>
-                        <View style={styles.containerItemTitleView}>
-                            <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>代取/送服务车型</Text>
-                        </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        <View style={[styles.containerItemConView, styles.deliveryCarConView]}>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_1_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>摩托车</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_2_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>私家车</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_3_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>小型面包车</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_4_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>小型货车</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_5_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>中型货车</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_6_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>大型货车</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryCarItem}
-                                activeOpacity = {1}
-                                onPress = {() => this.onPressAlert()}
-                            >
-                                <Image source={GlobalIcons.icon_car_7_2} style={styles.deliveryCarIcon} />
-                                <Text style={styles.deliveryCarName}>大型厢车</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        <View style={[styles.containerItemConView, styles.deliveryTypeView]}>
-                            <TouchableOpacity
-                                style = {styles.deliveryTypeItem}
-                                onPress = {() => {
-                                    this.onPressAlert();
-                                // let state = this.state.substitutePickup == '1' ? 0 : 1;
-                                // this.setState({
-                                //     substitutePickup: state,
-                                // })
-                            }}
-                        >
-                                <Text style={styles.deliveryTypeName}>代取件</Text>
-                                <View style={[GlobalStyles.verLine, styles.deliveryTypeVerLine]} />
-                                <View style={[styles.deliveryTypeIconView, this.state.substitutePickup == 1 && styles.deliveryTypeIconViewCur]}>
-                                    <Image source={GlobalIcons.icon_tick}
-                                        style={[styles.deliveryTypeIcon, this.state.substitutePickup == 1 && styles.deliveryTypeIconCur]} />
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style = {styles.deliveryTypeItem}
-                                onPress = {() => {
-                                    this.onPressAlert();
-                                // let state = this.state.substituteSend == '1' ? 0 : 1;
-                                // this.setState({
-                                //     substituteSend: state,
-                                // })
-                            }}
-                        >
-                                <Text style={styles.deliveryTypeName}>代送件</Text>
-                                <View style={[GlobalStyles.verLine, styles.deliveryTypeVerLine]} />
-                                <View style={[styles.deliveryTypeIconView, this.state.substituteSend == 1 && styles.deliveryTypeIconViewCur]}>
-                                    <Image source={GlobalIcons.icon_tick}
-                                        style={[styles.deliveryTypeIcon, this.state.substituteSend == 1 && styles.deliveryTypeIconCur]} />
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>}
-
-                    <View style={[styles.containerItemView, styles.deliveryCarView]}>
-                        <View style={styles.containerItemTitleView}>
-                            <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>小件取送费</Text>
-                        </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        {this.renderDeliveryFee(deliveryFee)}
-                    </View>
-
-                    <View style={[styles.containerItemView, styles.deliveryCarView]}>
-                        {1 > 2 &&<TouchableOpacity
-                            style = {styles.containerItemTitleView}
-                            onPress = {() => {
-                                let state = this.state.businessPickup == '1' ? 0 : 1;
-                                this.setState({
-                                    businessPickup: state,
-                                })
-                            }}
-                        >
-                            <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>是否商家取件，资费与商家协商</Text>
-                            <View style={styles.containerItemTitleRight}>
-                                <Image source={this.state.businessPickup == '1' ? selectedIcon : selectIcon} style={GlobalStyles.checkedIcon} />
+                                <TouchableOpacity
+                                    style={styles.flowProtocolBtnView}
+                                    onPress={() => this.onPushToNextPage('服务协议', 'FlowProtocol')}
+                                >
+                                    <Text style={styles.flowProtocolName}>《服务协议》</Text>
+                                </TouchableOpacity>
                             </View>
-                        </TouchableOpacity>}
-                        <View style={styles.containerItemTitleView}>
-                            <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>其他</Text>
-                        </View>
-                        <View style={[GlobalStyles.horLine, styles.horLine]} />
-                        <View style={styles.containerItemConView}>
-                            <TextInput
-                                style = {styles.inputItemCon}
-                                multiline = {true}
-                                placeholder = "其他注意事项..."
-                                placeholderTextColor = '#888'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
-                                    this.setState({
-                                        remark: text
-                                    })
-                                }}
-                            />
-                        </View>
-                    </View>
-
-                    <View style={[styles.containerItemView, styles.deliveryCouponView]}>
-                        <TouchableOpacity
-                            style = {styles.containerItemTitleView}
-                            onPress = {() => this.selectContent('MineCoupon')}
-                        >
-                            <View style={styles.containerItemTitleLeft}>
-                                <Text style={styles.containerItemTitle}>选择优惠券</Text>
-                            </View>
-                            <View style={styles.containerItemTitleRight}>
-                                {this.state.coupon != '0' && <Text style={[styles.containerItemTitleConText, styles.deliveryCouponConText]}>¥ {parseFloat(this.state.coupon).toFixed(2)}</Text>}
-                                <Image source={arrowRight} style={styles.arrowRightIcon} />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={[styles.containerItemView, styles.deliveryTotalMoneyView]}>
-                        <View style={styles.containerItemTitleView}>
-                            <View style={styles.containerItemTitleLeft}>
-                                <Text style={styles.containerItemTitle}>总计费用</Text>
-                            </View>
-                            <View style={styles.containerItemTitleRight}>
-                                <Text style={[styles.containerItemTitleConText, styles.deliveryTotalMoneyText]}>¥ {parseFloat(this.state.relprice).toFixed(2)}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={[styles.containerItemView, styles.flowProtocolView]}>
-                        <TouchableOpacity
-                            style = {styles.flowProtocolBtnView}
-                            onPress = {() => {
-                                let state = this.state.agree == '1' ? 0 : 1;
-                                this.setState({
-                                    agree: state,
-                                })
-                            }}
-                        >
-                            <Image source={this.state.agree == '1' ? selectedIcon : selectIcon} style={GlobalStyles.checkedIcon} />
-                            <Text style={styles.flowProtocolBtnCon}>我已阅读并同意</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style = {styles.flowProtocolBtnView}
-                            onPress = {() => this.onPushToNextPage('服务协议', 'FlowProtocol')}
-                        >
-                            <Text style={styles.flowProtocolName}>《服务协议》</Text>
-                        </TouchableOpacity>
-                    </View>
-                    </CustomKeyboard.AwareCusKeyBoardScrollView>
-                </KeyboardAwareScrollView>
+                        </CustomKeyboard.AwareCusKeyBoardScrollView>
+                    </KeyboardAwareScrollView>
                 </ScrollView>
                 <View style={GlobalStyles.fixedBtnView}>
                     <TouchableOpacity
-                        style = {[GlobalStyles.btnView, styles.btnView]}
-                        onPress = {()=> {canPress &&this.doSubmitOrder()}}
+                        style={[GlobalStyles.btnView, styles.btnView]}
+                        onPress={() => {
+                            canPress && this.doSubmitOrder()
+                        }}
                     >
                         <Text style={[GlobalStyles.btnItem, styles.btnItem]}>订单确认</Text>
                     </TouchableOpacity>
@@ -1560,8 +1699,7 @@ const styles = StyleSheet.create({
         width: 18,
         height: 18,
     },
-    selectView: {
-    },
+    selectView: {},
     selectViewWrap: {
         height: 30,
         flexDirection: 'row',
@@ -1596,5 +1734,15 @@ const styles = StyleSheet.create({
     deliverFeeCon: {
         fontSize: 14,
         color: GlobalStyles.themeColor,
+    },
+    rightContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    textSymbol: {
+        fontSize: 18,
+        color: '#f00',
+        marginRight: 5,
     },
 });
