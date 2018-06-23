@@ -200,6 +200,7 @@ export default class MineInfoSetting extends Component {
                             <TextInput
                                 style = {styles.inputItemCon}
                                 placeholder = "验证码"
+                                keyboardType = {'numeric'}
                                 placeholderTextColor = '#888'
                                 underlineColorAndroid = {'transparent'}
                                 onChangeText = {(text)=>{
@@ -215,6 +216,7 @@ export default class MineInfoSetting extends Component {
                                 style = {styles.inputItemCon}
                                 placeholder = "请输入新手机号"
                                 maxLength = {11}
+                                keyboardType = {'numeric'}
                                 placeholderTextColor = '#888'
                                 underlineColorAndroid = {'transparent'}
                                 onChangeText = {(text)=>{

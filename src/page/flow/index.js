@@ -406,6 +406,7 @@ export default class Flow extends Component {
     };
 
     checkStatus = (data) => {
+        let numberRule = /^\d+(\.\d+)?$/;
         // // console.log(data);
         if (data.shipper === '') {
             toastShort('请选择发货地址');
@@ -433,6 +434,22 @@ export default class Flow extends Component {
         }
         if (data.weight === '') {
             toastShort('请输入物品重量');
+            return false;
+        }
+        if (!numberRule.test(data.price)) {
+            toastShort('订单价格只能输入数字，请重新输入');
+            return false;
+        }
+        if (!numberRule.test(data.volume)) {
+            toastShort('物品体积只能输入数字，请重新输入');
+            return false;
+        }
+        if (!numberRule.test(data.count)) {
+            toastShort('物品数量只能输入数字，请重新输入');
+            return false;
+        }
+        if (!numberRule.test(data.weight)) {
+            toastShort('物品重量只能输入数字，请重新输入');
             return false;
         }
         if (data.cate === '') {
@@ -509,7 +526,7 @@ export default class Flow extends Component {
         this.setState({
             canPress: false,
         });
-        this.netRequest.fetchPost(url, data)
+        this.netRequest.fetchPost(url, data, true)
             .then(result => {
                 // console.log('下单成功', result);
                 if (result && result.code == 1) {
@@ -614,10 +631,12 @@ export default class Flow extends Component {
                             <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon}/>
                             <View style={styles.rightContent}>
                                 <Text style={styles.textSymbol}>*</Text>
-                                <CustomKeyboard.CustomTextInput
+                                <TextInput
+                                    // CustomKeyboard.CustomTextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入每件商品体积"
-                                    customKeyboardType="numberKeyBoardWithDot"
+                                    // customKeyboardType="numberKeyBoardWithDot"
+                                    keyboardType = {'numeric'}
                                     defaultValue={volume}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
@@ -639,10 +658,12 @@ export default class Flow extends Component {
                                 <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon}/>
                                 <View style={styles.rightContent}>
                                     <Text style={styles.textSymbol}>*</Text>
-                                    <CustomKeyboard.CustomTextInput
+                                    <TextInput
+                                        // CustomKeyboard.CustomTextInput
                                         style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                         placeholder="请输入物品数量"
-                                        customKeyboardType="numberKeyBoardWithDot"
+                                        // customKeyboardType="numberKeyBoardWithDot"
+                                        keyboardType = {'numeric'}
                                         defaultValue={count}
                                         placeholderTextColor='#666'
                                         underlineColorAndroid={'transparent'}
@@ -661,10 +682,12 @@ export default class Flow extends Component {
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
                             <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
-                            <CustomKeyboard.CustomTextInput
+                            <TextInput
+                                // CustomKeyboard.CustomTextInput
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
-                                customKeyboardType="numberKeyBoardWithDot"
+                                // customKeyboardType="numberKeyBoardWithDot"
+                                keyboardType = {'numeric'}
                                 defaultValue={weight}
                                 placeholderTextColor='#666'
                                 underlineColorAndroid={'transparent'}
@@ -691,7 +714,7 @@ export default class Flow extends Component {
                             placeholder='请选择物品类型'
                             pickerTitle='物品类型选择'
                             onSelected={(item, index) => {
-                                console.log(item);
+                                // console.log(item);
                                 this.setState({
                                     cate: item.id,
                                     categoryText: item.name
@@ -786,10 +809,12 @@ export default class Flow extends Component {
                             <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon}/>
                             <View style={styles.rightContent}>
                                 <Text style={styles.textSymbol}>*</Text>
-                                <CustomKeyboard.CustomTextInput
+                                <TextInput
+                                    // CustomKeyboard.CustomTextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入货物总体积"
-                                    customKeyboardType="numberKeyBoardWithDot"
+                                    // customKeyboardType="numberKeyBoardWithDot"
+                                    keyboardType = {'numeric'}
                                     defaultValue={this.state.volume}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
@@ -808,10 +833,12 @@ export default class Flow extends Component {
                         <View style={styles.paymentMethodItem}>
                             <View style={styles.paymentMethodTitleView}>
                                 <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon}/>
-                                <CustomKeyboard.CustomTextInput
+                                <TextInput
+                                    // CustomKeyboard.CustomTextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入物品数量"
-                                    customKeyboardType="numberKeyBoardWithDot"
+                                    // customKeyboardType="numberKeyBoardWithDot"
+                                    keyboardType = {'numeric'}
                                     defaultValue={this.state.count}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
@@ -829,10 +856,12 @@ export default class Flow extends Component {
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
                             <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
-                            <CustomKeyboard.CustomTextInput
+                            <TextInput
+                                // CustomKeyboard.CustomTextInput
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
-                                customKeyboardType="numberKeyBoardWithDot"
+                                // customKeyboardType="numberKeyBoardWithDot"
+                                keyboardType = {'numeric'}
                                 defaultValue={this.state.weight}
                                 placeholderTextColor='#666'
                                 underlineColorAndroid={'transparent'}
@@ -860,7 +889,7 @@ export default class Flow extends Component {
                             pickerTitle='物品类型选择'
                             placeholderTextColor={'#666'}
                             onSelected={(item, index) => {
-                                console.log(item);
+                                // console.log(item);
                                 this.setState({
                                     cate: item.id,
                                     categoryText: item.name
@@ -1308,7 +1337,7 @@ export default class Flow extends Component {
                                 {this.renderDeliveryFee(deliveryFee)}
                             </View>
 
-                            <View style={[styles.containerItemView, styles.deliveryCarView]}>
+                            <View style={[styles.containerItemView, styles.deliveryCarView, {marginTop: -15}]}>
                                 {1 > 2 && <TouchableOpacity
                                     style={styles.containerItemTitleView}
                                     onPress={() => {
@@ -1325,9 +1354,9 @@ export default class Flow extends Component {
                                                style={GlobalStyles.checkedIcon}/>
                                     </View>
                                 </TouchableOpacity>}
-                                <View style={styles.containerItemTitleView}>
+                                {1 > 2 && <View style={styles.containerItemTitleView}>
                                     <Text style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>其他</Text>
-                                </View>
+                                </View>}
                                 <View style={[GlobalStyles.horLine, styles.horLine]}/>
                                 <View style={styles.containerItemConView}>
                                     <TextInput
@@ -1363,13 +1392,16 @@ export default class Flow extends Component {
                                 <View
                                     style={styles.containerItemTitleView}
                                 >
-                                    <View style={[styles.containerItemTitleLeft, {flexDirection: 'row'}]}>
-                                        <Text style={styles.containerItemTitle}>货物保险费</Text>
-                                        <TouchableOpacity
-                                            onPress = {() => this.onPushToNextPage('保险须知', 'CooperateDetail', {webUrl: premiums_link})}
-                                        >
-                                            <Text style={[styles.containerItemTitle, {color: GlobalStyles.themeColor}]}>《保险须知》</Text>
-                                        </TouchableOpacity>
+                                    <View style={[styles.containerItemTitleLeft,]}>
+                                        <View style={[styles.containerItemTitleLeft, {flexDirection: 'row'}]}>
+                                            <Text style={styles.containerItemTitle}>货物保险</Text>
+                                            <TouchableOpacity
+                                                onPress = {() => this.onPushToNextPage('保险须知', 'CooperateDetail', {webUrl: premiums_link})}
+                                            >
+                                                <Text style={[styles.containerItemTitle, {color: GlobalStyles.themeColor}]}>《保险须知》</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={{fontSize: 11, color: '#555', marginTop: 5, marginLeft: 64}}>注：选择保险，将无法选择到付</Text>
                                     </View>
                                     <Select
                                         style={{flex: 1, borderWidth: 0,}}
@@ -1377,13 +1409,21 @@ export default class Flow extends Component {
                                         valueStyle={{flex: 1, color: '#555', textAlign: 'right'}}
                                         items={money_arr}
                                         getItemValue={(item, index) => item.value}
-                                        getItemText={(item, index) => item.value + '元'}
+                                        getItemText={(item, index) => item.name}
                                         pickerTitle='货物保险费'
                                         placeholder='请选择'
                                         placeholderTextColor='#666'
-                                        onSelected={(item, index) => this.setState({
-                                            insurance: item.value
-                                        })}
+                                        onSelected={(item, index) => {                                            
+                                            if (item.name === '取消') {
+                                                this.setState({
+                                                    insurance: null
+                                                })
+                                            } else {
+                                                this.setState({
+                                                    insurance: item.value
+                                                })
+                                            }
+                                        }}
                                     />
                                 </View>
                             </View>

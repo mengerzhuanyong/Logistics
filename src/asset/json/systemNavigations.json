@@ -34,7 +34,12 @@
             "remark": "",
         }, {
             "style": 7,
-            "name": "冷藏运输",
+            "name": "内河运输",
+            "navIcon": "require('../../asset/images/icons/icon_plane.png')",
+            "remark": "",
+        }, {
+            "style": 8,
+            "name": "铁路运输",
             "navIcon": "require('../../asset/images/icons/icon_plane.png')",
             "remark": "",
         }, ],

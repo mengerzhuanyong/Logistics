@@ -64,6 +64,8 @@ module.exports = {
     icon_nav_cold: require('../asset/img/icon/icon_nav_cold.png'),
     icon_nav_more: require('../asset/img/icon/icon_nav_more.png'),
     icon_nav_world: require('../asset/img/icon/icon_nav_world.png'),
+    icon_nav_river: require('../asset/img/icon/icon_nav_river.png'),
+    icon_nav_train: require('../asset/img/icon/icon_nav_train.png'),
     icon_phone: require('../asset/img/icon/icon_phone.png'),
     icon_place: require('../asset/img/icon/icon_place.png'),
     icon_plane: require('../asset/img/icon/icon_plane.png'),
@@ -80,6 +82,7 @@ module.exports = {
     icon_wechat: require('../asset/img/icon/icon_wechat.png'),
     icon_weight: require('../asset/img/icon/icon_weight.png'),
     icon_cash_on_delivery: require('../asset/img/icon/icon_cash_on_delivery.png'),
+    icon_no_record: require('../asset/img/icon/icon_no_record.png'),
 
     // IMAGES
     logo: require('../asset/img/img/logo.png'),

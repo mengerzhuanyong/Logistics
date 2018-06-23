@@ -32,6 +32,8 @@ import {Menu, Button} from 'teaset'
 import {Geolocation} from 'react-native-baidu-map'
 import {checkFloat} from '../../util/utilsRegularMatch'
 import {HorizontalLine, VerticalLine} from '../../component/common/commonLine'
+import {clearAllTimeout} from '../../util/utilsTool'
+import FlatListView from '../../component/common/flatListView'
 
 import BannerView from '../../component/common/Banner'
 import HotNews from '../../component/common/HotNews'
@@ -74,40 +76,42 @@ export default class Home extends Component {
             address: '当前位置',
             addressLine: 1,
             modalVisible: false,
-            MODALVIEW_CONFIG: {
-                title: '速芽物流',
-                modalText: '速芽物流信息弹窗',
-                modalContent: <View />,
-                cancelBtnName: '取消',
-                confirmBtnName: '电话咨询',
-            },
+            emptyTips: '',
         };
         this.netRequest = new NetRequest();
-        this.showSortMenu = this.showSortMenu.bind(this);
         this.lastActionTime = 0;
+        this.page = 1;
+        this.pageSize = 10;
     }
-
-    /**
-     * 初始化状态
-     * @type {Boolean}
-     */
-    page = -1;
-    sortType = 1;
-    totalPage = 0;
-    loadMore = false;
-    refreshing = false;
 
     async componentDidMount(){
         this.jpushRelative();
         this.getNavigations();
         this.getBannerData();
         this.getLocation();
-        // await this.dropLoadMore();
-        this.updateState({
-            ready: true,
-            showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
-        })
+        // let result = await this.loadNetData(0);
+        // if (result && result.code === 1) {
+        //     this.timer4 = setTimeout(() => {
+        //         this.setState({
+        //             ready: true,
+        //             listData: result.data.store,
+        //         })
+        //     }, 600);
+            
+        // }
     }
+
+    componentWillUnmount(){
+        let timers = [this.timer1, this.timer2, this.timer4];
+        clearAllTimeout(timers);
+        JPushModule.clearAllNotifications();
+    }
+
+    onBack = () => {
+        const {goBack, state} = this.props.navigation;
+        state.params && state.params.reloadData && state.params.reloadData();
+        goBack();
+    };
 
     jpushRelative = () => {
         JPushModule.addReceiveOpenNotificationListener(map => {
@@ -119,71 +123,63 @@ export default class Home extends Component {
         })
     }
 
-    componentWillUnmount(){
-        JPushModule.clearAllNotifications();
-        this.timer && clearTimeout(this.timer);
-    }
-
-    onBack = () => {
-        const {goBack, state} = this.props.navigation;
-        state.params && state.params.reloadData && state.params.reloadData();
-        goBack();
+    onPushToNextPage = (pageTitle, page, params = {}) => {
+        let nowTime = new Date().getTime();
+        if ((nowTime - this.lastActionTime) <= 500 && true) {
+            return false;
+        }
+        this.lastActionTime = nowTime;
+        let user = global.user ? global.user.userData : '';
+        let {navigate} = this.props.navigation;
+        page = user && user.token ? page : 'Login';
+        navigate(page, {
+            pageTitle: pageTitle,
+            ...params,
+        });
     };
 
-    updateState = (state) => {
-        if (!this) {
-            return;
-        }
-        this.setState(state);
+    onPushToBusiness = (item) => {
+        item = item.item;
+        const { navigate } = this.props.navigation;
+        navigate('BusinessDetail', {
+            pageTitle: 'pageTitle',
+            item: item,
+            reloadData: () => this.freshNetData(),
+        })
+    };
+
+    onPushNavigator = (nav, compent) => {
+        const { navigate } = this.props.navigation;
+        navigate(compent, {
+            navItem: nav,
+            pageTitle: 'pageTitle',
+            reloadData: () => this.freshNetData(),
+        })
     };
 
     modalVisible = () => {
         this.setState({
             modalVisible: !this.state.modalVisible,
         })
-        // console.log(this.state.modalVisible);
     };
 
-    /**
-     * 拨打电话
-     * @Author   Menger
-     * @DateTime 2018-02-27
-     */
-    makeCall = () => {
-        // let { businessInfo } = this.state;
-        // let url = 'tel: ' + '15066886007';
-        // // console.log(businessInfo.mobile);
-        // this.modalVisible();
-        // Linking.canOpenURL(url)
-        //     .then(supported => {
-        //         if (!supported) {
-        //             // console.log('Can\'t handle url: ' + url);
-        //         } else {
-        //             return Linking.openURL(url);
-        //         }
-        //     })
-        //     .catch((err)=>{
-        //         // console.log('An error occurred', err)
-        //     });
-    }
-
-    getLocation = () => {
-        Geolocation.getCurrentPosition()
-            .then(data => {
-                // console.log(data);
-                // console.log(checkFloat(35.95496));
-                let location = checkFloat(data.latitude);
-                if (location) {
-                    this.setState({
-                        lat: data.latitude,
-                        lng: data.longitude,
-                    });
-                    this.postLocation(data.latitude, data.longitude);
-                }
-            })
-            .catch(e => {
-                // console.log(e, '获取地理位置失败，请稍后重试！');
-            })
+    getLocation = async () => {
+        let data = await Geolocation.getCurrentPosition();
+        // console.log(data);
+        if (!data) {
+            toastShort('定位失败，请稍后重试');
+            return;
+        }
+        let location = checkFloat(data.latitude);
+        if (location) {
+            global.lat = data.latitude;
+            global.lng = data.longitude;
+            this.setState({
+                lat: data.latitude,
+                lng: data.longitude,
+            });
+            this.postLocation(data.latitude, data.longitude);
+        }
     };
 
     setBadge = () => {
@@ -199,6 +195,7 @@ export default class Home extends Component {
     }
 
     postLocation = async (lat = this.state.lat, lng = this.state.lng) => {
+        // console.log(lat, lng);
         if (this.state.lat !== '') {
             lat = this.state.lat;
             lng = this.state.lng;
@@ -209,15 +206,14 @@ export default class Home extends Component {
             lat: lat,
             lng: lng,
         };
-        // console.log('111111',lat, lng);
-        this.netRequest.fetchPost(url, data)
+        this.netRequest.fetchPost(url, data, true)
             .then( result => {
                 // console.log(result);
-                this.dropLoadMore();
-                this.updateState({
+                this.freshNetData();
+                this.setState({
                     ready: true,
                     showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
-                    address: result.data.address,
+                    address: result.data.address || '无法解析该地点',
                     addressLine: result.data.addressLine,
                 })
             })
@@ -228,10 +224,10 @@ export default class Home extends Component {
 
     getBannerData = () => {
         let url = NetApi.getBanner;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then(result => {
                 if (result && result.code == 1) {
-                    this.updateState({
+                    this.setState({
                         bannerData: result.data.banner,
                         hotNewsData: result.data.headlines,
                     });
@@ -240,16 +236,17 @@ export default class Home extends Component {
                 }
             })
             .catch(error => {
+                // console.log(error);
                 toastShort('error');
             })
     };
 
     getNavigations = () => {
         let url = NetApi.navigations;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then( result => {
                 if (result && result.code == 1) {
-                    this.updateState({
+                    this.setState({
                         navigations: result.data.indexNavigations,
                         servicesNavigations: result.data.servicesNavigations
                     })
@@ -257,121 +254,76 @@ export default class Home extends Component {
             })
             .catch( error => {
                 // console.log(error);
+                toastShort('error');
             })
     };
 
-    loadNetData = (sort, page) => {
-        let url = NetApi.index + page + '/sort/' + sort;
-        return this.netRequest.fetchGet(url, true)
-            .then( result => {
-                // console.log(result);
+    loadNetData = (page) => {
+        let url = NetApi.index;
+        let data = {
+            page: page,
+            pageSize: this.pageSize
+        };
+        return this.netRequest.fetchPost(url, data, true)
+            .then(result => {
                 return result;
             })
-            .catch( error => {
-                this.updateState({
-                    error: true,
-                    errorInfo: error
-                })
+            .catch(error => {
+                // toastShort('error');
             })
     };
 
-    dropLoadMore = async () => {
-        // 如果是正在加载中或没有更多数据了，则返回
-        if (this.state.showFoot != 0) {
+    freshNetData = async () => {
+        let {listData} = this.state;
+        let result = await this.loadNetData(0);
+        this.timer1 = setTimeout(() => {
+            this.page = 1;
+            this.setState();
+            // 调用停止刷新
+            this.flatList && this.flatList.stopRefresh()
+        }, 600);
+        if (!result) {
             return;
         }
-        if ((this.page != 1) && (this.page >= this.totalPage)) {
-            return;
-        } else {
-            this.page++;
-        }
-        this.updateState({
-            showFoot: 2
-        })
-        let result = await this.loadNetData(this.sortType, this.page);
-        this.updateState({
-            ready: true,
-            showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
-        })
-        // let result = await this.loadNetData(this.sortType, this.page);
-        this.totalPage = result.data.pageSize;
-        let foot = 0;
-        if (this.page >= this.totalPage) {
-            foot = 1; // listView底部显示没有更多数据了
-        }
-        if (result && result.code ==1) {
-            this.updateState({
-                showFoot: foot,
-                companyListData: this.state.companyListData.concat(result.data.store)
-            })
-        } else {
-            toastShort(result.msg);
-            this.updateState({
-                showFoot: foot,
-                companyListData: this.state.companyListData
-            })
-        }
-    };
-
-    /**
-     * @Author   Menger
-     * @DateTime 2018-03-17
-     * @param    {int}   sort 1: 综合 2: 星级 3: 距离
-     * @return   {[type]}        [description]
-     */
-    freshNetData = async (sort = `${this.sortType}`) => {
-
-        let result = await this.loadNetData(sort, 0);
-        if (result && result.code == 1) {
-            this.page = 0;
-            this.updateState({
-                showFoot: 0,
-                companyListData: result.data.store,
-            })
-        } else {
-            toastShort(result.msg);
-            this.updateState({
-                showFoot: 0,
-                companyListData: this.state.companyListData
-            })
-        }
-    };
-
-    onPushToBusiness = (item) => {
-        item = item.item;
-        const { navigate } = this.props.navigation;
-        navigate('BusinessDetail', {
-            pageTitle: 'pageTitle',
-            item: item,
-            reloadData: () => this.freshNetData(1),
-        })
-    };
-
-    onPushNavigator = (nav, compent) => {
-        const { navigate } = this.props.navigation;
-        navigate(compent, {
-            navItem: nav,
-            pageTitle: 'pageTitle',
-            reloadData: () => this.freshNetData(1),
-        })
-    };
-
-    onPushToNextPage = (pageTitle, page, params = {}) => {
-        let nowTime = new Date().getTime();
-        if ((nowTime - this.lastActionTime) <= 500 && true) {
-            // console.warn('间隔时间内重复点击了');
-            return false;
-        }
-        this.lastActionTime = nowTime;
-        let {navigate} = this.props.navigation;
-        navigate(page, {
-            pageTitle: pageTitle,
-            reloadData: () => this.loadNetData(),
-            ...params,
+        this.setState({
+            emptyTips: result.msg,
+            listData: result.data.store,
         });
     };
 
-    renderCompanyItem = (item) => {
+    dropLoadMore = async () => {
+        let {listData} = this.state;
+        let result = await this.loadNetData(this.page);
+        if (!result) {
+            return;
+        }
+        let totalPage = result.data.totalPage;
+        this.timer2 = setTimeout(() => {
+            let dataTemp = listData;
+            //模拟数据加载完毕,即page > 0,
+            if (this.page < totalPage) {
+                this.setState({
+                    emptyTips: result.msg,
+                    listData: dataTemp.concat(result.data.store),
+                });
+            }
+            this.flatList && this.flatList.stopEndReached({
+                allLoad: this.page === totalPage
+            });
+            this.page++;
+            // console.log('page, totalPage',this.page, totalPage)
+        }, 600);
+    };
+
+    _captureRef = (v) => {
+        this.flatList = v
+    };
+
+    _keyExtractor = (item, index) => {
+        return `item_${index}`;
+    };
+
+    renderListItem = (item) => {
         return (
             <BusinessItem
                 item = {item}
@@ -379,21 +331,10 @@ export default class Home extends Component {
                 onPushToBusiness = {()=> this.onPushToBusiness(item)}
                 onSetModal = {()=> this.modalVisible()}
             />
-        )
+        );
     };
 
-    showSortMenu = (align) => {
-        this.menu.measure((x, y, width, height, pageX, pageY) => {
-            let items = [
-                {title: '综合排序', onPress: () => {this.freshNetData(1); this.sortType = 1}},
-                {title: '星级排序', onPress: () => {this.freshNetData(2); this.sortType = 2}},
-                {title: '距离排序', onPress: () => {this.freshNetData(3); this.sortType = 3}},
-            ];
-            Menu.show({x: pageX, y: pageY, width, height}, items, {align});
-        });
-    };
-
-    renderHeaderView() {
+    renderHeaderView = () => {
         let { navigations, bannerData, hotNewsData, servicesNavigations } = this.state;
         return (
             <View style={styles.container}>
@@ -406,10 +347,10 @@ export default class Home extends Component {
                 <BannerView bannerData = {bannerData} />
                 <View style={styles.homeNavigationView}>
                     <NavigatorItem
-                        navigatorName = {navigations[0].name}
-                        navigatorIcon = {GlobalIcons.icon_delivery_now}
+                        navigatorName = {navigations[2].name}
+                        navigatorIcon = {GlobalIcons.icon_logistics}
                         onPushNavigator = {() => {
-                            this.onPushNavigator(navigations[0], 'BusinessList');
+                            this.onPushNavigator(navigations[2], 'BusinessList');
                         }}
                     />
                     <NavigatorItem
@@ -420,10 +361,10 @@ export default class Home extends Component {
                         }}
                     />
                     <NavigatorItem
-                        navigatorName = {navigations[2].name}
-                        navigatorIcon = {GlobalIcons.icon_logistics}
+                        navigatorName = {navigations[0].name}
+                        navigatorIcon = {GlobalIcons.icon_delivery_now}
                         onPushNavigator = {() => {
-                            this.onPushNavigator(navigations[2], 'BusinessList');
+                            this.onPushNavigator(navigations[0], 'BusinessList');
                         }}
                     />
                     <NavigatorItem
@@ -449,29 +390,29 @@ export default class Home extends Component {
                     />}
                     {navigations.length >= 7 && <NavigatorItem
                         navigatorName = {navigations[6].name}
-                        navigatorIcon = {GlobalIcons.icon_nav_cold}
+                        navigatorIcon = {GlobalIcons.icon_nav_river}
                         onPushNavigator = {() => {
                             this.onPushNavigator(navigations[6], 'BusinessList');
                         }}
                     />}
                     {navigations.length >= 7 && <NavigatorItem
-                        navigatorName = {'更多'}
-                        navigatorIcon = {GlobalIcons.icon_nav_more}
+                        navigatorName = {navigations[7].name}
+                        navigatorIcon = {GlobalIcons.icon_nav_train}
                         onPushNavigator = {() => {
-                            toastShort('敬请期待');
+                            this.onPushNavigator(navigations[7], 'BusinessList');
                         }}
                     />}
                 </View>
                 <HotNews hotNewsData = {hotNewsData} />
                 <View style={styles.hotServicesView}>
                     <View style={styles.hotServicesTitleView}>
-                        <Image source={GlobalIcons.icon_hot} style={styles.titleIcon}/>
-                        <Text style={styles.servicesTitleName}>热门服务</Text>
+                        {1 > 2 && <Image source={GlobalIcons.icon_hot} style={styles.titleIcon}/>}
+                        <Text style={styles.servicesTitleName}>🔥热门服务</Text>
                     </View>
                     <HorizontalLine lineStyle={styles.servicesHorLine} />
                     <View style={styles.hotServicesContentView}>
                         <TouchableOpacity
-                            style={styles.hotServicesItemView}
+                            style={[styles.hotServicesItemView, {backgroundColor: '#ff000000'}]}
                             onPress = {() => this.onPushToNextPage(servicesNavigations[0].name, 'CooperateDetail', {webUrl: servicesNavigations[0].link})}
                         >
                             <Text style={styles.itemName}>{servicesNavigations[0].name}</Text>
@@ -479,7 +420,7 @@ export default class Home extends Component {
                         </TouchableOpacity>
                         <VerticalLine lineStyle={styles.verLine} />
                         <TouchableOpacity
-                            style={styles.hotServicesItemView}
+                            style={[styles.hotServicesItemView, {backgroundColor: '#ffff0000'}]}
                             onPress = {() => this.onPushToNextPage(servicesNavigations[1].name, 'CooperateDetail', {webUrl: servicesNavigations[1].link})}
                         >
                             <Text style={styles.itemName}>{servicesNavigations[1].name}</Text>
@@ -487,7 +428,7 @@ export default class Home extends Component {
                         </TouchableOpacity>
                         <VerticalLine lineStyle={styles.verLine} />
                         <TouchableOpacity
-                            style={styles.hotServicesItemView}
+                            style={[styles.hotServicesItemView, {backgroundColor: '#00800000'}]}
                             onPress = {() => this.onPushToNextPage(servicesNavigations[2].name, 'CooperateDetail', {webUrl: servicesNavigations[2].link})}
                         >
                             <Text style={styles.itemName}>{servicesNavigations[2].name}</Text>
@@ -507,52 +448,12 @@ export default class Home extends Component {
                 </View>
             </View>
         )
-    }
-
-    renderFooterView = () => {
-        return <FooterComponent status = {this.state.showFoot} />;
-    }
-
-    renderEmptyView = () => {
-        return this.state.showFoot == 0 && <EmptyComponent emptyTips={'对不起，暂未找到相关商家!'} />;
+        
     }
 
     renderSeparator = () => {
         return <View style={GlobalStyles.horLine} />;
-    }
-
-    renderFlatlist = () => {
-        const { ready, refreshing, companyListData } = this.state;
-        return (
-                <FlatList
-                    style = {styles.shopListView}
-                    keyExtractor = { item => item.id}
-                    data = {companyListData}
-                    extraData = {this.state}
-                    renderItem = {(item) => this.renderCompanyItem(item)}
-                    onEndReachedThreshold = {0.2}
-                    onEndReached = {this.dropLoadMore}
-                    onRefresh = {this.freshNetData}
-                    refreshing = {refreshing}
-                    ItemSeparatorComponent={this.renderSeparator}
-                    ListHeaderComponent = {() => this.renderHeaderView()}
-                    ListFooterComponent = {this.renderFooterView}
-                    ListEmptyComponent = {this.renderEmptyView}
-                />
-        )
-    }
-
-    updateLocation = (data) => {
-        let {lat, lng} = this.state;
-        if (lat === '') {
-            this.updateState({
-                lat: data.latitude,
-                lng: data.longitude,
-            });
-        }
-        // console.log(lat, lng);
-        this.dropLoadMore(data.latitude, data.longitude);
-    }
+    };
 
     renderTitleView = () => {
         let {navigations} = this.state;
@@ -570,7 +471,10 @@ export default class Home extends Component {
         return (
             <TouchableOpacity
                 style = {styles.headLeftButton}
-                onPress = {() => toastShort(this.state.address, 'center')}
+                onPress = {() => {
+                    this.getLocation();
+                    toastShort(this.state.address, 'center');
+                }}
             >
                 <Image source={GlobalIcons.icon_place} style={styles.headLeftIcon}/>
                 <Text style={styles.headLeftButtonName} numberOfLines={this.state.addressLine}>{this.state.address}</Text>
@@ -583,8 +487,9 @@ export default class Home extends Component {
             <TouchableOpacity
                 style = {styles.headRightButton}
                 onPress = {() => {
-                    let page = global.user.loginState ? 'Mine' : 'Login';
-                    this.onPushNavigator('登录', page);
+                    let page = global.user.loginState ? 'MineFeedBackReward' : 'Login';
+                    let pageTitle = global.user.loginState ? '有奖反馈' : '登录';
+                    this.onPushToNextPage(pageTitle, page);
                 }}
             >
                 <Image source={GlobalIcons.icon_user} style={styles.headRightIcon}/>
@@ -592,8 +497,14 @@ export default class Home extends Component {
         )
     };
 
-    render(){
-        let { ready, refreshing, companyListData, modalVisible,lat, MODALVIEW_CONFIG } = this.state;
+    renderEmptyView = () => {
+        // console.log(this.state.emptyTips);
+        return <EmptyComponent emptyTips={this.state.emptyTips} />;
+    }
+
+    render() {
+        let {ready, listData, refreshing, modalVisible} = this.state;
+        // console.log('listData--->', listData);
         let titleViewStyle = {
             marginLeft: 15,
         };
@@ -605,20 +516,17 @@ export default class Home extends Component {
                     leftButton = {this.renderLeftButton()}
                     rightButton = {this.renderRightButton()}
                 />
-                {ready ?
-                    <FlatList
-                        style = {styles.shopListView}
-                        keyExtractor = { item => item.id}
-                        data = {companyListData}
-                        extraData = {this.state}
-                        renderItem = {(item) => this.renderCompanyItem(item)}
-                        onEndReachedThreshold = {0.2}
-                        onEndReached = {this.dropLoadMore}
-                        onRefresh = {this.freshNetData}
-                        refreshing = {refreshing}
+                {ready && listData ?
+                    <FlatListView
+                        ref={this._captureRef}
+                        data={listData}
+                        style={styles.shopListView}
+                        renderItem={this.renderListItem}
+                        keyExtractor={this._keyExtractor}
+                        onEndReached={this.dropLoadMore}
+                        onRefresh={this.freshNetData}
                         ItemSeparatorComponent={this.renderSeparator}
-                        ListHeaderComponent = {() => this.renderHeaderView()}
-                        ListFooterComponent = {this.renderFooterView}
+                        ListHeaderComponent = {this.renderHeaderView}
                         ListEmptyComponent = {this.renderEmptyView}
                     />
                     : <ActivityIndicatorItem />
@@ -634,6 +542,7 @@ export default class Home extends Component {
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -757,7 +666,7 @@ const styles = StyleSheet.create({
         width: GlobalStyles.width,
     },
     hotServicesView: {
-        marginTop: 10,
+        marginTop: -10,
         backgroundColor: '#fff',
     },
     hotServicesTitleView: {

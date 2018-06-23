@@ -61,7 +61,7 @@ export default class OrderDetail extends Component {
             ready: false,
             orderid: params.orderid,
             orderInfo: {},
-            paymentType: '1',
+            paymentType: 1,
             modalVisiable: false,
             images: [],
             imageIndex: 1,
@@ -142,7 +142,7 @@ export default class OrderDetail extends Component {
         let { orderid } = this.state;
         let url = NetApi.orderDetail + orderid;
         // return this.netRequest.fetchGet(url)
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then( result => {
                 // return result;
                 if (result && result.code == 1) {
@@ -202,7 +202,7 @@ export default class OrderDetail extends Component {
     submitPayment = (orderid) => {
         this.showPayModal();
         let { paymentType } = this.state;
-        if (paymentType == 1) {
+        if (paymentType === 1) {
             wechat.isWXAppInstalled()
                 .then((isInstalled) => {
                     if(isInstalled) {
@@ -222,7 +222,7 @@ export default class OrderDetail extends Component {
                 .catch((error) => {
                     toastShort(error.message);
                 });
-        } else if (paymentType == 2) {
+        } else if (paymentType === 2) {
             // toastShort('没有安装支付宝软件，请您安装支付宝之后再试');
             let url = NetApi.orderAliPay + orderid;
             this.netRequest.fetchGet(url)
@@ -440,7 +440,7 @@ export default class OrderDetail extends Component {
                             <Image source={GlobalIcons.icon_wechat} style={styles.itemTitleIcon}/>
                             <Text style={styles.itemTitle}>微信支付</Text>
                         </View>
-                        <Image source={paymentType == 1 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
+                        <Image source={paymentType === 1 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
                     </TouchableOpacity>
                     <View style={[GlobalStyles.horLine, styles.horLine]} />
                     <TouchableOpacity
@@ -451,7 +451,7 @@ export default class OrderDetail extends Component {
                             <Image source={GlobalIcons.icon_alipay} style={styles.itemTitleIcon}/>
                             <Text style={styles.itemTitle}>支付宝支付</Text>
                         </View>
-                        <Image source={paymentType == 2 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
+                        <Image source={paymentType === 2 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
                     </TouchableOpacity>
                     <View style={[GlobalStyles.horLine, styles.horLine]} />
                     {orderInfo.premiums === '0.00' && <TouchableOpacity
@@ -462,7 +462,7 @@ export default class OrderDetail extends Component {
                             <Image source={GlobalIcons.icon_cash_on_delivery} style={styles.itemTitleIcon}/>
                             <Text style={styles.itemTitle}>货到付款</Text>
                         </View>
-                        <Image source={paymentType == 3 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
+                        <Image source={paymentType === 3 ? checkedIcon : checkIcon} style={GlobalStyles.checkedIcon}/>
                     </TouchableOpacity>}
                 </View>
             );
@@ -526,7 +526,7 @@ export default class OrderDetail extends Component {
 
                         <View style={[styles.containerItemView, styles.orderInfoView]}>
                             <View style={styles.orderInfoItemView}>
-                                <Image source={{uri: orderInfo.images[0].url}} style={styles.OrderInfoImage} />
+                                <Image source={orderInfo.logo ? {uri: orderInfo.logo} : GlobalIcons.banner1} style={styles.OrderInfoImage} />
                                 <View style={styles.orderCompanyInfo}>
                                     <View style={[styles.orderCompanyInfoItem, styles.orderStatusView]}>
                                         <Text style={styles.orderCompanyInfoTitle}>订单状态：</Text>
@@ -628,7 +628,7 @@ export default class OrderDetail extends Component {
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
                             <View style={styles.orderMoneyInfoItem}>
                                 <Text style={styles.orderMoneyInfoTitle}>实付金额：</Text>
-                                <Text style={styles.orderMoneyInfoConNum}>¥ {paymentType == 3 ? 0 : parseFloat(orderInfo.relprice).toFixed(2)}</Text>
+                                <Text style={styles.orderMoneyInfoConNum}>¥ {paymentType === 3 ? 0 : parseFloat(orderInfo.relprice).toFixed(2)}</Text>
                             </View>
                         </View>
                     </ScrollView>

@@ -15,6 +15,7 @@ import {
     PixelRatio,
     ScrollView,
     StyleSheet,
+    RefreshControl,
     TouchableOpacity,
     DeviceEventEmitter,
 } from 'react-native'
@@ -68,6 +69,7 @@ export default class BusinessDetail extends Component {
             },
             canBack: false,
             modalVisible: false,
+            isRefreshing: false,
         };
         this.netRequest = new NetRequest();
         this.lastActionTime = 0;
@@ -148,10 +150,11 @@ export default class BusinessDetail extends Component {
         let { user, item } = this.state;
         user = user != '' ? user : global.user.userData;
         let url = NetApi.businessDetail + item.id + '/uid/' + user.uid;
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then( result => {
                 this.updateState({
                     loading: true,
+                    isRefreshing: false,
                     businessInfo: result.data,
                     service: result.data.service,
                     isCollect: result.data.iscollect,
@@ -255,7 +258,7 @@ export default class BusinessDetail extends Component {
     makeCall = () => {
         let { businessInfo } = this.state;
         let url = 'tel: ' + businessInfo.mobile;
-        this.modalVisible();
+        // this.modalVisible();
         // console.log(businessInfo.mobile);
         Linking.canOpenURL(url)
             .then(supported => {
@@ -318,11 +321,13 @@ export default class BusinessDetail extends Component {
     renderServiceAddressItem = ({item}) => {
         return (
             <View style={{height: 40, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 14, color: '#666',}}>{item.name}</Text>
+                <Text style={{flex: 3, fontSize: 14, color: '#666',}} numberOfLines={2}><Text style={{fontSize: 15, color: '#333'}}>(服务点)</Text> {item.name}</Text>
                 <TouchableOpacity
+                    style={{flex: 1.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',}}
                     onPress={() => this.pushToNavigation(item)}
                 >
-                    <Text style={{fontSize: 13, color: '#888'}}>查看地图</Text>
+                    <Text style={{fontSize: 13, color: '#888'}}>{item.distance}</Text>
+                    <Image source={GlobalIcons.icon_place} style={[{width: 15, height: 15, resizeMode: 'contain', marginRight: 0, marginLeft: 6,}]} />
                 </TouchableOpacity>
             </View>
         )
@@ -357,7 +362,7 @@ export default class BusinessDetail extends Component {
                 <View style={[GlobalStyles.horLine, styles.listFooterHorLine]} />
                 <TouchableOpacity
                     style = {styles.listFooterBtnView}
-                    onPress = {() => this.onPushToNextPage('门店服务点', 'BusinessServiceAddList', {item: this.state.item})}
+                    onPress = {() => this.onPushToNextPage('门店服务点', 'BusinessServiceAddList', {item: this.state.businessInfo})}
                 >
                     <Text style={styles.listFooterBtnName}>点击查看全部</Text>
                 </TouchableOpacity>
@@ -465,7 +470,7 @@ export default class BusinessDetail extends Component {
     }
 
     render(){
-        const { loading, ready, refreshing, businessInfo, isCollect, service, addressInfo, modalVisible, MODALVIEW_CONFIG } = this.state;
+        const { loading, ready, refreshing, isRefreshing, businessInfo, isCollect, service, addressInfo, modalVisible, MODALVIEW_CONFIG } = this.state;
         let navigationBarStyle = {
             zIndex: 2,
             backgroundColor: 'transparent',
@@ -484,6 +489,16 @@ export default class BusinessDetail extends Component {
                         style = {styles.scrollContainer}
                         // onScroll = {(event) => this.onScroll(event)}
                         scrollEventThrottle = {10}
+                        refreshControl={
+                            <RefreshControl
+                                title='Loading...'
+                                refreshing={isRefreshing}
+                                onRefresh={this.loadNetData}
+                                tintColor="#0398ff"
+                                colors={['#0398ff']}
+                                progressBackgroundColor="#fff"
+                            />
+                        }
                     >
                         <View style={GlobalStyles.bannerViewWrap}>
                             <Image source={{uri: businessInfo.img}} style={GlobalStyles.bannerImg} />
@@ -531,7 +546,7 @@ export default class BusinessDetail extends Component {
                         {businessInfo.service_points.length > 0 && <View style={{marginBottom: 10,}}>
                             <View style={styles.searchView}>
                                 <View style={styles.searchTitleView}>
-                                    <Text style={styles.searchTitle}>所有服务点</Text>
+                                    <Text style={[styles.shopName]}>请选择服务点</Text>
                                 </View>
                                 <View style={[GlobalStyles.horLine, styles.horLine]} />
                             </View>
@@ -557,7 +572,7 @@ export default class BusinessDetail extends Component {
 
                         <View style={[styles.searchView,]}>
                             <View style={styles.searchTitleView}>
-                                <Text style={styles.searchTitle}>所有线路</Text>
+                                <Text style={styles.shopName}>所有线路</Text>
                                 <Text style={styles.searchTitleConTips}>优惠信息：{businessInfo.disinfo}</Text>
                             </View>
                             <View style={[GlobalStyles.horLine, styles.horLine]} />

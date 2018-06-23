@@ -54,7 +54,7 @@ export default class PopModel extends Component {
 
     componentDidMount(){
         let url = NetApi.phone;
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then(result => {
                 if (result && result.code === 1) {
                     this.setState({
@@ -133,13 +133,14 @@ export default class PopModel extends Component {
                                     onPress={() => this.modalVisible()}>
                                     <Text style={styles.buttonText}>{cancelBtnName}</Text>
                                 </TouchableHighlight>
-                                <View style={styles.verticalLine}/>
+                                {1 > 2 && 
                                 <TouchableHighlight
                                     underlayColor='transparent'
                                     style={styles.buttonStyle}
                                     onPress={() => this.makeCall()}>
+                                    <View style={styles.verticalLine}/>
                                     <Text style={styles.buttonText}>{confirmBtnName}</Text>
-                                </TouchableHighlight>
+                                </TouchableHighlight>}
                             </View>
                         </View>
                     </TouchableHighlight>

@@ -1,5 +1,5 @@
 /**
- * 速芽物流用户端 - BANNER
+ * 速芽物流用户端 - BusinessItem
  * https://menger.me
  * @大梦
  */
@@ -23,7 +23,7 @@ import GlobalIcons from '../../constant/GlobalIcon'
 import ShopRankView from './shopRankView'
 import ShopTagsView from './shopTagsView'
 
-export default class Banner extends Component {
+export default class BusinessItem extends Component {
 
     constructor(props){
         super(props);
@@ -191,7 +191,7 @@ export default class Banner extends Component {
     render(){
         const { item, index, tagsPosition } = this.state;
         const { onPushToBusiness, onSetModal } = this.props;
-        // console.log(tagsPosition);
+        // console.log(item);
         return (
             <TouchableOpacity
                 style = {styles.container}
@@ -247,6 +247,7 @@ export default class Banner extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        // height: 160,
         paddingVertical: 10,
         alignItems: 'center',
         flexDirection: 'row',
@@ -277,11 +278,14 @@ const styles = StyleSheet.create({
     shopInfoView: {
         // width: GlobalStyles.width - 200,
         flex: 1,
+        // marginTop: 5,
+        // overflow: 'hidden',
+        // height: 140,
         marginLeft: 10,
     },
     shopInfoItem: {
         flex: 1,
-        marginVertical: 5,
+        marginVertical: 2,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -375,17 +379,17 @@ const styles = StyleSheet.create({
         color: GlobalStyles.themeColor
     },
     featuresView: {
-        flexWrap: 'wrap',
+        // flexWrap: 'wrap',
         justifyContent: 'flex-start',
     },
     featuresItem: {
         marginVertical: 3,
-        marginRight: 6,
+        marginRight: 3,
         borderWidth: 1 / PixelRatio.get(),
-        borderRadius: 3,
+        borderRadius: 2,
         borderColor: GlobalStyles.themeColor,
-        paddingVertical: 3,
-        paddingHorizontal: 6,
+        paddingVertical: 1,
+        paddingHorizontal: 2,
     },
     featuresItemName: {
         fontSize: 12,

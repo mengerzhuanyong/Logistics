@@ -27,6 +27,12 @@ export default class EmptyComponent extends Component {
         emptyTips: '暂未找到相关商品！',
     }
 
+    // componentWillReceiveProps(nextProps){
+    //     this.setState({
+    //         emptyTips: nextProps.emptyTips
+    //     })
+    // }
+
     render(){
         return (
             <View style={styles.container}>

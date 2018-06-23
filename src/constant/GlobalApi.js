@@ -16,7 +16,7 @@ module.exports = {
     // base: 'http://suya.com.192.168.2.174.xip.io/index/',
     // base: 'http://192.168.2.120/',
 
-    index: 'user/index/index/page/',                                                                    // 首页
+    index: 'user/index/index',                                                                          // 首页
     navigations: 'user/navigations/index',                                                              // 首页
     postLongitude: 'user/index/navigation',                                                             // 首页
     getBanner: 'user/index/banner',                                                                     // 首页

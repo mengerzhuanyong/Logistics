@@ -104,6 +104,7 @@ export default class hotNews extends Component {
                 <ScrollView>
                     <Carousel
                         horizontal={false}
+                        interval={4000}
                         style={styles.bannerContainer}
                     >
                         {this.renderSlider(hotNews)}

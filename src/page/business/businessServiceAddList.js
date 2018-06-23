@@ -22,6 +22,7 @@ import GlobalStyles from '../../constant/GlobalStyle'
 import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
+import UtilMap from '../../util/utilsMap'
 import { toastShort, consoleLog } from '../../util/utilsToast'
 
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
@@ -117,10 +118,11 @@ export default class BusinessDetail extends Component {
         }
     }
 
-    loadNetData = (page) => {
+    loadNetData = () => {
         let { item, start, end } = this.state;
+        // console.log(item);
         let url = NetApi.businessServiceAddress + '/id/' + item.id;
-        return this.netRequest.fetchPost(url, true)
+        this.netRequest.fetchGet(url)
             .then( result => {
                 if (result && result.code === 1) {
                     this.updateState({
@@ -157,12 +159,14 @@ export default class BusinessDetail extends Component {
     renderCompanyItem = ({item}) => {
         // console.log(item);
         return (
-            <View style={styles.addressItemView}>
-                <Text style={{fontSize: 14, color: '#666',}}>{item.name}</Text>
+            <View style={{height: 40, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text style={{flex: 3, fontSize: 14, color: '#666',}} numberOfLines={2}><Text style={{fontSize: 15, color: '#333'}}>(服务点)</Text> {item.name}</Text>
                 <TouchableOpacity
+                    style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',}}
                     onPress={() => this.pushToNavigation(item)}
                 >
-                    <Text style={{fontSize: 13, color: '#888'}}>查看地图</Text>
+                    <Text style={{fontSize: 13, color: '#888'}}>{item.distance}</Text>
+                    <Image source={GlobalIcons.icon_place} style={[styles.shopPlaceIcon]} />
                 </TouchableOpacity>
             </View>
         )
@@ -223,5 +227,11 @@ const styles = StyleSheet.create({
     },
     horLine: {
         backgroundColor: '#ddd',
+    },
+    shopPlaceIcon: {
+        width: 15,
+        height: 15,
+        marginLeft: 6,
+        resizeMode: 'contain',
     },
 });

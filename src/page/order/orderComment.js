@@ -32,11 +32,11 @@ export default class OrderComment extends Component {
         let { params } = this.props.navigation.state;
         // console.log(params);
         this.state =  {
-            rank: 4,
+            rank: 5,
             user: global.user ? global.user.userData : '',
             commentText: '',
-            item: params.item ? params.item : '',
-            orderid: params.orderid ? params.orderid : '',
+            item: params && params.item ? params.item : '',
+            orderid: params && params.orderid ? params.orderid : '',
             canBack: false,
         }
         this.netRequest = new NetRequest();
@@ -73,6 +73,7 @@ export default class OrderComment extends Component {
     };
 
     loadNetData = () => {
+        console.log(this.state.item);
         if (global.user.loginState) {
             this.updateState({
                 user: global.user.userData,
@@ -126,7 +127,7 @@ export default class OrderComment extends Component {
                 />
                 <ScrollView style={styles.container}>
                     <View style={[styles.commentItemView, styles.commentOrderInfoView]}>
-                        <Image source={GlobalIcons.banner1} style={styles.commentOrderImage} />
+                        <Image source={item.logo ? {uri: item.logo} : GlobalIcons.banner1} style={styles.commentOrderImage} />
                         <View style={styles.commentCompanyView}>
                             <View style={styles.commentCompanyInfoItem}>
                                 <Text style={styles.commentCompanyName}>{item.storeName}</Text>
@@ -259,20 +260,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#f60',
     },
-    commentStarInfoView: {},
+    commentStarInfoView: {
+        justifyContent: 'flex-start',
+    },
     commentStarInfoTitle: {},
     commentStarConView: {
+        marginHorizontal: 10,
         flexDirection: 'row',
         alignItems: 'center',
+        // backgroundColor: '#123',
     },
     commentStarItem: {
-        width: 35,
-        height: 35,
+        width: 20,
+        height: 20,
         marginHorizontal: 5,
     },
     commentStarIcon: {
-        width: 35,
-        height: 35,
+        width: 20,
+        height: 20,
         resizeMode: 'contain'
     },
     commentStarGrade: {

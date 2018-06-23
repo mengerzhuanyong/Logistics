@@ -241,7 +241,7 @@ const App = StackNavigator(
         headerMode: 'screen',
         initialRouteName: 'TabNavScreen',
         // initialRouteName: 'Login',
-        // initialRouteName: 'BusinessList',
+        // initialRouteName: 'OrderComment',
         navigationOptions: ({navigation, screenProps}) => ({
             gesturesEnabled: true,
             header: null,
