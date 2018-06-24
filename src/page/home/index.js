@@ -85,7 +85,7 @@ export default class Home extends Component {
     }
 
     async componentDidMount(){
-        this.jpushRelative();
+        // this.jpushRelative();
         this.getNavigations();
         this.getBannerData();
         this.getLocation();
@@ -104,7 +104,7 @@ export default class Home extends Component {
     componentWillUnmount(){
         let timers = [this.timer1, this.timer2, this.timer4];
         clearAllTimeout(timers);
-        JPushModule.clearAllNotifications();
+        // JPushModule.clearAllNotifications();
     }
 
     onBack = () => {
@@ -185,7 +185,7 @@ export default class Home extends Component {
     setBadge = () => {
         JPushModule.setBadge(0, (badgeNumber) => {
             // console.log(badgeNumber);
-            alert(badgeNumber);
+            // alert(badgeNumber);
         })
     }
 

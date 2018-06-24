@@ -61,7 +61,7 @@ export default class OrderDetail extends Component {
             ready: false,
             orderid: params.orderid,
             orderInfo: {},
-            paymentType: 1,
+            paymentType: 1, // 0 未付款 1 微信 2 支付宝 3 到付
             modalVisiable: false,
             images: [],
             imageIndex: 1,
@@ -202,6 +202,8 @@ export default class OrderDetail extends Component {
     submitPayment = (orderid) => {
         this.showPayModal();
         let { paymentType } = this.state;
+        // console.log(paymentType);
+        // return;
         if (paymentType === 1) {
             wechat.isWXAppInstalled()
                 .then((isInstalled) => {
@@ -233,7 +235,7 @@ export default class OrderDetail extends Component {
                 .catch( error => {
                     // console.log('首页推荐', error);
                 })
-        } else {
+        } else if (paymentType === 3) {
             let url = NetApi.orderOnDelivery + orderid;
             const {navigate, state} = this.props.navigation;
             this.netRequest.fetchGet(url)
@@ -250,6 +252,9 @@ export default class OrderDetail extends Component {
                 .catch( error => {
                     // console.log('首页推荐', error);
                 })
+        } else {
+            toastShort('请选择支付方式');
+            return;
         }
     }
 

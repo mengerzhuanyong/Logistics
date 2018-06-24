@@ -98,13 +98,13 @@ export default class Index extends Component {
     setBadge() {
         JPushModule.setBadge(0, (badgeNumber) => {
             // console.log(badgeNumber);
-            alert(badgeNumber);
+            // alert(badgeNumber);
         })
     }
 
     jumpSecondActivity = () => {
         // console.log('jump to SecondActivity');
-        this.props.navigation.navigate('Mine');
+        // this.props.navigation.navigate('Mine');
     }
 
     jpushRelative = () => {
@@ -134,21 +134,22 @@ export default class Index extends Component {
         JPushModule.addReceiveNotificationListener(map => {
             // console.log('alertContent: ' + map.alertContent)
             // console.log('extras: ' + map.extras)
-            // var extra = JSON.parse(map.extras);
+            var extra = JSON.parse(map.extras);
             // console.log(extra.key + ": " + extra.value);
         })
 
-        // JPushModule.addReceiveOpenNotificationListener(map => {
+        JPushModule.addReceiveOpenNotificationListener(map => {
             // console.log('Opening notification!')
             // console.log('map.extra: ' + map.extras)
-        //     this.jumpSecondActivity();
-        //     this.setBadge();
-        //     JPushModule.jumpToPushActivity("SecondActivity");
-        // })
+            this.jumpSecondActivity();
+            this.setBadge();
+            // JPushModule.jumpToPushActivity("SecondActivity");
+        })
 
         JPushModule.addGetRegistrationIdListener(registrationId => {
             // console.log('Device register succeed, registrationId ' + registrationId)
         })
+        // console.log('推送');
     }
 
     registerKeyBoard = () => {
