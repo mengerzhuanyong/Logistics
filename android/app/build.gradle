@@ -156,7 +156,6 @@ dependencies {
     compile project(':react-native-baidu-map')
     compile project(':react-native-picker')
     compile project(':react-native-yunpeng-alipay')
-    compile project(':jpush-react-native')
     compile project(':react-native-qq')
     compile project(':react-native-svg')
     compile project(':react-native-yusha-customkeyboard')
