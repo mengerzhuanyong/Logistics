@@ -19,6 +19,8 @@ import NetRequest from './util/utilsRequest'
 import NetApi from './constant/GlobalApi'
 import { toastShort, consoleLog } from './util/utilsToast'
 
+const __IOS__ = Platform.OS === 'ios';
+
 export default class Index extends Component {
     constructor(props) {
         super(props);
@@ -142,7 +144,7 @@ export default class Index extends Component {
             // console.log('Opening notification!')
             // console.log('map.extra: ' + map.extras)
             this.jumpSecondActivity();
-            this.setBadge();
+            __IOS__ && this.setBadge();
             // JPushModule.jumpToPushActivity("SecondActivity");
         })
 

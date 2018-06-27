@@ -685,8 +685,9 @@ const styles = StyleSheet.create({
         backgroundColor: GlobalStyles.bgColor,
     },
     scrollContainer: {
-        marginTop: -70,
+        marginTop: -64,
         // paddingBottom: 64,
+        // backgroundColor: '#123',
     },
     companyType: {
         marginRight: 6,

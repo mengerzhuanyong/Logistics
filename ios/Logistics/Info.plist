@@ -59,7 +59,7 @@
 			<string>alipay</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>2018022602278754</string>
+				<string>alipay2018022602278754</string>
 			</array>
 		</dict>
 	</array>
@@ -112,15 +112,15 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>访问照相机</string>
+	<string>App需通过您的允许才能访问照相机</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>访问地理位置信息</string>
+	<string>请求访问地理位置信息以获取附近门店</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>访问麦克风</string>
+	<string>App需通过您的允许才能访问麦克风</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>保存到相册</string>
+	<string>App需通过您的允许才能保存到相册</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>访问相册</string>
+	<string>App需通过您的允许才能访问相册</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

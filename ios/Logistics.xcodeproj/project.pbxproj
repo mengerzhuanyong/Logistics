@@ -61,12 +61,11 @@
 		D9C7D0DA204E45C900838054 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9C7D0D9204E45C900838054 /* libc++.tbd */; };
 		D9C7D0DC204E45CF00838054 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9C7D0DB204E45CF00838054 /* libz.tbd */; };
 		D9C7D0DE204E45D900838054 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9C7D0DD204E45D800838054 /* libsqlite3.0.tbd */; };
+		D9F2A96D20E26EAA000585B6 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D9F2A96C20E26EAA000585B6 /* mapapi.bundle */; };
 		D9F462C620729EE4004028FC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9F462C520729EE4004028FC /* CoreLocation.framework */; };
 		D9F462C820729EF2004028FC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9F462C720729EF1004028FC /* QuartzCore.framework */; };
 		D9F462CA20729EF9004028FC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9F462C920729EF9004028FC /* OpenGLES.framework */; };
 		D9F462CC20729F06004028FC /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9F462CB20729F06004028FC /* libstdc++.6.0.9.tbd */; };
-		D9F462CE20729F24004028FC /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D9F462CD20729F23004028FC /* mapapi.bundle */; };
-		D9F462D020729F9A004028FC /* lib in Resources */ = {isa = PBXBuildFile; fileRef = D9F462CF20729F9A004028FC /* lib */; };
 		DC3EFBA0D2FE455CBB838E32 /* libCustomKeyboard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC0A3B6060D34B269823E6F5 /* libCustomKeyboard.a */; };
 		E8445A02014544C395512DB9 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EA050483E0F4211B9F0F893 /* UserNotifications.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		EC8CEF9EBB2B4B0AA4715B52 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F79EC694D974176A66A38A5 /* Security.framework */; };
@@ -528,12 +527,11 @@
 		D9C7D0D9204E45C900838054 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		D9C7D0DB204E45CF00838054 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		D9C7D0DD204E45D800838054 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		D9F2A96C20E26EAA000585B6 /* mapapi.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = mapapi.bundle; path = "../node_modules/react-native-baidu-map/ios/lib/BaiduMapAPI_Map.framework/Resources/mapapi.bundle"; sourceTree = "<group>"; };
 		D9F462C520729EE4004028FC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D9F462C720729EF1004028FC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D9F462C920729EF9004028FC /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		D9F462CB20729F06004028FC /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
-		D9F462CD20729F23004028FC /* mapapi.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = mapapi.bundle; path = "../node_modules/react-native-baidu-map/ios/lib/BaiduMapAPI_Map.framework/Resources/mapapi.bundle"; sourceTree = "<group>"; };
-		D9F462CF20729F9A004028FC /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = "../node_modules/react-native-baidu-map/ios/lib"; sourceTree = "<group>"; };
 		DDEFB65A8A234C75850A50A4 /* libjschelpers.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libjschelpers.a; sourceTree = "<group>"; };
 		DFF4D6331A2B435FB77C533D /* libRCTBaiduMap.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTBaiduMap.a; sourceTree = "<group>"; };
 		E6E359C3E8544295AA5CA679 /* CoreFoundation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -549,6 +547,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9BA9FA820729FBA0025DE55 /* BaiduMapAPI_Cloud.framework in Frameworks */,
+				D9BA9FA720729FBA0025DE55 /* BaiduMapAPI_Location.framework in Frameworks */,
+				D9BA9FA920729FBA0025DE55 /* BaiduMapAPI_Map.framework in Frameworks */,
+				D9BA9FAB20729FBA0025DE55 /* BaiduMapAPI_Radar.framework in Frameworks */,
+				D9BA9FA620729FBA0025DE55 /* BaiduMapAPI_Search.framework in Frameworks */,
+				D9BA9FA520729FBA0025DE55 /* BaiduMapAPI_Utils.framework in Frameworks */,
+				D9BA9FAA20729FBA0025DE55 /* BaiduMapAPI_Base.framework in Frameworks */,
 				D9F462CC20729F06004028FC /* libstdc++.6.0.9.tbd in Frameworks */,
 				D9F462CA20729EF9004028FC /* OpenGLES.framework in Frameworks */,
 				D9F462C820729EF2004028FC /* QuartzCore.framework in Frameworks */,
@@ -580,13 +585,6 @@
 				225CD6C0077D46DE9A0D8BA2 /* libyoga.a in Frameworks */,
 				64AD7B0C0931477D851A4815 /* libcxxreact.a in Frameworks */,
 				C961AD30FA634883ADF8AC1D /* libjschelpers.a in Frameworks */,
-				D9BA9FA520729FBA0025DE55 /* BaiduMapAPI_Utils.framework in Frameworks */,
-				D9BA9FA620729FBA0025DE55 /* BaiduMapAPI_Search.framework in Frameworks */,
-				D9BA9FA720729FBA0025DE55 /* BaiduMapAPI_Location.framework in Frameworks */,
-				D9BA9FA820729FBA0025DE55 /* BaiduMapAPI_Cloud.framework in Frameworks */,
-				D9BA9FA920729FBA0025DE55 /* BaiduMapAPI_Map.framework in Frameworks */,
-				D9BA9FAA20729FBA0025DE55 /* BaiduMapAPI_Base.framework in Frameworks */,
-				D9BA9FAB20729FBA0025DE55 /* BaiduMapAPI_Radar.framework in Frameworks */,
 				2DB8CA9F93F447048CEB5620 /* libthird-party.a in Frameworks */,
 				D9C7D0D4204E45AE00838054 /* libRCTWeChat.a in Frameworks */,
 				F19D8CA4F7B54D648EE1489B /* libdouble-conversion.a in Frameworks */,
@@ -828,9 +826,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				D9F2A96C20E26EAA000585B6 /* mapapi.bundle */,
 				D9738B1B2084538200BD4B5C /* TZImagePickerController.bundle */,
-				D9F462CF20729F9A004028FC /* lib */,
-				D9F462CD20729F23004028FC /* mapapi.bundle */,
 				13B07FAE1A68108700A75B9A /* Logistics */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* LogisticsTests */,
@@ -1539,10 +1536,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9738B1C2084538300BD4B5C /* TZImagePickerController.bundle in Resources */,
-				D9F462D020729F9A004028FC /* lib in Resources */,
 				D92E4E102063EE1300E946BC /* main.jsbundle in Resources */,
-				D9F462CE20729F24004028FC /* mapapi.bundle in Resources */,
 				D92E4E112063EE1300E946BC /* assets in Resources */,
+				D9F2A96D20E26EAA000585B6 /* mapapi.bundle in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
@@ -1622,12 +1618,11 @@
 					"$(SRCROOT)/../node_modules/react-native-yunpeng-alipay/ios/AlipayModule/**",
 					"$(SRCROOT)/../node_modules/react-native-picker/ios/RCTBEEPickerManager",
 					"$(SRCROOT)/../node_modules/react-native-baidu-map/ios/RCTBaiduMap/**",
-					"$(SRCROOT)/../node_modules/react-native-baidu-map/ios/lib",
 					"$(SRCROOT)/../node_modules/react-native-syan-image-picker/ios/**",
 				);
 				INFOPLIST_FILE = Logistics/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-baidu-map/ios/lib";
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = (
 					"-isystem",
 					"\"$(SRCROOT)/../node_modules/react-native-qq/ios/RCTQQAPI\"",
@@ -1676,12 +1671,11 @@
 					"$(SRCROOT)/../node_modules/react-native-yunpeng-alipay/ios/AlipayModule/**",
 					"$(SRCROOT)/../node_modules/react-native-picker/ios/RCTBEEPickerManager",
 					"$(SRCROOT)/../node_modules/react-native-baidu-map/ios/RCTBaiduMap/**",
-					"$(SRCROOT)/../node_modules/react-native-baidu-map/ios/lib",
 					"$(SRCROOT)/../node_modules/react-native-syan-image-picker/ios/**",
 				);
 				INFOPLIST_FILE = Logistics/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-baidu-map/ios/lib";
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = (
 					"-isystem",
 					"\"$(SRCROOT)/../node_modules/react-native-qq/ios/RCTQQAPI\"",

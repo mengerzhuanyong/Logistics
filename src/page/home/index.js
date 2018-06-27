@@ -42,7 +42,7 @@ import NavigatorItem from '../../component/home/navigatorItem'
 import BusinessItem from '../../component/common/businessItem'
 import NavigationsData from '../../asset/json/systemNavigations.json'
 
-const isIos = Platform.OS === 'ios';
+const __IOS__ = Platform.OS === 'ios';
 
 export default class Home extends Component {
 
@@ -89,16 +89,15 @@ export default class Home extends Component {
         this.getNavigations();
         this.getBannerData();
         this.getLocation();
-        // let result = await this.loadNetData(0);
-        // if (result && result.code === 1) {
-        //     this.timer4 = setTimeout(() => {
-        //         this.setState({
-        //             ready: true,
-        //             listData: result.data.store,
-        //         })
-        //     }, 600);
-            
-        // }
+        this.timer3 = setTimeout(() => {
+            this.freshNetData();
+        }, 1000);
+        if (global.user && global.user.loginState) {
+            this.setState({
+                user: global.user.userData
+            })
+            this.setAlias(global.user.userData.uid);
+        }
     }
 
     componentWillUnmount(){
@@ -118,9 +117,30 @@ export default class Home extends Component {
             // console.log('Opening notification!')
             // console.log('map.extra: ' + map.extras)
             this.jumpSecondActivity();
-            isIos && this.setBadge();
+            __IOS__ && this.setBadge();
             // JPushModule.jumpToPushActivity("SecondActivity");
         })
+    }
+
+    setAlias = (alias) => {
+        alias = 'user_id_' + alias;
+        console.log(alias);
+        getAlias = () => {
+            JPushModule.getAlias(map => {
+                if (map.errorCode === 0) {
+                    console.log('Get alias succeed, alias: ' + map.alias)
+                } else {
+                    // console.log('Get alias failed, errorCode: ' + map.errorCode)
+                    JPushModule.setAlias(alias, map => {
+                        if (map.errorCode === 0) {
+                            console.log('set alias succeed', map)
+                        } else {
+                            console.log('set alias failed, errorCode: ', map.errorCode)
+                        }
+                    })
+                }
+            })
+        }
     }
 
     onPushToNextPage = (pageTitle, page, params = {}) => {
@@ -165,7 +185,8 @@ export default class Home extends Component {
 
     getLocation = async () => {
         let data = await Geolocation.getCurrentPosition();
-        // console.log(data);
+        console.log(data);
+        this.freshNetData();
         if (!data) {
             toastShort('定位失败，请稍后重试');
             return;
@@ -286,8 +307,10 @@ export default class Home extends Component {
             return;
         }
         this.setState({
+            ready: true,
             emptyTips: result.msg,
             listData: result.data.store,
+            address: result.data.address,
         });
     };
 
