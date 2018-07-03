@@ -23,9 +23,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
-     entity.types = UNAuthorizationOptionAlert|UNAuthorizationOptionBadge|UNAuthorizationOptionSound;
-     [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
+  JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
+  entity.types = JPAuthorizationOptionAlert|JPAuthorizationOptionBadge|JPAuthorizationOptionSound;
+//  if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+//    // 可以添加自定义categories
+//    // NSSet<UNNotificationCategory *> *categories for iOS10 or later
+//    // NSSet<UIUserNotificationCategory *> *categories for iOS8 and iOS9
+//  }
+  [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
 [JPUSHService setupWithOption:launchOptions appKey:@"e12b969fcb3efc6eedc8eab4"
                     channel:nil apsForProduction:true];
   NSURL *jsCodeLocation;
@@ -71,7 +76,7 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
  NSDictionary * userInfo = notification.request.content.userInfo;
   [JPUSHService handleRemoteNotification:userInfo];
  [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:userInfo];
-    
+  
  completionHandler(UNNotificationPresentationOptionAlert);
 }
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
@@ -81,8 +86,8 @@ NSDictionary * userInfo = response.notification.request.content.userInfo;
 
 completionHandler();
 }
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
-[[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:notification.userInfo];
-}
+//- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+////[[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:notification.userInfo];
+//}
 @end
 

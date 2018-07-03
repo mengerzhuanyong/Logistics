@@ -52,9 +52,9 @@ export default class Index extends Component {
     componentWillUnmount(){
         this.timer && clearTimeout(this.timer);
         // JPushModule.removeReceiveCustomMsgListener(receiveCustomMsgEvent);
-        // JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
-        // JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
-        // JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
+        JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
+        JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
+        JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
         // console.log("Will clear all notifications");
         JPushModule.clearAllNotifications();
     }
@@ -99,7 +99,7 @@ export default class Index extends Component {
     
     setBadge() {
         JPushModule.setBadge(0, (badgeNumber) => {
-            // console.log(badgeNumber);
+            console.log(badgeNumber);
             // alert(badgeNumber);
         })
     }
@@ -125,26 +125,26 @@ export default class Index extends Component {
                 if (resultCode === 0) {}
             })
         }
-
+        __IOS__ && this.setBadge();
         JPushModule.addReceiveCustomMsgListener(map => {
-            this.setState({
-                pushMsg: map.message
-            })
+            // this.setState({
+            //     pushMsg: map.message
+            // })
             // console.log('extras: ' + map.extras)
         })
 
         JPushModule.addReceiveNotificationListener(map => {
             // console.log('alertContent: ' + map.alertContent)
             // console.log('extras: ' + map.extras)
-            var extra = JSON.parse(map.extras);
+            // var extra = JSON.parse(map.extras);
             // console.log(extra.key + ": " + extra.value);
         })
 
         JPushModule.addReceiveOpenNotificationListener(map => {
+            __IOS__ && this.setBadge();
             // console.log('Opening notification!')
             // console.log('map.extra: ' + map.extras)
-            this.jumpSecondActivity();
-            __IOS__ && this.setBadge();
+            // this.jumpSecondActivity();
             // JPushModule.jumpToPushActivity("SecondActivity");
         })
 

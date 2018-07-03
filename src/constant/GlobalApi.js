@@ -23,6 +23,7 @@ module.exports = {
 
     phone: 'user/index/mobile',
 
+    onlineStatus: 'user/login/index',                                                                        // 登录
     loginIn: 'user/login/login',                                                                        // 登录
     wechatLogin: 'user/loginApi/wxlogin',
     wechatTokenLogin: 'user/loginApi/wexinToken',

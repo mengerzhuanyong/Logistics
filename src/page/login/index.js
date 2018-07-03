@@ -35,9 +35,10 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state =  {
-            mobile: '15066886007', // '15066886007',
-            password: '123123', // '123123',
+            mobile: '', // '15066886007',
+            password: '', // '123123',
             canBack: false,
+            onlineStatus: 0,
         }
         this.netRequest = new NetRequest();
     }
@@ -58,6 +59,7 @@ export default class Login extends Component {
         this.timer3 && clearTimeout(this.timer3);
         this.timer4 && clearTimeout(this.timer4);
         // this.timerInterval && clearTimeout(this.timerInterval);
+        // this.getOnlineStatus();
     }
 
     onBack = () => {
@@ -71,7 +73,17 @@ export default class Login extends Component {
         this.setState(state);
     };
 
-    loadNetData = () => {}
+    loadNetData = () => {
+        let url = NetApi.onlineStatus;
+        this.netRequest.fetchGet(url)
+            .then(result => {
+                if (result && result.code === 1) {
+                    this.updateState({
+                        onlineStatus: result.data.is_online
+                    })
+                }
+            })
+    }
 
     setAlias = (alias) => {
         alias = 'user_id_' + alias;
@@ -392,6 +404,7 @@ export default class Login extends Component {
     }
 
     render(){
+        let {onlineStatus} = this.state;
         return (
             <View style={styles.container}>
                 <NavigationBar
@@ -466,7 +479,7 @@ export default class Login extends Component {
                                 <Text style={styles.titleName}>其他账号登录</Text>
                                 <View style={[GlobalStyles.horLine, styles.horLine]} />
                             </View>}
-                            <View style={styles.otherLoginCon}>
+                            {onlineStatus === 1 && <View style={styles.otherLoginCon}>
                                 <TouchableOpacity
                                     style = {[GlobalStyles.btnView, styles.otherLoginBtn]}
                                     onPress = {()=>this.getWechatCode()}
@@ -483,7 +496,7 @@ export default class Login extends Component {
                                     <Image source={GlobalIcons.icon_qq} style={[styles.otherLoginIcon, {width: 20, height: 20}]} />
                                     <Text style={GlobalStyles.btnItem}>QQ登录</Text>
                                 </TouchableOpacity>
-                            </View>
+                            </View>}
                         </View>
                     </CustomKeyboard.AwareCusKeyBoardScrollView>
                 </KeyboardAwareScrollView>

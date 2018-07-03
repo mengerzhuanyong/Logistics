@@ -113,29 +113,29 @@ export default class Home extends Component {
     };
 
     jpushRelative = () => {
-        JPushModule.addReceiveOpenNotificationListener(map => {
-            // console.log('Opening notification!')
-            // console.log('map.extra: ' + map.extras)
-            this.jumpSecondActivity();
-            __IOS__ && this.setBadge();
-            // JPushModule.jumpToPushActivity("SecondActivity");
-        })
+        // JPushModule.addReceiveOpenNotificationListener(map => {
+        //     // console.log('Opening notification!')
+        //     // console.log('map.extra: ' + map.extras)
+        //     this.jumpSecondActivity();
+        //     __IOS__ && this.setBadge();
+        //     // JPushModule.jumpToPushActivity("SecondActivity");
+        // })
     }
 
     setAlias = (alias) => {
         alias = 'user_id_' + alias;
-        console.log(alias);
+        // console.log(alias);
         getAlias = () => {
             JPushModule.getAlias(map => {
                 if (map.errorCode === 0) {
-                    console.log('Get alias succeed, alias: ' + map.alias)
+                    // console.log('Get alias succeed, alias: ' + map.alias)
                 } else {
                     // console.log('Get alias failed, errorCode: ' + map.errorCode)
                     JPushModule.setAlias(alias, map => {
                         if (map.errorCode === 0) {
-                            console.log('set alias succeed', map)
+                            // console.log('set alias succeed', map)
                         } else {
-                            console.log('set alias failed, errorCode: ', map.errorCode)
+                            // console.log('set alias failed, errorCode: ', map.errorCode)
                         }
                     })
                 }
@@ -185,7 +185,7 @@ export default class Home extends Component {
 
     getLocation = async () => {
         let data = await Geolocation.getCurrentPosition();
-        console.log(data);
+        // console.log(data);
         this.freshNetData();
         if (!data) {
             toastShort('定位失败，请稍后重试');
