@@ -47,10 +47,10 @@ export default class BusinessDetail extends Component {
         this.state =  {
             uid: global.user.userData.uid,
             service: [],
-            start: params.start != '' ? params.start : '',
-            end: params.end != '' ? params.end : '',
-            item: params.item != '' ? params.item : '',
-            disinfo: params.disinfo != '' ? params.disinfo : '',
+            start: params.start !== '' ? params.start : '',
+            end: params.end !== '' ? params.end : '',
+            item: params.item !== '' ? params.item : '',
+            disinfo: params.disinfo !== '' ? params.disinfo : '',
             ready: false,
             loading: false,
             loadMore: false,
@@ -223,7 +223,7 @@ export default class BusinessDetail extends Component {
             <View style={styles.searchView}>
                 <View style={styles.searchTitleView}>
                     <Text style={styles.searchTitle}>所有线路搜索</Text>
-                    <Text style={styles.searchTitleConTips}>优惠信息：{disinfo}</Text>
+                    {disinfo !== '' && <Text style={styles.searchTitleConTips}>优惠信息：{disinfo}</Text>}
                 </View>
                 <View style={[GlobalStyles.horLine, styles.horLine]} />
                 <View style={styles.searchContentView}>

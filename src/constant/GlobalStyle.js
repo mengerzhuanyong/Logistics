@@ -9,7 +9,7 @@ import {
     Dimensions,
 } from 'react-native'
 
-const isIOS = Platform.OS === 'ios';
+const __IOS__ = Platform.OS === 'ios';
 const {width, height} = Dimensions.get('window');
 const themeColor = '#5a89f5';
 
@@ -18,7 +18,7 @@ module.exports = {
     height: height,
     statusBar_Height_Ios: 44,
     statusBar_Height_Android: 50,
-
+    __IOS__: __IOS__,
     rightButton: {
         height: 44,
         minWidth: 35,

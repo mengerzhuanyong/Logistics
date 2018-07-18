@@ -623,7 +623,7 @@ export default class BusinessDetail extends Component {
                             <View style={[styles.searchView,]}>
                                 <View style={styles.searchTitleView}>
                                     <Text style={styles.shopName}>所有线路</Text>
-                                    {businessInfo.disinfo || businessInfo.disinfo !== '0' ? <Text style={styles.searchTitleConTips}>优惠信息：{businessInfo.disinfo}</Text> : null}
+                                    {businessInfo.disinfo !== '' ? <Text style={styles.searchTitleConTips}>优惠信息：{businessInfo.disinfo}</Text> : null}
                                 </View>
                                 <View style={[GlobalStyles.horLine, styles.horLine]} />
                                 {1 > 2 && <View style={styles.searchContentView}>
@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
         // backgroundColor: '#123',
     },
     scrollContainer: {
-        marginTop: -64,
+        marginTop: GlobalStyles.__IOS__ ? -64 : -70,
         // paddingBottom: 64,
         // backgroundColor: '#123',
     },
