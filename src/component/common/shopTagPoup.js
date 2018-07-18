@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
 
     // modal上子View的样式
     subView: {
-        marginHorizontal: 60,
+        marginHorizontal: GlobalStyles.width * .11,
         backgroundColor: '#fff',
         alignSelf: 'stretch',
         justifyContent: 'center',

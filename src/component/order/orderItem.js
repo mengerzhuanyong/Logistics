@@ -256,7 +256,7 @@ export default class OrderItem extends Component {
             <View style={styles.container}>
                 <View style={styles.orderItemView}>
                     <View style={[styles.orderItemInfo, styles.orderItemTitle]}>
-                        <Text style={styles.orderItemInfoCompany}>申通物流</Text>
+                        <Text style={styles.orderItemInfoCompany}>{item.storeName}</Text>
                         <Text style={styles.orderItemInfoStatus}>{item.statusName}</Text>
                     </View>
                     <View style={[GlobalStyles.horLine, styles.horLine]}>

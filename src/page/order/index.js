@@ -37,7 +37,7 @@ export default class Order extends Component {
         let {params} = this.props.navigation.state;
         this.state =  {
             user: global.user ? global.user.userData : '',
-            navigations: '',
+            navigations: [],
             activeTabIndex: params ? params.activeTabIndex : 0,
             canBack: false,
         }
@@ -130,6 +130,7 @@ export default class Order extends Component {
                     <ScrollableTabView
                         initialPage={activeTabIndex}
                         tabBarInactiveTextColor = "#333"
+                        onChangeTab = {this.getNavigations}
                         tabBarActiveTextColor = {GlobalStyles.themeColor}
                         tabBarUnderlineStyle = {GlobalStyles.tabBarUnderline}
                         renderTabBar = { () => <ScrollableTabBar/>}
@@ -201,7 +202,7 @@ export class OrderDetailTab extends Component {
     loadNetData = (status, page) => {
         // console.log(status, this.state.uid);
         let url = NetApi.orderList + status + '/uid/' + this.state.uid + '/page/' + page;
-        return this.netRequest.fetchGet(url)
+        return this.netRequest.fetchGet(url, true)
             .then(result => {
                 // console.log('订单列表', result);
                 return result;

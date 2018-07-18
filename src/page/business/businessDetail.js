@@ -70,6 +70,8 @@ export default class BusinessDetail extends Component {
             canBack: false,
             modalVisible: false,
             isRefreshing: false,
+            error: false,
+            errorInfo: '',
         };
         this.netRequest = new NetRequest();
         this.lastActionTime = 0;
@@ -111,6 +113,7 @@ export default class BusinessDetail extends Component {
     componentWillUnmount(){
         this.backTimer && clearTimeout(this.backTimer);
         this.timer && clearTimeout(this.timer);
+        this.loadingTimer && clearTimeout(this.loadingTimer);
         this.props.navigation.state.params.reloadData();
     }
 
@@ -138,37 +141,57 @@ export default class BusinessDetail extends Component {
         // consoleLog(global.user);
         if (!global.user.loginState) {
             return;
-        }else{
-            let { userData, loginState } = global.user;
+        } else {
+            let {userData, loginState} = global.user;
             this.updateState({
                 user: userData,
             })
         }
-    }
+    };
 
     loadNetData = () => {
         let { user, item } = this.state;
-        user = user != '' ? user : global.user.userData;
+        user = user !== '' ? user : global.user.userData;
         let url = NetApi.businessDetail + item.id + '/uid/' + user.uid;
-        this.netRequest.fetchGet(url)
-            .then( result => {
-                this.updateState({
-                    loading: true,
-                    isRefreshing: false,
-                    businessInfo: result.data,
-                    service: result.data.service,
-                    isCollect: result.data.iscollect,
-                    addressInfo: result.data.addressinfo,
+        // this.setState({
+        //     loading: false,
+        //     error: false,
+        // });
+        this.loadingTimer = setTimeout(() => {
+            this.netRequest.fetchGet(url, true)
+                .then( result => {
+                    if (result && result.code === 1) {
+                        this.updateState({
+                            loading: true,
+                            error: false,
+                            isRefreshing: false,
+                            businessInfo: result.data,
+                            service: result.data.service,
+                            isCollect: result.data.iscollect,
+                            addressInfo: result.data.addressinfo,
+                        })
+                    } else {
+                        this.updateState({
+                            loading: false,
+                        });
+                        this.timer1 = setTimeout(() => {
+                            toastShort(result.msg);
+                            this.updateState({
+                                error: true,
+                                errorInfo: result.msg
+                            });
+                        })
+                    }
+                    // console.log('详情页', result);
                 })
-                // console.log('详情页', result);
-            })
-            .catch( error => {
-                // console.log('详情页', error);
-                this.updateState({
-                    error: true,
-                    errorInfo: error
+                .catch( error => {
+                    // console.log('详情页', error);
+                    this.updateState({
+                        error: true,
+                        errorInfo: error
+                    })
                 })
-            })
+        }, 1000);
     }
 
     dropLoadMore = async () => {
@@ -470,219 +493,253 @@ export default class BusinessDetail extends Component {
     }
 
     render(){
-        const { loading, ready, refreshing, isRefreshing, businessInfo, isCollect, service, addressInfo, modalVisible, MODALVIEW_CONFIG } = this.state;
+        const { loading, ready, refreshing, isRefreshing,
+        businessInfo, isCollect, service, addressInfo,
+        modalVisible, MODALVIEW_CONFIG, error, errorInfo } = this.state;
         let navigationBarStyle = {
             zIndex: 2,
             backgroundColor: 'transparent',
         };
-        return (
-            <View styel={styles.container}>
-                <NavigationBar
-                    title = {''}
-                    style = {navigationBarStyle}
-                    statusBar = {{barStyle: 'dark-content',}}
-                    leftButton = {this.renderLeftButton()}
-                    rightButton = {this.renderRightButton()}
-                />
-                {loading ?
-                    <ScrollView
-                        style = {styles.scrollContainer}
-                        // onScroll = {(event) => this.onScroll(event)}
-                        scrollEventThrottle = {10}
-                        refreshControl={
-                            <RefreshControl
-                                title='Loading...'
-                                refreshing={isRefreshing}
-                                onRefresh={this.loadNetData}
-                                tintColor="#0398ff"
-                                colors={['#0398ff']}
-                                progressBackgroundColor="#fff"
-                            />
+        if (!loading) {
+            console.log( error);
+            return (
+                <View style={styles.container}>
+                    <NavigationBar
+                        title = {''}
+                        style = {navigationBarStyle}
+                        statusBar = {{barStyle: 'dark-content',}}
+                        leftButton = {this.renderLeftButton()}
+                        rightButton = {this.renderRightButton()}
+                    />
+                    <View style={styles.content}>
+                        {error ? <TouchableOpacity
+                                style={GlobalStyles.emptyWrap}
+                                onPress={this.loadNetData}
+                            >
+                                <Image source={GlobalIcons.icon_no_record} style={GlobalStyles.emptyIcon} />
+                                <Text style={GlobalStyles.emptyTips}>{errorInfo}，点击重试或返回</Text>
+                            </TouchableOpacity>
+                            : <Spinner style={styles.spinner} isVisible={!loading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
                         }
-                    >
-                        <View style={GlobalStyles.bannerViewWrap}>
-                            <Image source={{uri: businessInfo.img}} style={GlobalStyles.bannerImg} />
-                        </View>
-                        <View style={styles.shopInfoView}>
-                            <View style={styles.shopInfoItem}>
-                                <Text style={styles.shopName}>{businessInfo.name}</Text>
+                    </View>
+                </View>
+            );
+        } else {
+            return (
+                <View style={styles.container}>
+                    <NavigationBar
+                        title = {''}
+                        style = {navigationBarStyle}
+                        statusBar = {{barStyle: 'dark-content',}}
+                        leftButton = {this.renderLeftButton()}
+                        rightButton = {this.renderRightButton()}
+                    />
+                    {loading ?
+                        <ScrollView
+                            style = {styles.scrollContainer}
+                            // onScroll = {(event) => this.onScroll(event)}
+                            scrollEventThrottle = {10}
+                            refreshControl={
+                                <RefreshControl
+                                    title='Loading...'
+                                    refreshing={isRefreshing}
+                                    onRefresh={this.loadNetData}
+                                    tintColor="#0398ff"
+                                    colors={['#0398ff']}
+                                    progressBackgroundColor="#fff"
+                                />
+                            }
+                        >
+                            <View style={GlobalStyles.bannerViewWrap}>
+                                <Image source={{uri: businessInfo.img}} style={GlobalStyles.bannerImg} />
                             </View>
-                            <View style={styles.shopInfoItem}>
-                                <View>
-                                    <ShopRankView
-                                        star = {businessInfo.star}
-                                        titleStyle = {{fontSize: 14,}}
-                                        iconStyle = {{width: 14, height: 14,}}
-                                        pointStyle = {{fontSize: 15}}
-                                    />
-                                    {businessInfo.style == 1 && <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                        <Text style={styles.companyType}>企业</Text>
-                                        <Text style={styles.companyName}>: {businessInfo.company}</Text>
-                                    </View>}
+                            <View style={styles.shopInfoView}>
+                                <View style={styles.shopInfoItem}>
+                                    <Text style={styles.shopName}>{businessInfo.name}</Text>
                                 </View>
-                                <ShopTagsView tags={businessInfo.tags} page_flag={'detail'} onSetModal = {()=> this.modalVisible()} />
-                            </View>
-                            <View style={[GlobalStyles.horLine, styles.horLine]} />
-                            <View style={styles.shopInfoItem}>
-                                <TouchableOpacity style={styles.shopAddressView}
-                                    onPress={() => this.pushToNavigation(addressInfo)}
-                                >
-                                    <Image source={GlobalIcons.icon_place} style={styles.shopPlaceIcon} />
-                                    <View style={styles.shopAddressDetail}>
-                                        <Text style={styles.shopAddressCon} numberOfLines={2}>{businessInfo.dress}</Text>
-                                        <Text style={styles.shopDistance}>{businessInfo.distance}</Text>
+                                <View style={styles.shopInfoItem}>
+                                    <View>
+                                        <ShopRankView
+                                            star = {businessInfo.star}
+                                            titleStyle = {{fontSize: 14,}}
+                                            iconStyle = {{width: 14, height: 14,}}
+                                            pointStyle = {{fontSize: 15}}
+                                        />
+                                        {businessInfo.style == 1 && <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                            <Text style={styles.companyType}>企业</Text>
+                                            <Text style={styles.companyName}>: {businessInfo.company}</Text>
+                                        </View>}
                                     </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style = {styles.shopPhoneView}
-                                    onPress = {() => {
-                                        tel: this.makeCall()
-                                    }}
-                                >
-                                    <Image source={GlobalIcons.icon_phone} style={styles.shopPhoneIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        {businessInfo.service_points.length > 0 && <View style={{marginBottom: 10,}}>
-                            <View style={styles.searchView}>
-                                <View style={styles.searchTitleView}>
-                                    <Text style={[styles.shopName]}>请选择服务点</Text>
+                                    <ShopTagsView tags={businessInfo.tags} page_flag={'detail'} onSetModal = {()=> this.modalVisible()} />
                                 </View>
                                 <View style={[GlobalStyles.horLine, styles.horLine]} />
+                                <View style={styles.shopInfoItem}>
+                                    <TouchableOpacity style={styles.shopAddressView}
+                                        onPress={() => this.pushToNavigation(addressInfo)}
+                                    >
+                                        <Image source={GlobalIcons.icon_place} style={styles.shopPlaceIcon} />
+                                        <View style={styles.shopAddressDetail}>
+                                            <Text style={styles.shopAddressCon} numberOfLines={2}>{businessInfo.dress}</Text>
+                                            <Text style={styles.shopDistance}>{businessInfo.distance}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style = {styles.shopPhoneView}
+                                        onPress = {() => {
+                                            tel: this.makeCall()
+                                        }}
+                                    >
+                                        <Image source={GlobalIcons.icon_phone} style={styles.shopPhoneIcon} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            {businessInfo.service_points.length > 0 && <View style={{marginBottom: 10,}}>
+                                <View style={styles.searchView}>
+                                    <View style={styles.searchTitleView}>
+                                        <Text style={[styles.shopName]}>请选择服务点</Text>
+                                    </View>
+                                    <View style={[GlobalStyles.horLine, styles.horLine]} />
+                                </View>
+                                {ready ?
+                                    <FlatList
+                                        style = {styles.shopListView}
+                                        keyExtractor = { item => item.id}
+                                        data = {businessInfo.service_points}
+                                        extraData = {this.state}
+                                        renderItem = {(item) => this.renderServiceAddressItem(item)}
+                                        onEndReachedThreshold = {0.1}
+                                        onEndReached = {(info) => this.dropLoadMore(info)}
+                                        onRefresh = {this.freshNetData}
+                                        refreshing = {refreshing}
+                                        ItemSeparatorComponent={this.renderSeparator}
+                                        // ListHeaderComponent = {this.renderServicesHeaderView}
+                                        ListFooterComponent = {this.renderServicesAddFooterView}
+                                        ListEmptyComponent = {this.renderServiceEmptyView}
+                                    />
+                                    : <ActivityIndicatorItem />
+                                }
+                            </View>}
+
+                            <View style={[styles.searchView,]}>
+                                <View style={styles.searchTitleView}>
+                                    <Text style={styles.shopName}>所有线路</Text>
+                                    {businessInfo.disinfo || businessInfo.disinfo !== '0' ? <Text style={styles.searchTitleConTips}>优惠信息：{businessInfo.disinfo}</Text> : null}
+                                </View>
+                                <View style={[GlobalStyles.horLine, styles.horLine]} />
+                                {1 > 2 && <View style={styles.searchContentView}>
+                                    <View style={styles.searchInputView}>
+                                        <View style={styles.searchInputItemView}>
+                                            <View style={[styles.searchItemIcon, styles.searchStartIcon]} />
+                                            <TextInput
+                                                style = {styles.searchInputItem}
+                                                placeholder = "发货地(城市名称)"
+                                                placeholderTextColor = '#888'
+                                                underlineColorAndroid = {'transparent'}
+                                                onChangeText = {(text)=>{
+                                                    this.setState({
+                                                        start: text
+                                                    })
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={[GlobalStyles.horLine, styles.searchHorLine]} />
+                                        <View style={styles.searchInputItemView}>
+                                            <View style={[styles.searchItemIcon, styles.searchEndIcon]} />
+                                            <TextInput
+                                                style = {styles.searchInputItem}
+                                                placeholder = "目的地(城市名称)"
+                                                placeholderTextColor = '#888'
+                                                underlineColorAndroid = {'transparent'}
+                                                onChangeText = {(text)=>{
+                                                    this.setState({
+                                                        end: text
+                                                    })
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <TouchableOpacity
+                                        style = {styles.searchBtnView}
+                                        onPress = {() => this.onSubmitSearch()}
+                                    >
+                                        <Text style={styles.searchBtnItem}>确认</Text>
+                                    </TouchableOpacity>
+                                </View>}
                             </View>
                             {ready ?
                                 <FlatList
                                     style = {styles.shopListView}
                                     keyExtractor = { item => item.id}
-                                    data = {businessInfo.service_points}
+                                    data = {service}
                                     extraData = {this.state}
-                                    renderItem = {(item) => this.renderServiceAddressItem(item)}
+                                    renderItem = {(item) => this.renderCompanyItem(item)}
                                     onEndReachedThreshold = {0.1}
                                     onEndReached = {(info) => this.dropLoadMore(info)}
                                     onRefresh = {this.freshNetData}
                                     refreshing = {refreshing}
                                     ItemSeparatorComponent={this.renderSeparator}
                                     // ListHeaderComponent = {this.renderServicesHeaderView}
-                                    ListFooterComponent = {this.renderServicesAddFooterView}
+                                    ListFooterComponent = {this.renderServicesFooterView}
                                     ListEmptyComponent = {this.renderServiceEmptyView}
                                 />
                                 : <ActivityIndicatorItem />
                             }
-                        </View>}
-
-                        <View style={[styles.searchView,]}>
-                            <View style={styles.searchTitleView}>
-                                <Text style={styles.shopName}>所有线路</Text>
-                                <Text style={styles.searchTitleConTips}>优惠信息：{businessInfo.disinfo}</Text>
-                            </View>
-                            <View style={[GlobalStyles.horLine, styles.horLine]} />
-                            {1 > 2 && <View style={styles.searchContentView}>
-                                <View style={styles.searchInputView}>
-                                    <View style={styles.searchInputItemView}>
-                                        <View style={[styles.searchItemIcon, styles.searchStartIcon]} />
-                                        <TextInput
-                                            style = {styles.searchInputItem}
-                                            placeholder = "发货地(城市名称)"
-                                            placeholderTextColor = '#888'
-                                            underlineColorAndroid = {'transparent'}
-                                            onChangeText = {(text)=>{
-                                                this.setState({
-                                                    start: text
-                                                })
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={[GlobalStyles.horLine, styles.searchHorLine]} />
-                                    <View style={styles.searchInputItemView}>
-                                        <View style={[styles.searchItemIcon, styles.searchEndIcon]} />
-                                        <TextInput
-                                            style = {styles.searchInputItem}
-                                            placeholder = "目的地(城市名称)"
-                                            placeholderTextColor = '#888'
-                                            underlineColorAndroid = {'transparent'}
-                                            onChangeText = {(text)=>{
-                                                this.setState({
-                                                    end: text
-                                                })
-                                            }}
-                                        />
-                                    </View>
+                            <View style={[styles.shopRemarkTipsView,]}>
+                                <View style={styles.shopListViewTitle}>
+                                    <Text style={styles.titleName}>温馨提示：</Text>
                                 </View>
-                                <TouchableOpacity
-                                    style = {styles.searchBtnView}
-                                    onPress = {() => this.onSubmitSearch()}
-                                >
-                                    <Text style={styles.searchBtnItem}>确认</Text>
-                                </TouchableOpacity>
-                            </View>}
-                        </View>
-                        {ready ?
-                            <FlatList
-                                style = {styles.shopListView}
-                                keyExtractor = { item => item.id}
-                                data = {service}
-                                extraData = {this.state}
-                                renderItem = {(item) => this.renderCompanyItem(item)}
-                                onEndReachedThreshold = {0.1}
-                                onEndReached = {(info) => this.dropLoadMore(info)}
-                                onRefresh = {this.freshNetData}
-                                refreshing = {refreshing}
-                                ItemSeparatorComponent={this.renderSeparator}
-                                // ListHeaderComponent = {this.renderServicesHeaderView}
-                                ListFooterComponent = {this.renderServicesFooterView}
-                                ListEmptyComponent = {this.renderServiceEmptyView}
-                            />
-                            : <ActivityIndicatorItem />
-                        }
-                        <View style={[styles.shopRemarkTipsView,]}>
-                            <View style={styles.shopListViewTitle}>
-                                <Text style={styles.titleName}>温馨提示：</Text>
+                                <View style={styles.remarkConView}>
+                                    <Text style={styles.remarkConText}>{businessInfo.reminder}</Text>
+                                </View>
                             </View>
-                            <View style={styles.remarkConView}>
-                                <Text style={styles.remarkConText}>{businessInfo.reminder}</Text>
-                            </View>
+                            {ready ?
+                                <FlatList
+                                    style = {[styles.shopListView, {marginTop: 10, marginBottom: 64}]}
+                                    keyExtractor = { item => item.id}
+                                    data = {businessInfo.evaluate}
+                                    extraData = {this.state}
+                                    renderItem = {(item) => this.renderCommentItem(item)}
+                                    onEndReachedThreshold = {0.1}
+                                    onEndReached = {(info) => this.dropLoadMore(info)}
+                                    onRefresh = {this.freshNetData}
+                                    refreshing = {refreshing}
+                                    ItemSeparatorComponent={this.renderSeparator}
+                                    ListHeaderComponent = {this.renderCommentHeaderView}
+                                    ListFooterComponent = {this.renderCommentFooterView}
+                                    ListEmptyComponent = {this.renderCommentEmptyView}
+                                />
+                                : <ActivityIndicatorItem />
+                            }
+                        </ScrollView>
+                        :
+                        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                            <Spinner style={styles.spinner} isVisible={loading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
                         </View>
-                        {ready ?
-                            <FlatList
-                                style = {[styles.shopListView, {marginTop: 10, marginBottom: 64}]}
-                                keyExtractor = { item => item.id}
-                                data = {businessInfo.evaluate}
-                                extraData = {this.state}
-                                renderItem = {(item) => this.renderCommentItem(item)}
-                                onEndReachedThreshold = {0.1}
-                                onEndReached = {(info) => this.dropLoadMore(info)}
-                                onRefresh = {this.freshNetData}
-                                refreshing = {refreshing}
-                                ItemSeparatorComponent={this.renderSeparator}
-                                ListHeaderComponent = {this.renderCommentHeaderView}
-                                ListFooterComponent = {this.renderCommentFooterView}
-                                ListEmptyComponent = {this.renderCommentEmptyView}
-                            />
-                            : <ActivityIndicatorItem />
-                        }
-                    </ScrollView>
-                    :
-                    <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                        <Spinner style={styles.spinner} isVisible={loading} size={50} type={'ChasingDots'} color={GlobalStyles.themeLightColor}/>
-                    </View>
-                }
-                {modalVisible &&
-                    <ModalView
-                        show = {modalVisible}
-                        cancelFoo = {() => this.modalVisible()}
-                        confirmFoo = {() => this.makeCall()}
-                    />
-                }
-            </View>
-        );
+                    }
+                    {modalVisible &&
+                        <ModalView
+                            show = {modalVisible}
+                            cancelFoo = {() => this.modalVisible()}
+                            confirmFoo = {() => this.makeCall()}
+                        />
+                    }
+                </View>
+            );
+        }
     }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginBottom: 60,
+        // marginBottom: 60,
         backgroundColor: GlobalStyles.bgColor,
+    },
+    content: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        // backgroundColor: '#123',
     },
     scrollContainer: {
         marginTop: -64,
@@ -938,5 +995,9 @@ const styles = StyleSheet.create({
     separatorStyle: {
         marginLeft: 15,
         width: GlobalStyles.width - 30,
+    },
+    errorTips: {
+        fontSize: 15,
+        color: '#6666',
     }
 });

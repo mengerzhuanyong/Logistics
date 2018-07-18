@@ -135,7 +135,7 @@ export default class MineAddressList extends Component {
     loadNetData = (page) => {
         let { uid, style } = this.state;
         let url = NetApi.mineAddress + uid + '/style/' + style + '/page/' + page;
-        return this.netRequest.fetchGet(url)
+        return this.netRequest.fetchGet(url, true)
             .then( result => {
                 // console.log('收货地址', result);
                 return result;
@@ -249,6 +249,7 @@ export default class MineAddressList extends Component {
         if (this.state.addressListData.length <= 0) {
             return <Text />;
         }
+        let btnTitle = this.state.manageAddress ? '取消' : '管理';
         return (
             <TouchableOpacity
                 style = {GlobalStyles.rightButton}

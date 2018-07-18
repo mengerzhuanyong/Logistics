@@ -20,7 +20,11 @@ module.exports = {
     statusBar_Height_Android: 50,
 
     rightButton: {
+        height: 44,
+        minWidth: 35,
         paddingHorizontal: 8,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
     },
     rightButtonName: {
         color: '#fff',
@@ -266,5 +270,19 @@ module.exports = {
     sortBtnName: {
         fontSize: 13,
         color: '#666',
+    },
+
+    emptyWrap: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    emptyIcon: {
+        width: 80,
+        height: 80,
+        marginBottom: 15,
+    },
+    emptyTips: {
+        fontSize: 15,
+        color: '#999',
     },
 };

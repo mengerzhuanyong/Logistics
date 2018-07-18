@@ -825,7 +825,7 @@ const styles = StyleSheet.create({
     },
     orderCargoInfoConText: {
         // flex: 1,
-        fontSize: 14,
+        fontSize: 13,
         color: '#666',
         lineHeight: 25,
     },

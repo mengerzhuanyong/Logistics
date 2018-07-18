@@ -217,14 +217,14 @@ export default class BusinessItem extends Component {
                         <ShopRankView star={item.star} />
                         {GlobalStyles.width >= 360 && <Text style={styles.shopDistance}>{item.distance}</Text>}
                     </View>
-                    <View style={styles.shopInfoItem}>
+                    {item.disinfo !== '' && <View style={styles.shopInfoItem}>
                         <View style={styles.shopDiscountView}>
                             <View style={styles.shopDiscountTitleView}>
                                 <Text style={styles.shopDiscountTitle}>惠</Text>
                             </View>
                             <Text style={styles.shopDiscountCon}>{item.disinfo}</Text>
                         </View>
-                    </View>
+                    </View>}
                     {1 > 2 && <View style={styles.shopInfoItem}>
                         <View style={styles.shopRouterView}>
                             {this.renderShopServices(item.service)}
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
         width: 40,
         zIndex: 2,
         height: 40,
+        resizeMode: 'contain',
     },
     shopThumbnail: {
         width: 110,

@@ -95,7 +95,7 @@ export default class ShopRankView extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        height: 20,
+        maxHeight: 20,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: GlobalStyles.width > 359 ? 'flex-end' : 'flex-start',

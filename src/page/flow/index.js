@@ -207,7 +207,7 @@ export default class Flow extends Component {
 
     loadNetData = () => {
         let url = NetApi.orderTips + this.state.sid;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then(result => {
                 // console.log(result);
                 if (result && result.code == 1) {
@@ -235,7 +235,7 @@ export default class Flow extends Component {
      * @return   {订单价格}
      */
     getPrices = (style, charteredCar) => {
-        let {seid, volume, deliveryFee} = this.state;
+        let {seid, volume, deliveryFee, count} = this.state;
         this.setState({
             price: '',
         });
@@ -256,6 +256,7 @@ export default class Flow extends Component {
         }
 
         volume = volume === '' ? 0 : parseInt(volume);
+        count = count === '' ? 0 : parseInt(count);
         // if (volume <= 0 && charteredCar == 0 && style != 2) {
         //     toastShort('体积数需大于0！');
         //     return;
@@ -265,6 +266,7 @@ export default class Flow extends Component {
             seid: seid,
             style: style,
             volumes: volume,
+            count: count,
             charteredCar: charteredCar,
         };
         let value1 = 0;
@@ -277,7 +279,7 @@ export default class Flow extends Component {
         }
         deliveryFeeValue = (parseFloat(value1).toFixed(2) * 100 + parseFloat(value2).toFixed(2) * 100) / 100;
         // console.log(value1, value2, deliveryFeeValue);
-        style == 1 && this.netRequest.fetchPost(url, data)
+        style == 1 && this.netRequest.fetchPost(url, data, true)
             .then(result => {
                 if (result && result.code == 1) {
                     relprice = (parseFloat(result.data).toFixed(2) * 100 - parseInt(this.state.coupon) * 100 + parseFloat(deliveryFeeValue).toFixed(2) * 100) / 100;
@@ -667,6 +669,7 @@ export default class Flow extends Component {
                                         defaultValue={count}
                                         placeholderTextColor='#666'
                                         underlineColorAndroid={'transparent'}
+                                        onBlur={() => style === 1 && this.getPrices(1, charteredCar)}
                                         onChangeText={(text) => {
                                             this.setState({
                                                 count: text

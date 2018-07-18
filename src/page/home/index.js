@@ -54,6 +54,7 @@ export default class Home extends Component {
             loadMore: false,
             error: false,
             errorInfo: "",
+            canPress: true,
             refreshing: false,
             companyListData: [],
             navigations: NavigationsData.data.indexNavigations,
@@ -184,9 +185,17 @@ export default class Home extends Component {
     };
 
     getLocation = async () => {
+        this.setState({
+            canPress: false
+        });
         let data = await Geolocation.getCurrentPosition();
         // console.log(data);
         this.freshNetData();
+        this.timer5 = setTimeout(() =>{
+            this.setState({
+                canPress: true
+            });
+        }, 1000);
         if (!data) {
             toastShort('定位失败，请稍后重试');
             return;
@@ -495,8 +504,10 @@ export default class Home extends Component {
             <TouchableOpacity
                 style = {styles.headLeftButton}
                 onPress = {() => {
-                    this.getLocation();
-                    toastShort(this.state.address, 'center');
+                    if (this.state.canPress) {
+                        this.getLocation();
+                        toastShort(this.state.address, 'center');
+                    }
                 }}
             >
                 <Image source={GlobalIcons.icon_place} style={styles.headLeftIcon}/>
