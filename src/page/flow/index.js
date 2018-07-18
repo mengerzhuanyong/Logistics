@@ -52,94 +52,14 @@ const pickPhotoOptions = {
 
 export default class Flow extends Component {
 
-    constructor(props) {
-        super(props);
-        let {params} = this.props.navigation.state;
-        // console.log(params);
-        this.state = {
-            sid: params ? params.sid : '',   // 门店ID
-            uid: global.user ? global.user.userData.uid : '',
-            seid: params ? params.item.id : '',  // 服务ID
-            shipper: '',
-            receiver: '',
-            style: '1',
-            cargoName: '',
-            volume: '',
-            count: '',
-            weight: '',
-            cate: '2',
-            charteredCar: '0',
-            img1: '',
-            img2: '',
-            img3: '',
-            substitutePickup: '0',
-            substituteSend: '0',
-            businessPickup: '0',
-            remark: '',
-            cid: '',
-            coupon: '0',
-            price: '0',
-            relprice: '0',
-            agree: '0',
-            uploading: false,
-            unit: {
-                volumes: 'm³',
-                num: '件',
-                weight: 'KG',
-            },
-            carPrice: '',
-            mobile: '',
-            category: [],
-            shipperAdd: '',
-            receiverAdd: '',
-            couponInfo: '',
-            categoryText: '常规品',
-            canPress: true,
-            otherType: '',
-            canBack: false,
-            insurance: null,
-            money_arr: [],
-            deliveryFee: [
-                {name: '取件费', value: '10', is_selected: 0},
-                {name: '送件费', value: '20', is_selected: 0},
-            ],
-            premiums_link: '',
-        };
-        this.netRequest = new NetRequest();
-    }
-
     style = '1';
     charteredCar = '0';
     price = '0';
-
-    componentDidMount() {
-        this.loadNetData();
-        if (global.user) {
-            this.setState({
-                uid: global.user.userData.uid
-            });
-        }
-
-        this.backTimer = setTimeout(() => {
-            this.setState({
-                canBack: true
-            })
-        }, 1000);
-    }
-
-    componentWillUnmount() {
-        this.backTimer && clearTimeout(this.backTimer);
-        this.timer && clearTimeout(this.timer);
-        DeviceEventEmitter.emit('ACTION_MINE', ACTION_MINE.A_RESTART);
-        DeviceEventEmitter.emit('ACTION_FLOW', ACTION_FLOW.A_RESTART);
-    }
-
     onBack = () => {
         const {goBack, state} = this.props.navigation;
         state.params && state.params.reloadData && state.params.reloadData();
         goBack();
     };
-
     selectContent = (component) => {
         const {navigate} = this.props.navigation;
         navigate(component, {
@@ -151,7 +71,6 @@ export default class Flow extends Component {
             reloadData: () => this.loadNetData(),
         })
     };
-
     onPushToNextPage = (pageTitle, page, params = {}) => {
         let {navigate} = this.props.navigation;
         navigate(page, {
@@ -159,7 +78,6 @@ export default class Flow extends Component {
             ...params,
         });
     };
-
     updateContent = (type, data) => {
         // console.log('传回的值', type, data);
         if (type == 'address' && data.style == 2) {
@@ -185,7 +103,6 @@ export default class Flow extends Component {
         }
 
     }
-
     renderRow = (rowData) => {
         // console.log(rowData);
         return (
@@ -194,7 +111,6 @@ export default class Flow extends Component {
             </View>
         );
     }
-
     renderButtonText = (rowData) => {
         // console.log(rowData);
         const {id, name} = rowData;
@@ -204,10 +120,9 @@ export default class Flow extends Component {
         })
         return name;
     }
-
     loadNetData = () => {
         let url = NetApi.orderTips + this.state.sid;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then(result => {
                 // console.log(result);
                 if (result && result.code == 1) {
@@ -220,6 +135,7 @@ export default class Flow extends Component {
                         mobile: result.data.service.mobile,
                         carPrice: result.data.service.carprice,
                         premiums_link: result.data.premiums_link,
+                        deliveryFee: result.data.deliveryFee,
                     })
                 }
                 // console.log('获取成功', result);
@@ -227,8 +143,7 @@ export default class Flow extends Component {
             .catch(error => {
                 // console.log('获取出错', error);
             })
-    }
-
+    };
     /**
      * @Author   Menger
      * @DateTime 2018-02-24
@@ -296,7 +211,6 @@ export default class Flow extends Component {
                 // console.log('获取出错', error);
             })
     };
-
     changeStatus = (type, status) => {
         let state = '';
         if (status == '1') {
@@ -309,7 +223,6 @@ export default class Flow extends Component {
         })
         // console.log(status);
     };
-
     pickerImages = async () => {
         let {img1, img2, img3} = this.state;
         if (img1 != '' && img2 != '' && img3 != '') {
@@ -353,7 +266,6 @@ export default class Flow extends Component {
             }
         });
     }
-
     handleOpenImagePicker = () => {
         let {img1, img2, img3} = this.state;
         if (img1 != '' && img2 != '' && img3 != '') {
@@ -370,7 +282,6 @@ export default class Flow extends Component {
             }
         })
     };
-
     uploadImages = (source) => {
         let {img1, img2, img3} = this.state;
         let url = NetApi.orderUpload;
@@ -406,7 +317,6 @@ export default class Flow extends Component {
                 // console.log(error);
             })
     };
-
     checkStatus = (data) => {
         let numberRule = /^\d+(\.\d+)?$/;
         // // console.log(data);
@@ -480,7 +390,6 @@ export default class Flow extends Component {
         }
         return true;
     }
-
     doSubmitOrder = () => {
         let {
             sid, uid, seid, shipper, receiver, style, cargoName, volume,
@@ -553,7 +462,6 @@ export default class Flow extends Component {
                 // console.log('下单出错', error);
             })
     };
-
     calculatorPrices = () => {
         let {style, charteredCar, price, carPrice, relprice, coupon, deliveryFee} = this.state;
         if ((this.style == 1 && this.charteredCar == 0) || this.style == 2) {
@@ -573,7 +481,6 @@ export default class Flow extends Component {
             return;
         }
     };
-
     /**
      * 拨打电话
      * @Author   Menger
@@ -595,11 +502,9 @@ export default class Flow extends Component {
                 // console.log('An error occurred', err)
             });
     };
-
     onPressAlert = () => {
         toastShort('功能完善中');
     };
-
     renderCargoInfoView = (style) => {
         let {charteredCar, mobile, cargoName, volume, unit, category, categoryText, cate, count, weight, otherType, coupon, deliveryFee} = this.state;
         if (style === 1) {
@@ -638,7 +543,7 @@ export default class Flow extends Component {
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入每件商品体积"
                                     // customKeyboardType="numberKeyBoardWithDot"
-                                    keyboardType = {'numeric'}
+                                    keyboardType={'numeric'}
                                     defaultValue={volume}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
@@ -665,7 +570,7 @@ export default class Flow extends Component {
                                         style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                         placeholder="请输入物品数量"
                                         // customKeyboardType="numberKeyBoardWithDot"
-                                        keyboardType = {'numeric'}
+                                        keyboardType={'numeric'}
                                         defaultValue={count}
                                         placeholderTextColor='#666'
                                         underlineColorAndroid={'transparent'}
@@ -690,7 +595,7 @@ export default class Flow extends Component {
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
                                 // customKeyboardType="numberKeyBoardWithDot"
-                                keyboardType = {'numeric'}
+                                keyboardType={'numeric'}
                                 defaultValue={weight}
                                 placeholderTextColor='#666'
                                 underlineColorAndroid={'transparent'}
@@ -817,7 +722,7 @@ export default class Flow extends Component {
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入货物总体积"
                                     // customKeyboardType="numberKeyBoardWithDot"
-                                    keyboardType = {'numeric'}
+                                    keyboardType={'numeric'}
                                     defaultValue={this.state.volume}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
@@ -841,7 +746,7 @@ export default class Flow extends Component {
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入物品数量"
                                     // customKeyboardType="numberKeyBoardWithDot"
-                                    keyboardType = {'numeric'}
+                                    keyboardType={'numeric'}
                                     defaultValue={this.state.count}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
@@ -864,7 +769,7 @@ export default class Flow extends Component {
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
                                 // customKeyboardType="numberKeyBoardWithDot"
-                                keyboardType = {'numeric'}
+                                keyboardType={'numeric'}
                                 defaultValue={this.state.weight}
                                 placeholderTextColor='#666'
                                 underlineColorAndroid={'transparent'}
@@ -978,16 +883,19 @@ export default class Flow extends Component {
             );
         }
     };
-
     renderDeliveryFee = (data) => {
         let {relprice} = this.state;
-        if (data.length < 1) {
+        if (!data || data.length < 1) {
             data = [
                 {name: '取件费', value: '0', is_selected: 0},
                 {name: '送件费', value: '0', is_selected: 0},
             ];
+            return;
         }
         let delivery = data.map((obj, index) => {
+            if (obj.value === '') {
+                return;
+            }
             return (
                 <TouchableOpacity
                     key={obj.name}
@@ -1013,14 +921,103 @@ export default class Flow extends Component {
                 </TouchableOpacity>
             );
         });
-        return delivery;
+
+        return (
+            <View style={[styles.containerItemView, styles.deliveryCarView]}>
+                <View style={styles.containerItemTitleView}>
+                    <Text
+                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>小件取送费</Text>
+                </View>
+                <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                {delivery}
+            </View>
+        );
     };
+
+    constructor(props) {
+        super(props);
+        let {params} = this.props.navigation.state;
+        // console.log(params);
+        this.state = {
+            sid: params ? params.sid : '',   // 门店ID
+            uid: global.user ? global.user.userData.uid : '',
+            seid: params ? params.item.id : '',  // 服务ID
+            shipper: '',
+            receiver: '',
+            style: '1',
+            cargoName: '',
+            volume: '',
+            count: '',
+            weight: '',
+            cate: '2',
+            charteredCar: '0',
+            img1: '',
+            img2: '',
+            img3: '',
+            substitutePickup: '0',
+            substituteSend: '0',
+            businessPickup: '0',
+            remark: '',
+            cid: '',
+            coupon: '0',
+            price: '0',
+            relprice: '0',
+            agree: '0',
+            uploading: false,
+            unit: {
+                volumes: 'm³',
+                num: '件',
+                weight: 'KG',
+            },
+            carPrice: '',
+            mobile: '',
+            category: [],
+            shipperAdd: '',
+            receiverAdd: '',
+            couponInfo: '',
+            categoryText: '常规品',
+            canPress: true,
+            otherType: '',
+            canBack: false,
+            insurance: null,
+            money_arr: [],
+            deliveryFee: [
+                {name: '取件费', value: '', is_selected: 0},
+                {name: '送件费', value: '', is_selected: 0},
+            ],
+            premiums_link: '',
+        };
+        this.netRequest = new NetRequest();
+    }
+
+    componentDidMount() {
+        this.loadNetData();
+        if (global.user) {
+            this.setState({
+                uid: global.user.userData.uid
+            });
+        }
+
+        this.backTimer = setTimeout(() => {
+            this.setState({
+                canBack: true
+            })
+        }, 1000);
+    }
+
+    componentWillUnmount() {
+        this.backTimer && clearTimeout(this.backTimer);
+        this.timer && clearTimeout(this.timer);
+        DeviceEventEmitter.emit('ACTION_MINE', ACTION_MINE.A_RESTART);
+        DeviceEventEmitter.emit('ACTION_FLOW', ACTION_FLOW.A_RESTART);
+    }
 
     render() {
         let {
             uploading, img1, img2, img3, shipperAdd, receiverAdd,
             category, categoryText, cate, canPress, charteredCar, style, deliveryFee,
-            insurance, money_arr, premiums_link} = this.state;
+            insurance, money_arr, premiums_link
+        } = this.state;
         insurance = insurance ? `${insurance}元` : insurance;
         return (
             <View style={styles.container}>
@@ -1331,14 +1328,7 @@ export default class Flow extends Component {
                                 </View>
                             </View>}
 
-                            <View style={[styles.containerItemView, styles.deliveryCarView]}>
-                                <View style={styles.containerItemTitleView}>
-                                    <Text
-                                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>小件取送费</Text>
-                                </View>
-                                <View style={[GlobalStyles.horLine, styles.horLine]}/>
-                                {this.renderDeliveryFee(deliveryFee)}
-                            </View>
+                            {this.renderDeliveryFee(deliveryFee)}
 
                             <View style={[styles.containerItemView, styles.deliveryCarView, {marginTop: -15}]}>
                                 {1 > 2 && <TouchableOpacity
@@ -1399,12 +1389,18 @@ export default class Flow extends Component {
                                         <View style={[styles.containerItemTitleLeft, {flexDirection: 'row'}]}>
                                             <Text style={styles.containerItemTitle}>货物保险</Text>
                                             <TouchableOpacity
-                                                onPress = {() => this.onPushToNextPage('保险须知', 'CooperateDetail', {webUrl: premiums_link})}
+                                                onPress={() => this.onPushToNextPage('保险须知', 'CooperateDetail', {webUrl: premiums_link})}
                                             >
-                                                <Text style={[styles.containerItemTitle, {color: GlobalStyles.themeColor}]}>《保险须知》</Text>
+                                                <Text
+                                                    style={[styles.containerItemTitle, {color: GlobalStyles.themeColor}]}>《保险须知》</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        <Text style={{fontSize: 11, color: '#555', marginTop: 5, marginLeft: 64}}>注：选择保险，将无法选择到付</Text>
+                                        <Text style={{
+                                            fontSize: 11,
+                                            color: '#555',
+                                            marginTop: 5,
+                                            marginLeft: 64
+                                        }}>注：选择保险，将无法选择到付</Text>
                                     </View>
                                     <Select
                                         style={{flex: 1, borderWidth: 0,}}
@@ -1416,7 +1412,7 @@ export default class Flow extends Component {
                                         pickerTitle='货物保险费'
                                         placeholder='请选择'
                                         placeholderTextColor='#666'
-                                        onSelected={(item, index) => {                                            
+                                        onSelected={(item, index) => {
                                             if (item.name === '取消') {
                                                 this.setState({
                                                     insurance: null
