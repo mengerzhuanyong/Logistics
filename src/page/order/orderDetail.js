@@ -611,7 +611,8 @@ export default class OrderDetail extends Component {
                             </View>
                             {orderInfo.deliveryFee.map((obj, index) => {
                                 if (obj.is_selected !== 1) {
-                                    obj.value = 0;
+                                    // obj.value = 0;
+                                    return;
                                 }
                                 return (
                                     <View style={styles.orderMoneyInfoItem} key={index}>
@@ -748,6 +749,7 @@ const styles = StyleSheet.create({
     },
     addressUserName: {
         fontSize: 16,
+        color: '#333',
     },
     addressUserPhone: {
         fontSize: 14,
