@@ -52,14 +52,94 @@ const pickPhotoOptions = {
 
 export default class Flow extends Component {
 
+    constructor(props) {
+        super(props);
+        let {params} = this.props.navigation.state;
+        // console.log(params);
+        this.state = {
+            sid: params ? params.sid : '',   // 门店ID
+            uid: global.user ? global.user.userData.uid : '',
+            seid: params ? params.item.id : '',  // 服务ID
+            shipper: '',
+            receiver: '',
+            style: '1',
+            cargoName: '',
+            volume: '',
+            count: '',
+            weight: '',
+            cate: '2',
+            charteredCar: '0',
+            img1: '',
+            img2: '',
+            img3: '',
+            substitutePickup: '0',
+            substituteSend: '0',
+            businessPickup: '0',
+            remark: '',
+            cid: '',
+            coupon: '0',
+            price: '0',
+            relprice: '0',
+            agree: '0',
+            uploading: false,
+            unit: {
+                volumes: 'm³',
+                num: '件',
+                weight: 'KG',
+            },
+            carPrice: '',
+            mobile: '',
+            category: [],
+            shipperAdd: '',
+            receiverAdd: '',
+            couponInfo: '',
+            categoryText: '常规品',
+            canPress: true,
+            otherType: '',
+            canBack: false,
+            insurance: null,
+            money_arr: [],
+            deliveryFee: [
+                {name: '取件费', value: '', is_selected: 0},
+                {name: '送件费', value: '', is_selected: 0},
+            ],
+            premiums_link: '',
+        };
+        this.netRequest = new NetRequest();
+    }
+
+    componentDidMount() {
+        this.loadNetData();
+        if (global.user) {
+            this.setState({
+                uid: global.user.userData.uid
+            });
+        }
+
+        this.backTimer = setTimeout(() => {
+            this.setState({
+                canBack: true
+            })
+        }, 1000);
+    }
+
+    componentWillUnmount() {
+        this.backTimer && clearTimeout(this.backTimer);
+        this.timer && clearTimeout(this.timer);
+        DeviceEventEmitter.emit('ACTION_MINE', ACTION_MINE.A_RESTART);
+        DeviceEventEmitter.emit('ACTION_FLOW', ACTION_FLOW.A_RESTART);
+    }
+
     style = '1';
     charteredCar = '0';
     price = '0';
+
     onBack = () => {
         const {goBack, state} = this.props.navigation;
         state.params && state.params.reloadData && state.params.reloadData();
         goBack();
     };
+
     selectContent = (component) => {
         const {navigate} = this.props.navigation;
         navigate(component, {
@@ -71,6 +151,7 @@ export default class Flow extends Component {
             reloadData: () => this.loadNetData(),
         })
     };
+
     onPushToNextPage = (pageTitle, page, params = {}) => {
         let {navigate} = this.props.navigation;
         navigate(page, {
@@ -78,6 +159,7 @@ export default class Flow extends Component {
             ...params,
         });
     };
+    
     updateContent = (type, data) => {
         // console.log('传回的值', type, data);
         if (type == 'address' && data.style == 2) {
@@ -933,84 +1015,6 @@ export default class Flow extends Component {
             </View>
         );
     };
-
-    constructor(props) {
-        super(props);
-        let {params} = this.props.navigation.state;
-        // console.log(params);
-        this.state = {
-            sid: params ? params.sid : '',   // 门店ID
-            uid: global.user ? global.user.userData.uid : '',
-            seid: params ? params.item.id : '',  // 服务ID
-            shipper: '',
-            receiver: '',
-            style: '1',
-            cargoName: '',
-            volume: '',
-            count: '',
-            weight: '',
-            cate: '2',
-            charteredCar: '0',
-            img1: '',
-            img2: '',
-            img3: '',
-            substitutePickup: '0',
-            substituteSend: '0',
-            businessPickup: '0',
-            remark: '',
-            cid: '',
-            coupon: '0',
-            price: '0',
-            relprice: '0',
-            agree: '0',
-            uploading: false,
-            unit: {
-                volumes: 'm³',
-                num: '件',
-                weight: 'KG',
-            },
-            carPrice: '',
-            mobile: '',
-            category: [],
-            shipperAdd: '',
-            receiverAdd: '',
-            couponInfo: '',
-            categoryText: '常规品',
-            canPress: true,
-            otherType: '',
-            canBack: false,
-            insurance: null,
-            money_arr: [],
-            deliveryFee: [
-                {name: '取件费', value: '', is_selected: 0},
-                {name: '送件费', value: '', is_selected: 0},
-            ],
-            premiums_link: '',
-        };
-        this.netRequest = new NetRequest();
-    }
-
-    componentDidMount() {
-        this.loadNetData();
-        if (global.user) {
-            this.setState({
-                uid: global.user.userData.uid
-            });
-        }
-
-        this.backTimer = setTimeout(() => {
-            this.setState({
-                canBack: true
-            })
-        }, 1000);
-    }
-
-    componentWillUnmount() {
-        this.backTimer && clearTimeout(this.backTimer);
-        this.timer && clearTimeout(this.timer);
-        DeviceEventEmitter.emit('ACTION_MINE', ACTION_MINE.A_RESTART);
-        DeviceEventEmitter.emit('ACTION_FLOW', ACTION_FLOW.A_RESTART);
-    }
 
     render() {
         let {
