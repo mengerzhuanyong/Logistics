@@ -76,20 +76,21 @@ export default class Banner extends Component {
     };
 
     renderBanner = (row) => {
-        if(this.state.swiperShow) {
-            if(row.length <= 0) {
+        if (this.state.swiperShow) {
+            if (row.length <= 0) {
                 return;
             }
-            let banners = row.map((obj,index)=>{
+            let banners = row.map((obj, index) => {
                 return (
                     <TouchableOpacity
                         style={GlobalStyles.bannerViewWrap}
-                        key={"bubble_"+index}
-                        activeOpacity = {1}
-                        onPress={() => {}}
+                        key={"bubble_" + index}
+                        activeOpacity={1}
+                        onPress={() => {
+                        }}
                     >
                         <View style={GlobalStyles.bannerViewWrap}>
-                            <Image source={{uri: obj.logo}} style={GlobalStyles.bannerImg} />
+                            <Image source={{uri: obj.logo}} style={GlobalStyles.bannerImg}/>
                         </View>
                     </TouchableOpacity>
                 )
@@ -103,18 +104,18 @@ export default class Banner extends Component {
                     removeClippedSubviews={false}
                     showsPagination={true}
                     autoplayTimeout={6}
-                    height={180}
+                    height={GlobalStyles.width / 2}
                     width={GlobalStyles.width}
-                    style={{paddingTop:0,marginTop:0}}
+                    style={{paddingTop: 0, marginTop: 0}}
                     lazy={true}
-                    dot = {<View style={GlobalStyles.bannerDot} />}
-                    activeDot = {<View style={GlobalStyles.bannerActiveDot} />}
+                    dot={<View style={GlobalStyles.bannerDot}/>}
+                    activeDot={<View style={GlobalStyles.bannerActiveDot}/>}
                 >
                     {banners}
                 </Swiper>
             )
         }
-    }
+    };
 
     render(){
         const { banners } = this.state;

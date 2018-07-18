@@ -1,5 +1,5 @@
 /**
- * 速芽物流用户端 - BANNER
+ * 速芽物流用户端 - HotNews
  * https://menger.me
  * @大梦
  */
@@ -26,7 +26,7 @@ import GlobalIcons from '../../constant/GlobalIcon'
 const img_url = GlobalIcons.banner1;
 const isIos = Platform.OS == 'ios';
 
-export default class hotNews extends Component {
+export default class HotNews extends Component {
 
     constructor(props){
         super(props);
@@ -39,7 +39,7 @@ export default class hotNews extends Component {
 
     static defaultProps = {
         hotNews: [],
-    }
+    };
 
     componentDidMount() {
         this.timer = setTimeout(() => {
@@ -68,13 +68,15 @@ export default class hotNews extends Component {
     }
 
     updateState = (state) => {
-        if (!this) { return }
+        if (!this) {
+            return
+        }
         this.setState(state);
-    }
+    };
 
     loadNetData = () => {
 
-    }
+    };
 
     renderSlider = (row) => {
         if(row.length <= 0) {
@@ -122,18 +124,18 @@ const styles = StyleSheet.create({
     },
     bannerContainer: {
         flex: 1,
-        marginHorizontal: 15,
         height: 60,
-        borderRadius: 30,
         overflow: 'hidden',
         marginVertical: 20,
-        backgroundColor: '#fff',
+        // borderRadius: 30,
+        // marginHorizontal: 15,
+        // backgroundColor: '#123',
     },
     bannerViewWrap: {
         flex: 1,
     },
     hotNewsItemPicture: {
         flex: 1,
-        resizeMode: 'cover',
+        resizeMode: 'contain',
     }
 });

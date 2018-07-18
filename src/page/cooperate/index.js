@@ -70,7 +70,7 @@ export default class Cooperate extends Component {
 
     loadNetData = () => {
         let url = NetApi.cooperate;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then( result => {
                 this.updateState({
                     navigations: result.data
@@ -87,14 +87,14 @@ export default class Cooperate extends Component {
     };
 
     onPushNavigator = (pageTitle, compent, link) => {
-        let { user, loginState } = this.state;
-        let { navigate } = this.props.navigation;
+        let {user, loginState} = this.state;
+        let {navigate} = this.props.navigation;
         navigate(compent, {
             user: user,
             pageTitle: pageTitle,
             webUrl: link,
         })
-    }
+    };
 
 
     render() {

@@ -46,21 +46,23 @@ export default class BusinessServicesItem extends Component {
     }
 
     updateState = (state) => {
-        if (!this) { return };
+        if (!this) {
+            return
+        }
         this.setState(state);
-    }
+    };
 
     loadNetData = () => {
-        
-    }
+
+    };
 
     render(){
         const { item, index } = this.state;
         const { onPushToFlow } = this.props;
         return (
             <View style={styles.container}>
-                <Text style={styles.servicesName}>{item.router}</Text>
-                <Text style={styles.servicesCon}>{item.time}</Text>
+                <Text style={styles.servicesName} numberOfLines={2}>{item.router}</Text>
+                <Text style={styles.servicesCon} numberOfLines={2}>{item.time}</Text>
                 <TouchableOpacity
                     style = {styles.servicesBtnItem}
                     onPress = {onPushToFlow}
@@ -82,14 +84,22 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     servicesName: {
+        flex: 1,
         fontSize: 15,
         color: '#555',
+        textAlign: 'left',
     },
     servicesCon: {
+        flex: 1,
         fontSize: 13,
         color: '#555',
+        textAlign: 'center',
     },
-    servicesBtnItem: {},
+    servicesBtnItem: {
+        minWidth: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     servicesBtnName: {
         fontSize: 15,
         color: GlobalStyles.themeColor,

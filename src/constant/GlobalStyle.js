@@ -99,7 +99,7 @@ module.exports = {
     },
 
     bannerContainer: {
-        height: 180,
+        height: width / 2,
     },
     bannerViewWrap: {
         flex: 1,
@@ -107,9 +107,10 @@ module.exports = {
         // backgroundColor: themeColor,
     },
     bannerImg: {
+        flex: 1,
         width: width,
-        height: 220,
-        resizeMode: 'cover',
+        height: width / 2,
+        resizeMode: 'contain',
         // backgroundColor: themeColor,
     },
     bannerDot: {

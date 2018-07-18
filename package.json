@@ -33,6 +33,7 @@
     "react-native-yunpeng-alipay": "^2.0.0",
     "react-native-yusha-customkeyboard": "^0.0.7",
     "react-navigation": "^1.4.0",
+    "redux": "^4.0.0",
     "teaset": "^0.5.8"
   },
   "devDependencies": {

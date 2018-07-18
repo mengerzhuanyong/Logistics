@@ -58,7 +58,7 @@ export default class BusinessDetail extends Component {
             loading: false,
             loadMore: false,
             refreshing: false,
-            item: params.item != '' ? params.item : '',
+            item: params.item !== '' ? params.item : '',
             businessInfo: '',
             service: [],
             isCollect: '0',
