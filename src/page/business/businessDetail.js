@@ -158,7 +158,7 @@ export default class BusinessDetail extends Component {
         //     error: false,
         // });
         this.loadingTimer = setTimeout(() => {
-            this.netRequest.fetchGet(url, true)
+            this.netRequest.fetchGet(url)
                 .then( result => {
                     if (result && result.code === 1) {
                         this.updateState({
@@ -501,7 +501,7 @@ export default class BusinessDetail extends Component {
             backgroundColor: 'transparent',
         };
         if (!loading) {
-            console.log( error);
+            // console.log( error);
             return (
                 <View style={styles.container}>
                     <NavigationBar

@@ -99,7 +99,7 @@ export default class Index extends Component {
     
     setBadge() {
         JPushModule.setBadge(0, (badgeNumber) => {
-            console.log(badgeNumber);
+            // console.log(badgeNumber);
             // alert(badgeNumber);
         })
     }

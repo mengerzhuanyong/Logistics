@@ -73,7 +73,7 @@ export default class OrderComment extends Component {
     };
 
     loadNetData = () => {
-        console.log(this.state.item);
+        // console.log(this.state.item);
         if (global.user.loginState) {
             this.updateState({
                 user: global.user.userData,

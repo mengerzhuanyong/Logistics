@@ -12,3 +12,9 @@
 ###react-native-yusha-customkeyboard
 	1、CustomKeyboard.m
 	#import <RCTText/RCTTextInput.h> -> #import "RCTTextInput.h"
+
+###react-native-scrollable-tab-view
+    // scrolltabbar.js 第62行
+    if (offset.value === undefined) {
+      offset.value = this.props.activeTab;
+    }

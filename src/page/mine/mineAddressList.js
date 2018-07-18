@@ -135,7 +135,7 @@ export default class MineAddressList extends Component {
     loadNetData = (page) => {
         let { uid, style } = this.state;
         let url = NetApi.mineAddress + uid + '/style/' + style + '/page/' + page;
-        return this.netRequest.fetchGet(url, true)
+        return this.netRequest.fetchGet(url)
             .then( result => {
                 // console.log('收货地址', result);
                 return result;

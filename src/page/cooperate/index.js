@@ -70,7 +70,7 @@ export default class Cooperate extends Component {
 
     loadNetData = () => {
         let url = NetApi.cooperate;
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then( result => {
                 this.updateState({
                     navigations: result.data

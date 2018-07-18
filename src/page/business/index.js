@@ -79,7 +79,7 @@ export default class BusinessIndex extends Component {
         this.updateState({
             ready: true,
             showFoot: 0 // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
-        })
+        });
         this.backTimer = setTimeout(() => {
             this.setState({
                 canBack: true

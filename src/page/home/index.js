@@ -236,7 +236,7 @@ export default class Home extends Component {
             lat: lat,
             lng: lng,
         };
-        this.netRequest.fetchPost(url, data, true)
+        this.netRequest.fetchPost(url, data)
             .then( result => {
                 // console.log(result);
                 this.freshNetData();
@@ -254,7 +254,7 @@ export default class Home extends Component {
 
     getBannerData = () => {
         let url = NetApi.getBanner;
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then(result => {
                 if (result && result.code == 1) {
                     this.setState({
@@ -273,7 +273,7 @@ export default class Home extends Component {
 
     getNavigations = () => {
         let url = NetApi.navigations;
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then( result => {
                 if (result && result.code == 1) {
                     this.setState({
@@ -294,7 +294,7 @@ export default class Home extends Component {
             page: page,
             pageSize: this.pageSize
         };
-        return this.netRequest.fetchPost(url, data, true)
+        return this.netRequest.fetchPost(url, data)
             .then(result => {
                 return result;
             })

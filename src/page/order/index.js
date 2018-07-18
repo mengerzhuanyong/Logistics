@@ -35,12 +35,12 @@ export default class Order extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        this.state =  {
+        this.state = {
             user: global.user ? global.user.userData : '',
             navigations: [],
             activeTabIndex: params ? params.activeTabIndex : 0,
             canBack: false,
-        }
+        };
         this.netRequest = new NetRequest();
     }
 
@@ -202,7 +202,7 @@ export class OrderDetailTab extends Component {
     loadNetData = (status, page) => {
         // console.log(status, this.state.uid);
         let url = NetApi.orderList + status + '/uid/' + this.state.uid + '/page/' + page;
-        return this.netRequest.fetchGet(url, true)
+        return this.netRequest.fetchGet(url)
             .then(result => {
                 // console.log('订单列表', result);
                 return result;
