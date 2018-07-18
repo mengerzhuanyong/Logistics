@@ -157,7 +157,7 @@ export default class MineAddressItem extends Component {
                                 <Text style={styles.addressInfophone}>{item.phone}</Text>
                             </View>
                             <View style={styles.addressInfoItem}>
-                                <Text style={styles.addressInfoDetail}>{item.address}</Text>
+                                <Text style={styles.addressInfoDetail}>{item.address_detail}</Text>
                             </View>
                         </TouchableOpacity>
                         :
@@ -167,7 +167,7 @@ export default class MineAddressItem extends Component {
                                 <Text style={styles.addressInfophone}>{item.phone}</Text>
                             </View>
                             <View style={styles.addressInfoItem}>
-                                <Text style={styles.addressInfoDetail}>{item.address}</Text>
+                                <Text style={styles.addressInfoDetail}>{item.address_detail}</Text>
                             </View>
                         </View>
                     }
