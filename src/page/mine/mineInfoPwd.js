@@ -22,6 +22,7 @@ import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
+import { NavigationActions } from 'react-navigation'
 import SendSMS from '../../component/common/sendSMS'
 
 export default class MineInfoSetting extends Component {
@@ -34,9 +35,9 @@ export default class MineInfoSetting extends Component {
             uid: params.user ? params.user.uid : '',
             phone: params.user ? params.user.phone : '',
             code: '',
-            password: '',
-            repassword: '',
-            origin_password: '',
+            password: '123123',
+            repassword: '123123',
+            origin_password: '123123',
             seconds: 60,
             newMobile: '',
             loading: false,
@@ -90,15 +91,15 @@ export default class MineInfoSetting extends Component {
     }
 
     submitChange = () => {
-        let { uid, newMobile, code, password, rePassword, originPassword } = this.state;
+        let { uid, newMobile, code, password, repassword, origin_password } = this.state;
         let url = NetApi.mineEditPwd;
         let data = {
             uid: uid,
             password: password,
-            repassword: rePassword,
-            origin_password: originPassword,
+            repassword: repassword,
+            origin_password: origin_password,
         };
-        this.netRequest.fetchPost(url, data)
+        this.netRequest.fetchPost(url, data, true)
             .then(result => {
                 if (result && result.code == 1) {
                     // console.log('用户中心', result);
@@ -208,7 +209,7 @@ export default class MineInfoSetting extends Component {
                             underlineColorAndroid = {'transparent'}
                             onChangeText = {(text) => {
                                 this.updateState({
-                                    originPassword: text
+                                    origin_password: text
                                 })
                             }}
                         />
@@ -238,7 +239,7 @@ export default class MineInfoSetting extends Component {
                             underlineColorAndroid = {'transparent'}
                             onChangeText = {(text) => {
                                 this.updateState({
-                                    rePassword: text
+                                    repassword: text
                                 })
                             }}
                         />

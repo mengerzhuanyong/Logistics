@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
         height: 45,
     },
     inputItemConText: {
+        flex: 1,
         height: 130,
         textAlignVertical: 'top',
     },

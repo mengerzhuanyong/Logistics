@@ -22,6 +22,7 @@ import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
+import SpinnerLoading from '../../component/common/SpinnerLoading'
 
 const WEBVIEW_REF = 'webview';
 
@@ -33,6 +34,7 @@ export default class MineFeedbackReward extends Component {
         this.state = {
             url: params && params.webUrl ? params.webUrl : '',
             canBack: false,
+            loading: true,
         };
         this.netRequest = new NetRequest();
     }
@@ -41,6 +43,7 @@ export default class MineFeedbackReward extends Component {
         this.loadNetData();
         this.backTimer = setTimeout(() => {
             this.setState({
+                loading: false,
                 canBack: true
             })
         }, 1000);
@@ -81,6 +84,7 @@ export default class MineFeedbackReward extends Component {
 
 
     render() {
+        let {loading} = this.state;
         let {params} = this.props.navigation.state;
         let pageTitle = params && params.pageTitle ? params.pageTitle : '有奖反馈';
         return (
@@ -89,13 +93,16 @@ export default class MineFeedbackReward extends Component {
                     title = {pageTitle}
                     leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
                 />
-                <WebView
-                    ref={(webView) => {this.webview = webView}}
-                    startInLoadingState={true}
-                    source={{uri: this.state.url}}
-                    style={styles.webContainer}
-                    // onNavigationStateChange={this.onNavigationStateChange}
-                />
+                {!loading ?
+                    <WebView
+                        ref={(webView) => {this.webview = webView}}
+                        startInLoadingState={false}
+                        source={{uri: this.state.url}}
+                        style={styles.webContainer}
+                        // onNavigationStateChange={this.onNavigationStateChange}
+                    />
+                    : <SpinnerLoading isVisible={loading}/>
+                }
             </View>
         );
     }

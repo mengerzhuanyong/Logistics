@@ -32,6 +32,7 @@ export default class MineCoupon extends Component {
     constructor(props) {
         super(props);
         let { params } = this.props.navigation.state;
+        // console.log(params);
         this.state =  {
             uid: global.user.userData.uid,
             ready: false,
@@ -41,6 +42,7 @@ export default class MineCoupon extends Component {
             errorInfo: "",
             refreshing: false,
             couponListData: [],
+            cid: params.cid != '' ? params.cid : '',
             orderPrice: params.orderPrice != '' ? params.orderPrice : '',
             PAGE_FLAG: params.PAGE_FLAG != '' ? params.PAGE_FLAG : '',
             updateContent: params.updateContent ? params.updateContent : () => {},
@@ -166,6 +168,7 @@ export default class MineCoupon extends Component {
     renderListItem = (item) => {
         return (
             <MineCouponItem
+                cid = {this.state.cid}
                 item = {item.item}
                 {...this.props}
                 orderPrice = {this.state.orderPrice}

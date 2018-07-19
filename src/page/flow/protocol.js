@@ -22,6 +22,7 @@ import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
+import SpinnerLoading from '../../component/common/SpinnerLoading'
 
 const WEBVIEW_REF = 'webview';
 
@@ -31,6 +32,7 @@ export default class Cooperate extends Component {
         super(props);
         this.state = {
             url: '',
+            loading: true,
             canBack: false,
         };
         this.netRequest = new NetRequest();
@@ -40,6 +42,7 @@ export default class Cooperate extends Component {
         this.loadNetData();
         this.backTimer = setTimeout(() => {
             this.setState({
+                loading: false,
                 canBack: true
             })
         }, 1000);
@@ -77,18 +80,22 @@ export default class Cooperate extends Component {
     };
 
     render() {
+        let {loading} = this.state;
         return (
             <View style={styles.container}>
                 <NavigationBar
                     title = {'服务协议'}
                     leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
                 />
-                <WebView
-                    ref={WEBVIEW_REF}
-                    startInLoadingState={true}
-                    source={{uri: this.state.url}}
-                    style={styles.webContainer}
-                />
+                {!loading ?
+                    <WebView
+                        ref={WEBVIEW_REF}
+                        startInLoadingState={false}
+                        source={{uri: this.state.url}}
+                        style={styles.webContainer}
+                    />
+                    : <SpinnerLoading isVisible={loading}/>
+                }
             </View>
         );
     }

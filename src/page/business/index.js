@@ -143,7 +143,7 @@ export default class BusinessIndex extends Component {
             sort: sort,
             not_limit: notLimit,
         };
-        return this.netRequest.fetchPost(url, data)
+        return this.netRequest.fetchPost(url, data, true)
             .then( result => {
                 // console.log('服务列表', result);
                 return result;

@@ -286,6 +286,8 @@ const styles = StyleSheet.create({
     },
     commentContextView: {},
     inputItemCon: {
+        flex: 1,
         height: 120,
+        textAlignVertical: 'top',
     },
 });

@@ -159,13 +159,13 @@ export default class BusinessDetail extends Component {
     renderCompanyItem = ({item}) => {
         // console.log(item);
         return (
-            <View style={{height: 40, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{flex: 3, fontSize: 14, color: '#666',}} numberOfLines={2}><Text style={{fontSize: 15, color: '#333'}}>(服务点)</Text> {item.name}</Text>
+            <View style={styles.serviceAddressItemView}>
+                <Text style={styles.serviceAddressName} numberOfLines={2}><Text style={styles.serviceAddressNameCur}>(服务点)</Text> {item.name}</Text>
                 <TouchableOpacity
-                    style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',}}
+                    style={styles.serviceAddressBtnView}
                     onPress={() => this.pushToNavigation(item)}
                 >
-                    <Text style={{fontSize: 13, color: '#888'}}>{item.distance}</Text>
+                    <Text style={styles.serviceAddressBtnName}>{item.distance}</Text>
                     <Image source={GlobalIcons.icon_place} style={[styles.shopPlaceIcon]} />
                 </TouchableOpacity>
             </View>
@@ -181,8 +181,15 @@ export default class BusinessDetail extends Component {
     }
 
     render(){
-        const { loading, ready, refreshing, businessInfo, isCollect, service } = this.state;
-
+        let { loading, ready, refreshing, businessInfo, isCollect, service } = this.state;
+        // service = [
+        //     {id: 1, name: 1, distance: 2},
+        //     {id: 2, name: 2, distance: 2},
+        //     {id: 3, name: 3, distance: 2},
+        //     {id: 4, name: 4, distance: 2},
+        //     {id: 5, name: 5, distance: 2},
+        //     {id: 6, name: 6, distance: 2},
+        // ];
         return (
             <View style={styles.container}>
                 <NavigationBar
@@ -212,7 +219,8 @@ export default class BusinessDetail extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
+        backgroundColor: GlobalStyles.bgColor,
     },
     scrollContainer: {
         marginTop: 10,
@@ -233,5 +241,32 @@ const styles = StyleSheet.create({
         height: 15,
         marginLeft: 6,
         resizeMode: 'contain',
+    },
+    serviceAddressItemView: {
+        height: 40,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+    },
+    serviceAddressName: {
+        flex: 3,
+        fontSize: 14,
+        color: '#666',
+    },
+    serviceAddressNameCur: {
+        fontSize: 15,
+        color: '#333'
+    },
+    serviceAddressBtnView: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    serviceAddressBtnName: {
+        fontSize: 13,
+        color: '#888'
     },
 });

@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 15,
         color: '#555',
-        textAlign: 'left',
+        textAlign: 'center',
     },
     servicesCon: {
         flex: 1,

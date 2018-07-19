@@ -29,6 +29,7 @@ export default class MineCouponItem extends Component {
     constructor(props){
         super(props);
         this.state = {
+            cid: this.props.cid,
             item: this.props.item,
             PAGE_FLAG: this.props.PAGE_FLAG,
             orderPrice: this.props.orderPrice,
@@ -38,6 +39,7 @@ export default class MineCouponItem extends Component {
     }
 
     static defaultProps = {
+        cid: '',
         item: {},
         PAGE_FLAG: '',
         orderPrice: '',
@@ -68,9 +70,14 @@ export default class MineCouponItem extends Component {
                     let couponFullPrice = parseInt(item.full);
                     if (PAGE_FLAG == 'FLOW') {
                         if (orderPrices >= couponFullPrice) {
+                            // if (this.state.cid === '') {
+                                updateContent('couponInfo', item);
+                                this.props.navigation.goBack();
+                            // } else {
+                            //     toastShort('当前已选择该优惠券，请选择其他或者直接返回');
+                            // }
                             // console.log(orderPrices, couponFullPrice);
-                            updateContent('couponInfo', item);
-                            this.props.navigation.goBack();
+                            
                         } else {
                             let tips = "订单不满" + item.full + '元，无法使用该优惠券！';
                             toastShort(tips);
