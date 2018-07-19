@@ -48,7 +48,7 @@ export default class MineAddressItem extends Component {
         item: {},
         PAGE_FLAG: '',
         updateContent: () => {}
-    }
+    };
 
     componentDidMount() {
         // console.log("接受参数", this.props.item);

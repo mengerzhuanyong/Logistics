@@ -30,21 +30,21 @@ export default class MineInfoSetting extends Component {
     constructor(props) {
         super(props);
         let {params} = this.props.navigation.state;
-        this.state =  {
+        this.state = {
             user: params.user ? params.user : global.user,
             uid: params.user ? params.user.uid : '',
             phone: params.user ? params.user.phone : '',
             code: '',
-            password: '123123',
-            repassword: '123123',
-            origin_password: '123123',
+            password: '', // '123123',
+            repassword: '', // '123123',
+            origin_password: '', // '123123',
             seconds: 60,
             newMobile: '',
             loading: false,
             codeAlreadySend: false,
             canPress: true,
             canBack: false,
-        }
+        };
         this.netRequest = new NetRequest();
     }
 
@@ -99,7 +99,7 @@ export default class MineInfoSetting extends Component {
             repassword: repassword,
             origin_password: origin_password,
         };
-        this.netRequest.fetchPost(url, data, true)
+        this.netRequest.fetchPost(url, data)
             .then(result => {
                 if (result && result.code == 1) {
                     // console.log('用户中心', result);

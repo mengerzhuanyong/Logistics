@@ -14,4 +14,4 @@ storage.load({
 }).catch(error => {
     global.user.loginState = false;
     global.user.userData = '';
-})
+});

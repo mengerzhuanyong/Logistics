@@ -34,12 +34,12 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this.state =  {
-            mobile: '15066886007', // '15066886007',
-            password: '123123', // '123123',
+        this.state = {
+            mobile: '', // '15066886007',
+            password: '', // '123123',
             canBack: false,
             onlineStatus: 0,
-        }
+        };
         this.netRequest = new NetRequest();
     }
 

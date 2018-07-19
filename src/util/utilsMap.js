@@ -20,7 +20,7 @@ const UtilMap = {
      */
     turnToMapApp(lon = 0, lat = 0, targetAppName = 'baidu', name = '目标地址'){
         if (0 == lat && 0 == lon) {
-            console.warn('暂时不能导航');
+            // console.warn('暂时不能导航');
             return;
         }
 

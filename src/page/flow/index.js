@@ -162,7 +162,7 @@ export default class Flow extends Component {
     };
     
     updateContent = (type, data) => {
-        console.log('传回的值', type, data);
+        // console.log('传回的值', type, data);
         if (type == 'address' && data.style == 2) {
             this.setState({
                 receiverAdd: data,
@@ -209,7 +209,7 @@ export default class Flow extends Component {
     }
     loadNetData = () => {
         let url = NetApi.orderTips + this.state.seid;
-        this.netRequest.fetchGet(url, true)
+        this.netRequest.fetchGet(url)
             .then(result => {
                 // console.log(result);
                 if (result && result.code == 1) {
@@ -286,7 +286,7 @@ export default class Flow extends Component {
         this.setState({
             insurance: _insurance,
         });
-        this.netRequest.fetchPost(url, data, true)
+        this.netRequest.fetchPost(url, data)
             .then(result => {
                 if (result && result.code == 1) {
                     let relprice = (parseFloat(result.data).toFixed(2) * 100
@@ -299,7 +299,7 @@ export default class Flow extends Component {
                 }
             })
             .catch(error => {
-                console.log('获取出错', error);
+                // console.log('获取出错', error);
             })
     };
 
@@ -976,7 +976,7 @@ export default class Flow extends Component {
             insurance, money_arr, premiums_link
         } = this.state;
         insurance = insurance ? `${insurance}元` : insurance;
-        console.log(insurance);
+        // console.log(insurance);
         return (
             <View style={styles.container}>
                 <NavigationBar
@@ -1006,7 +1006,7 @@ export default class Flow extends Component {
                                             <Text
                                                 style={styles.addressUserInfo}>{shipperAdd ? `${shipperAdd.name} ${shipperAdd.phone}` : '发货人'}</Text>
                                             <Text
-                                                style={styles.addressDetailCon}>{shipperAdd ? shipperAdd.address : '请选择发货地址'}</Text>
+                                                style={styles.addressDetailCon}>{shipperAdd ? shipperAdd.address_detail : '请选择发货地址'}</Text>
                                         </View>
                                         <View style={[GlobalStyles.verLine, styles.verLine]}/>
                                         <TouchableOpacity
@@ -1022,7 +1022,7 @@ export default class Flow extends Component {
                                             <Text
                                                 style={styles.addressUserInfo}>{receiverAdd ? `${receiverAdd.name} ${receiverAdd.phone}` : '收货人'}</Text>
                                             <Text
-                                                style={styles.addressDetailCon}>{receiverAdd ? receiverAdd.address : '请选择收货地址'}</Text>
+                                                style={styles.addressDetailCon}>{receiverAdd ? receiverAdd.address_detail : '请选择收货地址'}</Text>
                                         </View>
                                         <View style={[GlobalStyles.verLine, styles.verLine]}/>
                                         <TouchableOpacity
