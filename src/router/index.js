@@ -134,7 +134,7 @@ const TabNavScreen = TabNavigator(
         tabBarPosition: 'bottom',
         swipeEnabled: false,
         tabBarOptions: {
-            activeTintColor: '#42b3ff',
+            activeTintColor: GlobalStyles.themeColor,
             inactiveTintColor: '#808080',
             style: { backgroundColor: '#fff' },
             labelStyle: { fontSize: 12, marginBottom: 4,}

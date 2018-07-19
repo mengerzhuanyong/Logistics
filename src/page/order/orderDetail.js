@@ -541,6 +541,10 @@ export default class OrderDetail extends Component {
                                         <Text style={styles.orderCompanyInfoTitle}>物流公司：</Text>
                                         <Text style={[styles.orderCompanyInfoCon, {alignItems: 'flex-start'}]} numberOfLines={2}>{orderInfo.storeName}</Text>
                                     </View>
+                                    {orderInfo.style !== '' && <View style={styles.orderCompanyInfoItem}>
+                                        <Text style={styles.orderCompanyInfoTitle}>订单类型：</Text>
+                                        <Text style={styles.orderCompanyInfoCon}>{orderInfo.style}</Text>
+                                    </View>}
                                     <View style={styles.orderCompanyInfoItem}>
                                         <Text style={styles.orderCompanyInfoTitle}>物流订单号：</Text>
                                         <Text style={styles.orderCompanyInfoCon}>{orderInfo.code}</Text>

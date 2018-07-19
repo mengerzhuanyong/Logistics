@@ -52,9 +52,9 @@ export default class Index extends Component {
     componentWillUnmount(){
         this.timer && clearTimeout(this.timer);
         // JPushModule.removeReceiveCustomMsgListener(receiveCustomMsgEvent);
-        JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
-        JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
-        JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
+        // JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
+        // JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
+        // JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
         // console.log("Will clear all notifications");
         JPushModule.clearAllNotifications();
     }

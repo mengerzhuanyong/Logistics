@@ -191,7 +191,7 @@ export default class BusinessDetail extends Component {
                         errorInfo: error
                     })
                 })
-        }, 1000);
+        }, 100);
     }
 
     dropLoadMore = async () => {
