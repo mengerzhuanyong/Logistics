@@ -506,7 +506,7 @@ export default class Home extends Component {
                 onPress = {() => {
                     if (this.state.canPress) {
                         this.getLocation();
-                        toastShort(this.state.address, 'center');
+                        toastShort(this.state.address || '地址不存在', 'center');
                     }
                 }}
             >

@@ -31,7 +31,7 @@
 //    // NSSet<UIUserNotificationCategory *> *categories for iOS8 and iOS9
 //  }
   [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
-[JPUSHService setupWithOption:launchOptions appKey:@"e12b969fcb3efc6eedc8eab4"
+[JPUSHService setupWithOption:launchOptions appKey:@"4212a0a0f46d1f464f922a6a"
                     channel:nil apsForProduction:true];
   NSURL *jsCodeLocation;
 
