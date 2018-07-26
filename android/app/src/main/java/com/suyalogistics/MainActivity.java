@@ -1,4 +1,4 @@
-package com.logistics;
+package com.suyalogistics;
 
 import android.content.Intent;
 import android.os.Bundle;

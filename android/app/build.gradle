@@ -100,7 +100,7 @@ android {
         jumboMode true
     }
     defaultConfig {
-        applicationId "com.logistics"
+        applicationId "com.suyalogistics"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -110,7 +110,7 @@ android {
         }
         manifestPlaceholders = [
                 QQ_APPID: "101459807",
-                JPUSH_APPKEY: "e12b969fcb3efc6eedc8eab4",
+                JPUSH_APPKEY: "4212a0a0f46d1f464f922a6a",
                 APP_CHANNEL: "developer-default"
         ]
     }

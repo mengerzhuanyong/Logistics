@@ -1,4 +1,4 @@
-package com.logistics;
+package com.suyalogistics;
 
 import android.app.Application;
 

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.logistics"
+    package="com.suyalogistics"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -19,13 +19,13 @@
         android:targetSdkVersion="22" />
 
     <application
-        android:name=".MainApplication"
+        android:name="com.suyalogistics.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.suyalogistics.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize">
@@ -35,11 +35,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="com.suyalogistics.wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/app_name" />
         <activity
-            android:name=".wxapi.WXPayEntryActivity"
+            android:name="com.suyalogistics.wxapi.WXPayEntryActivity"
             android:exported="true"
             android:label="@string/app_name" />
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
