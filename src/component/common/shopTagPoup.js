@@ -99,25 +99,25 @@ export default class PopModel extends Component {
                         <View style={[styles.subView, style]}>
                             <View style={[styles.contentView]}>
                                 <View style={styles.textIconView}>
-                                    <Text style={[styles.contentText]}>诚信值</Text>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                 </View>
                                 <Text style={[styles.contentText]}>平台有条件让商家对普通小额损毁货物进行赔偿</Text>
                                 <View style={styles.textIconView}>
-                                    <Text style={[styles.contentText]}>诚信值</Text>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                 </View>
                                 <Text style={[styles.contentText]}>平台有条件让商家对多数损毁货物进行赔偿</Text>
                                 <View style={styles.textIconView}>
-                                    <Text style={[styles.contentText]}>诚信值</Text>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                 </View>
                                 <Text style={[styles.contentText]}>平台有条件让商家对大多数损毁货物进行赔偿</Text>
                                 <View style={styles.textIconView}>
-                                    <Text style={[styles.contentText]}>诚信值</Text>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                     <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
@@ -191,6 +191,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     // 内容
+    contentTextCur: {
+        fontSize: 14,
+        color: GlobalStyles.themeColor,
+    },
     contentText: {
         fontSize: 11,
         color: '#555',

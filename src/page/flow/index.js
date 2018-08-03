@@ -105,6 +105,8 @@ export default class Flow extends Component {
                 {name: '同城送货上门', value: '', is_selected: 0},
             ],
             premiums_link: '',
+            volmonArr: [],
+            volumePrice: 0,
         };
         this.netRequest = new NetRequest();
     }
@@ -206,7 +208,7 @@ export default class Flow extends Component {
     }
     loadNetData = () => {
         let url = NetApi.orderTips + this.state.seid;
-        this.netRequest.fetchGet(url)
+        this.netRequest.fetchGet(url, true)
             .then(result => {
                 // console.log(result);
                 if (result && result.code == 1) {
@@ -220,6 +222,7 @@ export default class Flow extends Component {
                         carPrice: result.data.service.carprice,
                         premiums_link: result.data.premiums_link,
                         deliveryFee: result.data.deliveryFee,
+                        volmonArr: result.data.volmon,
                     })
                 }
                 // console.log('获取成功', result);
@@ -240,6 +243,7 @@ export default class Flow extends Component {
             style,
             price,
             coupon: 0,
+            volume: '',
             deliveryFee: this.state.deliveryFee,
         })
         this.getPrices(style, insurance);
@@ -250,7 +254,7 @@ export default class Flow extends Component {
      * @return   {订单价格}
      */
     getPrices = (style, insurance = 0) => {
-        let {seid, volume, deliveryFee, count, price, cus_prices} = this.state;
+        let {seid, volume, deliveryFee, count, price, cus_prices, volumePrice} = this.state;
         // 取送费
         let value1 = 0;
         let value2 = 0;
@@ -277,6 +281,7 @@ export default class Flow extends Component {
             count: count,
             premiums: insurance,
             cus_prices: cus_prices,
+            volumePrice: volumePrice,
         };
         let _insurance = insurance != '0' ? insurance : null;
         this.setState({
@@ -298,18 +303,7 @@ export default class Flow extends Component {
                 // console.log('获取出错', error);
             })
     };
-    changeStatus = (type, status) => {
-        let state = '';
-        if (status == '1') {
-            state = 0;
-        } else {
-            state = 1
-        }
-        this.setState({
-            type: state,
-        })
-        // console.log(status);
-    };
+
     pickerImages = async () => {
         let {img1, img2, img3} = this.state;
         if (img1 != '' && img2 != '' && img3 != '') {
@@ -562,9 +556,22 @@ export default class Flow extends Component {
         let {
             charteredCar, mobile, cargoName, volume, unit,
             category, categoryText, cate, count, weight, otherType,
-            coupon, deliveryFee, insurance
+            coupon, deliveryFee, insurance, volmonArr,
         } = this.state;
+        volmonArr = [
+            {'volmon': 0.1, 'price': 1},
+            {'volmon': 0.2, 'price': 2},
+            {'volmon': 0.3, 'price': 3},
+            {'volmon': 0.4, 'price': 4},
+            {'volmon': 0.5, 'price': 5},
+            {'volmon': 0.6, 'price': 6},
+            {'volmon': 0.7, 'price': 7},
+            {'volmon': 0.8, 'price': 8},
+            {'volmon': 0.9, 'price': 9},
+            {'volmon': 1.0, 'price': 10},
+        ];
         if (style === 1) {
+            volume = volume !== '' ? (volume + 'm³') : null;
             return (
                 <View>
                     <View style={styles.paymentMethodItem}>
@@ -579,7 +586,6 @@ export default class Flow extends Component {
                                     defaultValue={cargoName}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
-                                    // onBlur = {() => this.getPrices(1, charteredCar)}
                                     onChangeText={(text) => {
                                         this.setState({
                                             cargoName: text
@@ -595,20 +601,34 @@ export default class Flow extends Component {
                             <Image source={GlobalIcons.icon_volume} style={styles.paymentMethodIcon}/>
                             <View style={styles.rightContent}>
                                 <Text style={styles.textSymbol}>*</Text>
-                                <TextInput
+                                {volmonArr.length > 0 ? <Select
+                                    style={{flex: 1, borderWidth: 0, paddingLeft: 0,}}
+                                    value={volume}
+                                    valueStyle={{flex: 1, color: '#555', textAlign: 'left'}}
+                                    items={volmonArr}
+                                    getItemValue={(item, index) => item.price}
+                                    getItemText={(item, index) => `${item.volmon}m³`}
+                                    iconTintColor='#666'
+                                    placeholder='请选择每件商品体积'
+                                    pickerTitle='单件物品超过1m³请选择【整体计算】'
+                                    placeholderTextColor={'#666'}
+                                    onSelected={(item, index) => {
+                                        this.setState({
+                                            volumePrice: item.price,
+                                            volume: item.volmon
+                                        }, () => {
+                                            style === 1 && this.getPrices(1, insurance);
+                                        });
+                                    }}
+                                /> : <TextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                    placeholder="请输入每件商品体积"
+                                    editable={false}
+                                    placeholder="暂无体积，无法选择"
                                     keyboardType={'numeric'}
                                     defaultValue={volume}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
-                                    onBlur={() => style === 1 && this.getPrices(1, insurance)}
-                                    onChangeText={(text) => {
-                                        this.setState({
-                                            volume: text
-                                        })
-                                    }}
-                                />
+                                />}
                             </View>
                         </View>
                         <Text style={styles.cargoAttributesUnit}>{unit.volumes}</Text>
@@ -627,11 +647,12 @@ export default class Flow extends Component {
                                         defaultValue={count}
                                         placeholderTextColor='#666'
                                         underlineColorAndroid={'transparent'}
-                                        onBlur={() => style === 1 && this.getPrices(1, insurance)}
                                         onChangeText={(text) => {
                                             this.setState({
                                                 count: text
-                                            })
+                                            }, () => {
+                                                style === 1 && this.getPrices(1, insurance);
+                                            });
                                         }}
                                     />
                                 </View>
@@ -672,6 +693,7 @@ export default class Flow extends Component {
                             iconTintColor='#666'
                             placeholder='请选择物品类型'
                             pickerTitle='物品类型选择'
+                            placeholderTextColor={'#666'}
                             onSelected={(item, index) => {
                                 // console.log(item);
                                 this.setState({
@@ -772,7 +794,7 @@ export default class Flow extends Component {
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入货物总体积"
                                     keyboardType={'numeric'}
-                                    defaultValue={this.state.volume}
+                                    defaultValue={'',this.state.volume}
                                     placeholderTextColor='#666'
                                     underlineColorAndroid={'transparent'}
                                     onChangeText={(text) => {
@@ -883,13 +905,12 @@ export default class Flow extends Component {
                                         keyboardType={'numeric'}
                                         placeholderTextColor='#666'
                                         underlineColorAndroid={'transparent'}
-                                        onBlur={() => this.getPrices(style, insurance)}
                                         onChangeText={(text) => {
                                             this.setState({
                                                 cus_prices: text,
                                                 price: text,
                                                 // relprice: relprice,
-                                            })
+                                            }, () => this.getPrices(style, insurance));
                                         }}
                                     />
                                 </View>
@@ -970,7 +991,7 @@ export default class Flow extends Component {
                 />
                 <ScrollView
                     keyboardShouldPersistTaps={'handled'}
-                    style={GlobalStyles.hasFixedContainer}
+                    style={GlobalStyles.hasFixedContainer1}
                 >
                     <View style={[styles.containerItemView, styles.addressInfoView]}>
                         <View style={styles.addressLeftView}>
@@ -1249,17 +1270,17 @@ export default class Flow extends Component {
                             <Text style={styles.flowProtocolName}>《服务协议》</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={GlobalStyles.fixedBtnView1}>
+                        <TouchableOpacity
+                            style={[GlobalStyles.btnView, styles.btnView]}
+                            onPress={() => {
+                                canPress && this.doSubmitOrder()
+                            }}
+                        >
+                            <Text style={[GlobalStyles.btnItem, styles.btnItem]}>订单确认</Text>
+                        </TouchableOpacity>
+                    </View>
                 </ScrollView>
-                <View style={GlobalStyles.fixedBtnView}>
-                    <TouchableOpacity
-                        style={[GlobalStyles.btnView, styles.btnView]}
-                        onPress={() => {
-                            canPress && this.doSubmitOrder()
-                        }}
-                    >
-                        <Text style={[GlobalStyles.btnItem, styles.btnItem]}>订单确认</Text>
-                    </TouchableOpacity>
-                </View>
             </View>
         );
     }

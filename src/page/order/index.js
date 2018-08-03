@@ -80,12 +80,12 @@ export default class Order extends Component {
     }
 
     getNavigations = () => {
-        let url = NetApi.navigations;
-        this.netRequest.fetchGet(url)
+        let url = NetApi.orderNavigation + '/uid/' + this.state.user.uid;
+        this.netRequest.fetchGet(url, true)
             .then( result => {
                 if (result && result.code == 1) {
                     this.updateState({
-                        navigations: result.data.orderNavigations
+                        navigations: result.data
                     })
                 }
                 // console.log('首页推荐', result);

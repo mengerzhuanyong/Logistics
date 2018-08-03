@@ -18,6 +18,7 @@ module.exports = {
 
     index: 'user/index/index',                                                                          // 首页
     navigations: 'user/navigations/index',                                                              // 首页
+    orderNavigation: 'user/navigations/orderNavigations',                                                              // 首页
     postLongitude: 'user/index/navigation',                                                             // 首页
     getBanner: 'user/index/banner',                                                                     // 首页
 
