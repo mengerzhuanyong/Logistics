@@ -558,18 +558,18 @@ export default class Flow extends Component {
             category, categoryText, cate, count, weight, otherType,
             coupon, deliveryFee, insurance, volmonArr,
         } = this.state;
-        volmonArr = [
-            {'volmon': 0.1, 'price': 1},
-            {'volmon': 0.2, 'price': 2},
-            {'volmon': 0.3, 'price': 3},
-            {'volmon': 0.4, 'price': 4},
-            {'volmon': 0.5, 'price': 5},
-            {'volmon': 0.6, 'price': 6},
-            {'volmon': 0.7, 'price': 7},
-            {'volmon': 0.8, 'price': 8},
-            {'volmon': 0.9, 'price': 9},
-            {'volmon': 1.0, 'price': 10},
-        ];
+        // volmonArr = [
+        //     {'volmon': 0.1, 'price': 1},
+        //     {'volmon': 0.2, 'price': 2},
+        //     {'volmon': 0.3, 'price': 3},
+        //     {'volmon': 0.4, 'price': 4},
+        //     {'volmon': 0.5, 'price': 5},
+        //     {'volmon': 0.6, 'price': 6},
+        //     {'volmon': 0.7, 'price': 7},
+        //     {'volmon': 0.8, 'price': 8},
+        //     {'volmon': 0.9, 'price': 9},
+        //     {'volmon': 1.0, 'price': 10},
+        // ];
         if (style === 1) {
             volume = volume !== '' ? (volume + 'm³') : null;
             return (
