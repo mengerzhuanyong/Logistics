@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     },
     // 内容
     contentTextCur: {
-        fontSize: 14,
+        fontSize: 13,
         color: GlobalStyles.themeColor,
     },
     contentText: {

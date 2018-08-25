@@ -558,18 +558,7 @@ export default class Flow extends Component {
             category, categoryText, cate, count, weight, otherType,
             coupon, deliveryFee, insurance, volmonArr,
         } = this.state;
-        // volmonArr = [
-        //     {'volmon': 0.1, 'price': 1},
-        //     {'volmon': 0.2, 'price': 2},
-        //     {'volmon': 0.3, 'price': 3},
-        //     {'volmon': 0.4, 'price': 4},
-        //     {'volmon': 0.5, 'price': 5},
-        //     {'volmon': 0.6, 'price': 6},
-        //     {'volmon': 0.7, 'price': 7},
-        //     {'volmon': 0.8, 'price': 8},
-        //     {'volmon': 0.9, 'price': 9},
-        //     {'volmon': 1.0, 'price': 10},
-        // ];
+        
         if (style === 1) {
             volume = volume !== '' ? (volume + 'm³') : null;
             return (
@@ -602,12 +591,12 @@ export default class Flow extends Component {
                             <View style={styles.rightContent}>
                                 <Text style={styles.textSymbol}>*</Text>
                                 {volmonArr.length > 0 ? <Select
-                                    style={{flex: 1, borderWidth: 0, paddingLeft: 0,}}
+                                    style={{width: GlobalStyles.width - 80, borderWidth: 0, paddingLeft: 0,}}
                                     value={volume}
                                     valueStyle={{flex: 1, color: '#555', textAlign: 'left'}}
                                     items={volmonArr}
                                     getItemValue={(item, index) => item.price}
-                                    getItemText={(item, index) => `${item.volmon}m³`}
+                                    getItemText={(item, index) => `${item.volmon}m³ (${item.price} 元)`}
                                     iconTintColor='#666'
                                     placeholder='请选择每件商品体积'
                                     pickerTitle='单件物品超过1m³请选择【整体计算】'
@@ -623,7 +612,7 @@ export default class Flow extends Component {
                                 /> : <TextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     editable={false}
-                                    placeholder="暂无体积，无法选择"
+                                    placeholder="商家还未设置体积规格，无法选择"
                                     keyboardType={'numeric'}
                                     defaultValue={volume}
                                     placeholderTextColor='#666'
@@ -631,7 +620,7 @@ export default class Flow extends Component {
                                 />}
                             </View>
                         </View>
-                        <Text style={styles.cargoAttributesUnit}>{unit.volumes}</Text>
+                        {/*<Text style={styles.cargoAttributesUnit}>{unit.volumes}</Text>*/}
                     </View>
                     <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     {charteredCar == 0 && <View>
@@ -926,8 +915,8 @@ export default class Flow extends Component {
         let {relprice} = this.state;
         if (!data || data.length < 1) {
             data = [
-                {name: '取件费', value: '0', is_selected: 0},
-                {name: '送件费', value: '0', is_selected: 0},
+                {name: '同城上门取货', value: '0', is_selected: 0},
+                {name: '同城上门送货', value: '0', is_selected: 0},
             ];
             return;
         }
@@ -960,14 +949,14 @@ export default class Flow extends Component {
                 </TouchableOpacity>
             );
         });
+                // <View style={styles.containerItemTitleView}>
+                //     <Text
+                //         style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>小件取送费</Text>
+                // </View>
+                // <View style={[GlobalStyles.horLine, styles.horLine]}/>
 
         return (
             <View style={[styles.containerItemView, styles.deliveryCarView]}>
-                <View style={styles.containerItemTitleView}>
-                    <Text
-                        style={[styles.containerItemTitleLeft, styles.containerItemTitle]}>小件取送费</Text>
-                </View>
-                <View style={[GlobalStyles.horLine, styles.horLine]}/>
                 {delivery}
             </View>
         );
