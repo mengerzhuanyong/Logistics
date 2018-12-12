@@ -1,6 +1,6 @@
 /**
  * 速芽物流 - PopModel
- * https://menger.me
+ * http://menger.me
  * @大梦
  */
 

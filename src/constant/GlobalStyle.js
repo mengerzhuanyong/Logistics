@@ -1,6 +1,6 @@
 /**
  * 速芽物流用户端 - 全局样式
- * https://menger.me
+ * http://menger.me
  * @大梦
  */
 

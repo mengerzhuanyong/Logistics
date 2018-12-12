@@ -1,6 +1,6 @@
 /**
  * 速芽物流 - Images && Icons
- * https://menger.me
+ * http://menger.me
  * @大梦
  */
 

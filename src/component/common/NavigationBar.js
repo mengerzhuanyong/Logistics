@@ -1,6 +1,6 @@
 /**
  * 速芽物流用户端 - NavigationBar
- * https://menger.me
+ * http://menger.me
  * @大梦
  */
 

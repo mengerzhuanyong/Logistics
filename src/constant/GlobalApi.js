@@ -1,6 +1,6 @@
 /**
  * 速芽物流用户端 - API
- * https://menger.me
+ * http://menger.me
  * UpdateTime: 2017/12/25 14:55
  * @大梦
  */
