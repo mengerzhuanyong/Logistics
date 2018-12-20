@@ -251,7 +251,7 @@ export default class MineAddressAdd extends Component {
                                 style = {styles.inputItemConView}
                                 onPress = {() => this.onPressSelectAddress()}
                             >
-                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择省市区(选填)'}</Text>
+                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择地区(选填)'}</Text>
                             </TouchableOpacity>
                             {/*<View style={[GlobalStyles.horLine, styles.horLine]} />
                             <TextInput

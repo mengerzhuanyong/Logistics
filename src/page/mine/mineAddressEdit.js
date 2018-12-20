@@ -53,14 +53,14 @@ export default class MineAddressAdd extends Component {
             area: (params.item && params.item.area) ? params.item.area : [],
             address: params.item ? params.item.address : '',
             other: params.item.other ? params.item.other : false,
+            addressName: params.item ? params.item.address_name : '',
+            longitude: params.item ? params.item.longitude : '',
             ready: false,
             loadMore: false,
             refreshing: false,
             canPress: true,
             companyListData: ShopData.data,
             canBack: false,
-            addressName: '',
-            longitude: '',
         }
         this.netRequest = new NetRequest();
     }
@@ -260,7 +260,7 @@ export default class MineAddressAdd extends Component {
                                 style = {styles.inputItemConView}
                                 onPress = {() => this.onPressSelectAddress()}
                             >
-                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择省市区(选填)'}</Text>
+                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择地区(选填)'}</Text>
                             </TouchableOpacity>
                             {/*<View style={[GlobalStyles.horLine, styles.horLine]} />
                             <TextInput
