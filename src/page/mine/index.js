@@ -345,14 +345,14 @@ export default class Mine extends Component {
                     <NavigatorItem
                         leftIcon = {GlobalIcons.icon_address_send}
                         leftTitle = {navigations.ship}
-                        onPushNavigator = {() => this.onPushNavigator(navigations.ship, 'MineAddressShipperList')}
+                        onPushNavigator = {() => this.onPushNavigator(navigations.ship, 'MineAddressList')}
                     />
-                    <View style={[GlobalStyles.horLine, styles.horLine]} />
+                    {/*<View style={[GlobalStyles.horLine, styles.horLine]} />
                     <NavigatorItem
                         leftIcon = {GlobalIcons.icon_address_receive}
                         leftTitle = {navigations.receive}
                         onPushNavigator = {() => this.onPushNavigator(navigations.receive, 'MineAddressList')}
-                    />
+                    />*/}
                     <View style={[GlobalStyles.horLine, styles.horLine, {height: 1}]} />
                     <NavigatorItem
                         leftIcon = {GlobalIcons.icon_feedback}

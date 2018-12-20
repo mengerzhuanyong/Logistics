@@ -141,13 +141,14 @@ export default class Flow extends Component {
         state.params && state.params.reloadData && state.params.reloadData();
         goBack();
     };
-    selectContent = (component) => {
+    selectContent = (component, type) => {
         const {navigate} = this.props.navigation;
         navigate(component, {
             cid: this.state.cid,
             orderPrice: this.state.relprice,
             // orderPrice: '50',
             PAGE_FLAG: 'FLOW',
+            PAGE_FLAG_TYPE: type,
             updateContent: this.updateContent,
             pageTitle: 'pageTitle',
             // reloadData: () => this.loadNetData(),
@@ -160,18 +161,18 @@ export default class Flow extends Component {
             ...params,
         });
     };
-    updateContent = (type, data) => {
-        // console.log('传回的值', type, data);
-        if (type == 'address' && data.style == 2) {
-            this.setState({
-                receiverAdd: data,
-                receiver: data.id,
-            })
-        }
-        if (type == 'address' && data.style == 1) {
+    updateContent = (type, data, dataType = 0) => {
+        console.log('传回的值', type, data);
+        if (type == 'address' && dataType == 1) {
             this.setState({
                 shipperAdd: data,
                 shipper: data.id,
+            })
+        }
+        if (type == 'address' && dataType == 2) {
+            this.setState({
+                receiverAdd: data,
+                receiver: data.id,
             })
         }
         if (type == 'couponInfo') {
@@ -451,6 +452,10 @@ export default class Flow extends Component {
         }
         if (data.img1 === '' && data.img2 === '' && data.img3 === '') {
             toastShort('请上传物品图片');
+            return false;
+        }
+        if (data.relprice <= 0) {
+            toastShort('订单金额必须大于0');
             return false;
         }
         if (data.agree != '1') {
@@ -1005,7 +1010,7 @@ export default class Flow extends Component {
                                 <View style={[GlobalStyles.verLine, styles.verLine]}/>
                                 <TouchableOpacity
                                     style={styles.addressDetailRight}
-                                    onPress={() => this.selectContent('MineAddressShipperList')}
+                                    onPress={() => this.selectContent('MineAddressList', 1)}
                                 >
                                     <Text style={styles.addressDetailRightCon}>地址簿</Text>
                                 </TouchableOpacity>
@@ -1021,7 +1026,7 @@ export default class Flow extends Component {
                                 <View style={[GlobalStyles.verLine, styles.verLine]}/>
                                 <TouchableOpacity
                                     style={styles.addressDetailRight}
-                                    onPress={() => this.selectContent('MineAddressList')}
+                                    onPress={() => this.selectContent('MineAddressList', 2)}
                                 >
                                     <Text style={styles.addressDetailRightCon}>地址簿</Text>
                                 </TouchableOpacity>
@@ -1039,7 +1044,7 @@ export default class Flow extends Component {
                                     onPress={() => this.changeOrderStyle(1, 0)}
                                 >
                                     <Text
-                                        style={[styles.cargoTypeItemCon, style == '1' && styles.cargoTypeItemConCur]}>单个计算</Text>
+                                        style={[styles.cargoTypeItemCon, style == '1' && styles.cargoTypeItemConCur]}>小件发货</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -1047,10 +1052,10 @@ export default class Flow extends Component {
                                     onPress={() => this.changeOrderStyle(2, 0)}
                                 >
                                     <Text
-                                        style={[styles.cargoTypeItemCon, style == '2' && styles.cargoTypeItemConCur]}>整体计算</Text>
+                                        style={[styles.cargoTypeItemCon, style == '2' && styles.cargoTypeItemConCur]}>大件发货</Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity
+                                {/* <TouchableOpacity
                                     style={[styles.cargoTypeItem, style == '3' && styles.cargoTypeItemCur]}
                                     onPress={() => this.changeOrderStyle(3, 0)}
                                 >
@@ -1064,7 +1069,7 @@ export default class Flow extends Component {
                                 >
                                     <Text
                                         style={[styles.cargoTypeItemCon, style == '4' && styles.cargoTypeItemConCur]}>国际物流</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity>*/}
                             </View>
                         </View>
                         <View style={[GlobalStyles.horLine, styles.horLine]}/>
@@ -1167,7 +1172,7 @@ export default class Flow extends Component {
                     <View style={[styles.containerItemView, styles.deliveryCouponView]}>
                         <TouchableOpacity
                             style={styles.containerItemTitleView}
-                            onPress={() => this.selectContent('MineCoupon')}
+                            onPress={() => this.selectContent('MineCoupon', 0)}
                         >
                             <View style={styles.containerItemTitleLeft}>
                                 <Text style={styles.containerItemTitle}>选择优惠券</Text>
@@ -1377,7 +1382,7 @@ const styles = StyleSheet.create({
         borderColor: GlobalStyles.themeColor,
     },
     cargoTypeItemCon: {
-        fontSize: 13,
+        fontSize: 14,
         color: '#999',
         // marginLeft: 5,
     },

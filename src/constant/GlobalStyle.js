@@ -104,6 +104,7 @@ module.exports = {
 
     bannerContainer: {
         height: width / 2,
+        backgroundColor: '#f60'
     },
     bannerViewWrap: {
         flex: 1,

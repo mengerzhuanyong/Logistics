@@ -19,6 +19,7 @@ import { consoleLog } from '../util/utilsToast'
 
 import TabBarItem from '../component/common/TabBarItem'
 import Root from '../index'
+import SelectAddressWeb from '../page/common/selectAddressWeb'
 
 import Home from '../page/home'
 import Order from '../page/order'
@@ -147,6 +148,9 @@ const App = StackNavigator(
     {
         TabNavScreen: {
             screen: TabNavScreen
+        },
+        SelectAddressWeb: {
+            screen: SelectAddressWeb
         },
         Login: {
             screen: Login

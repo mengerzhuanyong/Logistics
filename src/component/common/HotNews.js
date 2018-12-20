@@ -5,20 +5,8 @@
  */
 
 import React, {Component} from 'react'
-import {
-    Text,
-    View,
-    Image,
-    Platform,
-    TextInput,
-    StyleSheet,
-    ScrollView,
-    TouchableOpacity
-} from 'react-native'
+import {Image, Platform, StyleSheet, TouchableOpacity, View} from 'react-native'
 import {Carousel} from 'teaset'
-import Swiper from 'react-native-swiper'
-import { toastShort, consoleLog } from '../../util/utilsToast'
-import NetApi from '../../constant/GlobalApi'
 import NetRequest from '../../util/utilsRequest'
 import GlobalStyles from '../../constant/GlobalStyle'
 import GlobalIcons from '../../constant/GlobalIcon'
@@ -28,7 +16,7 @@ const isIos = Platform.OS == 'ios';
 
 export default class HotNews extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             swiperShow: false,
@@ -56,14 +44,14 @@ export default class HotNews extends Component {
     //     return false;
     // }
 
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps) {
         // consoleLog('', nextProps);
         this.updateState({
             hotNews: nextProps.hotNewsData
         })
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.timer && clearTimeout(this.timer);
     }
 
@@ -79,19 +67,20 @@ export default class HotNews extends Component {
     };
 
     renderSlider = (row) => {
-        if(row.length <= 0) {
+        if (row.length <= 0) {
             return;
         }
-        let sliders = row.map((obj,index)=>{
+        let sliders = row.map((obj, index) => {
             return (
                 <TouchableOpacity
                     style={GlobalStyles.bannerViewWrap}
-                    key={"bubble_"+index}
-                    activeOpacity = {1}
-                    onPress={() => {}}
+                    key={"bubble_" + index}
+                    activeOpacity={1}
+                    onPress={() => {
+                    }}
                 >
                     <View style={GlobalStyles.bannerViewWrap}>
-                        <Image source={{uri: obj.logo}} style={styles.hotNewsItemPicture} />
+                        <Image source={{uri: obj.logo}} style={styles.hotNewsItemPicture}/>
                     </View>
                 </TouchableOpacity>
             )
@@ -99,19 +88,18 @@ export default class HotNews extends Component {
         return sliders;
     };
 
-    render(){
-        const { hotNews } = this.state;
+    render() {
+        const {hotNews} = this.state;
         return (
             <View style={[styles.container]}>
-                <ScrollView>
-                    <Carousel
-                        horizontal={false}
-                        interval={4000}
-                        style={styles.bannerContainer}
-                    >
-                        {this.renderSlider(hotNews)}
-                    </Carousel>
-                </ScrollView>
+                <Image source={GlobalIcons.icon_hot_news} style={styles.hotNewsTitleIcon}/>
+                <Carousel
+                    horizontal={false}
+                    interval={4000}
+                    style={styles.bannerContainer}
+                >
+                    {this.renderSlider(hotNews)}
+                </Carousel>
             </View>
         );
     }
@@ -120,7 +108,15 @@ export default class HotNews extends Component {
 const styles = StyleSheet.create({
     container: {
         height: 100,
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#fff',
+    },
+    hotNewsTitleIcon: {
+        width: 45,
+        height: 45,
+        marginLeft: 15,
+        marginRight: 5,
     },
     bannerContainer: {
         flex: 1,

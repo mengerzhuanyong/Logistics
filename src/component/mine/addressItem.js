@@ -39,6 +39,7 @@ export default class MineAddressItem extends Component {
             item: this.props.item,
             style: this.props.style,
             PAGE_FLAG: this.props.PAGE_FLAG,
+            PAGE_FLAG_TYPE: this.props.PAGE_FLAG_TYPE,
             updateContent: this.props.updateContent,
         };
         this.netRequest = new NetRequest();
@@ -47,6 +48,7 @@ export default class MineAddressItem extends Component {
     static defaultProps = {
         item: {},
         PAGE_FLAG: '',
+        PAGE_FLAG_TYPE: '',
         updateContent: () => {}
     };
 
@@ -81,12 +83,12 @@ export default class MineAddressItem extends Component {
     }
 
     setDefaultAddress = (item) => {
-        const { updateContent } = this.state;
+        const { updateContent, PAGE_FLAG_TYPE } = this.state;
         let url = NetApi.mineAddressDefault + item.id + '/uid/' + global.user.userData.uid;
         this.netRequest.fetchGet(url)
             .then( result => {
                 if (result && result.code == 1) {
-                    updateContent('address', item);
+                    updateContent('address', item, PAGE_FLAG_TYPE);
                     this.props.navigation.goBack();
                 } else {
                     toastShort(result.msg);

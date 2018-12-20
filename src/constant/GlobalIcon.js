@@ -83,6 +83,9 @@ module.exports = {
     icon_weight: require('../asset/img/icon/icon_weight.png'),
     icon_cash_on_delivery: require('../asset/img/icon/icon_cash_on_delivery.png'),
     icon_no_record: require('../asset/img/icon/icon_no_record.png'),
+    icon_hot_news: require('../asset/img/icon/icon_hot_news.png'),
+    icon_message: require('../asset/img/icon/icon_message.png'),
+    icon_sign_in: require('../asset/img/icon/icon_sign_in.png'),
 
     // IMAGES
     logo: require('../asset/img/img/logo.png'),

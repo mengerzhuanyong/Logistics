@@ -370,12 +370,6 @@ export default class Home extends Component {
         let { navigations, bannerData, hotNewsData, servicesNavigations } = this.state;
         return (
             <View style={styles.container}>
-                <NavigationBar
-                    style = {{
-                        height: 0,
-                        backgroundColor: 'transparent'
-                    }}
-                />
                 <BannerView bannerData = {bannerData} />
                 <View style={styles.homeNavigationView}>
                     <NavigatorItem
@@ -526,7 +520,7 @@ export default class Home extends Component {
                     this.onPushToNextPage(pageTitle, page);
                 }}
             >
-                <Image source={GlobalIcons.icon_user} style={styles.headRightIcon}/>
+                <Image source={GlobalIcons.icon_message} style={styles.headRightIcon}/>
             </TouchableOpacity>
         )
     };
@@ -565,6 +559,12 @@ export default class Home extends Component {
                     />
                     : <ActivityIndicatorItem />
                 }
+                <TouchableOpacity
+                    style={styles.signBtnView}
+                    onPress={() => this.onPressToSign}
+                >
+                    <Image source={GlobalIcons.icon_sign_in} style={styles.signBtnIcon} />
+                </TouchableOpacity>
                 {modalVisible &&
                     <ModalView
                         show = {modalVisible}
@@ -745,6 +745,16 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         resizeMode: 'contain',
+    },
+
+    signBtnView: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+    },
+    signBtnIcon: {
+        width: 50,
+        height: 50,
     },
     // modalStyle: {
     //     borderRadius: 0,

@@ -45,6 +45,7 @@ export default class MineCoupon extends Component {
             cid: params.cid != '' ? params.cid : '',
             orderPrice: params.orderPrice != '' ? params.orderPrice : '',
             PAGE_FLAG: params.PAGE_FLAG != '' ? params.PAGE_FLAG : '',
+            PAGE_FLAG_TYPE: params.PAGE_FLAG_TYPE != '' ? params.PAGE_FLAG_TYPE : '',
             updateContent: params.updateContent ? params.updateContent : () => {},
             // couponListData: ShopData.data,
             canBack: false,
@@ -173,6 +174,7 @@ export default class MineCoupon extends Component {
                 {...this.props}
                 orderPrice = {this.state.orderPrice}
                 PAGE_FLAG = {this.state.PAGE_FLAG}
+                PAGE_FLAG_TYPE = {this.state.PAGE_FLAG_TYPE}
                 updateContent = {this.state.updateContent}
             />
         )

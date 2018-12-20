@@ -27,7 +27,7 @@ import EmptyComponent from '../../component/common/EmptyComponent'
 
 import OrderItemView from '../../component/order/orderItem'
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
-import AddressItem from '../../component/mine/addressItem'
+import MineAddressItem from '../../component/mine/addressItem'
 
 import ShopData from '../../asset/json/homeBusiness.json'
 
@@ -48,6 +48,7 @@ export default class MineAddressList extends Component {
             manageAddress: false,
             addressListData: [],
             PAGE_FLAG: params.PAGE_FLAG != '' ? params.PAGE_FLAG : '',
+            PAGE_FLAG_TYPE: params.PAGE_FLAG_TYPE != '' ? params.PAGE_FLAG_TYPE : '',
             updateContent: params.updateContent ? params.updateContent : () => {},
             // PAGE_FLAG: '',
             // updateContent: '',
@@ -137,7 +138,7 @@ export default class MineAddressList extends Component {
         let url = NetApi.mineAddress + uid + '/style/' + style + '/page/' + page;
         return this.netRequest.fetchGet(url)
             .then( result => {
-                // console.log('收货地址', result);
+                // console.log('地址', result);
                 return result;
             })
             .catch( error => {
@@ -196,10 +197,11 @@ export default class MineAddressList extends Component {
     renderAddressItem = (item) => {
         // console.log(item);
         return (
-            <AddressItem
+            <MineAddressItem
                 item = {item.item}
                 {...this.props}
                 PAGE_FLAG = {this.state.PAGE_FLAG}
+                PAGE_FLAG_TYPE = {this.state.PAGE_FLAG_TYPE}
                 updateContent = {this.state.updateContent}
                 manageAddress = {this.state.manageAddress}
                 onPushToAddressEdit = {()=> this.onPushToAddressEdit(item)}
@@ -224,7 +226,7 @@ export default class MineAddressList extends Component {
     }
 
     renderEmptyView = () => {
-        return <EmptyComponent emptyTips={'对不起，您还没有添加收货地址'} />;
+        return <EmptyComponent emptyTips={'对不起，您还没有添加地址'} />;
     }
 
     renderSeparator = () => {
@@ -266,7 +268,7 @@ export default class MineAddressList extends Component {
         return (
             <View style={styles.container}>
                 <NavigationBar
-                    title = {'我的收货地址'}
+                    title = {'我的地址'}
                     leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
                     rightButton = {this.renderRightButton()}
                 />
@@ -293,7 +295,7 @@ export default class MineAddressList extends Component {
                         style = {[GlobalStyles.btnView, styles.btnView]}
                         onPress = {()=>this.onPushToAddress()}
                     >
-                        <Text style={[GlobalStyles.btnItem, styles.btnItem]}>新建收货地址</Text>
+                        <Text style={[GlobalStyles.btnItem, styles.btnItem]}>新建地址</Text>
                     </TouchableOpacity>
                 </View>
             </View>

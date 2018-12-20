@@ -32,6 +32,7 @@ export default class MineCouponItem extends Component {
             cid: this.props.cid,
             item: this.props.item,
             PAGE_FLAG: this.props.PAGE_FLAG,
+            PAGE_FLAG_TYPE: this.props.PAGE_FLAG_TYPE,
             orderPrice: this.props.orderPrice,
             updateContent: this.props.updateContent,
         };
@@ -42,6 +43,7 @@ export default class MineCouponItem extends Component {
         cid: '',
         item: {},
         PAGE_FLAG: '',
+        PAGE_FLAG_TYPE: '',
         orderPrice: '',
         updateContent: () => {}
     }
@@ -60,7 +62,7 @@ export default class MineCouponItem extends Component {
     }
 
     render(){
-        const { item, PAGE_FLAG, updateContent, orderPrice } = this.state;
+        const { item, PAGE_FLAG, PAGE_FLAG_TYPE, updateContent, orderPrice } = this.state;
         return (
             <TouchableOpacity
                 style = {styles.container}
@@ -71,7 +73,7 @@ export default class MineCouponItem extends Component {
                     if (PAGE_FLAG == 'FLOW') {
                         if (orderPrices >= couponFullPrice) {
                             // if (this.state.cid === '') {
-                                updateContent('couponInfo', item);
+                                updateContent('couponInfo', item, PAGE_FLAG_TYPE);
                                 this.props.navigation.goBack();
                             // } else {
                             //     toastShort('当前已选择该优惠券，请选择其他或者直接返回');

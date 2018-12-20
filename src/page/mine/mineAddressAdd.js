@@ -57,6 +57,8 @@ export default class MineAddressAdd extends Component {
             canPress: true,
             companyListData: ShopData.data,
             canBack: false,
+            addressName: '',
+            longitude: '',
         }
         this.netRequest = new NetRequest();
     }
@@ -99,7 +101,7 @@ export default class MineAddressAdd extends Component {
 
     doSubmitAdd = () => {
         let url = NetApi.mineAddressAdd;
-        let { uid, phone, style, name, address, other } = this.state;
+        let { uid, phone, style, name, address, other, addressName, longitude } = this.state;
         let status = other ? ',1,2,' : style;
         let data = {
             uid: uid,
@@ -109,6 +111,8 @@ export default class MineAddressAdd extends Component {
             area: area,
             address: address,
             other: other,
+            address_name: addressName,
+            longitude,
         };
         if (name == '') {
             toastShort('请输入收件人姓名');
@@ -122,14 +126,14 @@ export default class MineAddressAdd extends Component {
             toastShort('手机号格式不正确，请重新输入');
             return;
         }
-        if (area.length == 0) {
-            toastShort('请选择所在城市');
-            return;
-        }
-        if (address == '') {
-            toastShort('请输入详细地址');
-            return;
-        }
+        // if (area.length == 0) {
+        //     toastShort('请选择所在城市');
+        //     return;
+        // }
+        // if (address == '') {
+        //     toastShort('请选择地点');
+        //     return;
+        // }
         this.updateState({
             canPress: false
         });
@@ -173,6 +177,16 @@ export default class MineAddressAdd extends Component {
         return data;
     }
 
+    onPressSelectAddress = () => {
+        this.props.navigation.navigate('SelectAddressWeb', {
+            onCallBack: (address, longitude, addressName) => this.setState({
+                address,
+                longitude,
+                addressName,
+            })
+        });
+    };
+
     showAreaPicker = (type) => {
         Picker.init({
             pickerData: this.createAreaData(),
@@ -198,11 +212,11 @@ export default class MineAddressAdd extends Component {
     }
 
     render(){
-        const { ready, refreshing, companyListData, area, canPress } = this.state;
+        const { ready, refreshing, companyListData, area, address, canPress } = this.state;
         return (
             <View style={styles.container}>
                 <NavigationBar
-                    title = {'新增收货地址'}
+                    title = {'新增地址'}
                     leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
                 />
                 <KeyboardAwareScrollView>
@@ -235,11 +249,11 @@ export default class MineAddressAdd extends Component {
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
                             <TouchableOpacity
                                 style = {styles.inputItemConView}
-                                onPress = {() => this.showAreaPicker()}
+                                onPress = {() => this.onPressSelectAddress()}
                             >
-                                <Text style={[styles.inputItemCon, {lineHeight: 45}]}>{area.length > 0 ? `${area[0]} ${area[1]} ${area[2]}` : '选择省市区'}</Text>
+                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择省市区(选填)'}</Text>
                             </TouchableOpacity>
-                            <View style={[GlobalStyles.horLine, styles.horLine]} />
+                            {/*<View style={[GlobalStyles.horLine, styles.horLine]} />
                             <TextInput
                                 style = {styles.inputItemCon}
                                 placeholder = "请输入详细地址"
@@ -250,9 +264,9 @@ export default class MineAddressAdd extends Component {
                                         address: text
                                     })
                                 }}
-                            />
+                            />*/}
                         </View>
-                        <TouchableOpacity
+                        {/*<TouchableOpacity
                             style = {[styles.addressAddItemView, styles.addressAddTips]}
                             onPress = {() => {
                                 this.updateState({
@@ -262,7 +276,7 @@ export default class MineAddressAdd extends Component {
                         >
                             <Text style={styles.addressAddTipsName}>保存到我的发货地址</Text>
                             <Image source={this.state.other ? selectedIcon : selectIcon} style={GlobalStyles.checkedIcon} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
                         <View style={[GlobalStyles.btnView, styles.btnView]}>
                             <TouchableOpacity
                                 style = {GlobalStyles.btnView}
@@ -301,6 +315,10 @@ const styles = StyleSheet.create({
         color: '#555',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    inputItemConText: {
+        fontSize: 15,
+        color: '#555',
     },
     addressAddTips: {
         marginTop: 10,
