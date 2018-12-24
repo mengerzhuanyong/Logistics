@@ -20,6 +20,7 @@ import { consoleLog } from '../util/utilsToast'
 import TabBarItem from '../component/common/TabBarItem'
 import Root from '../index'
 import SelectAddressWeb from '../page/common/selectAddressWeb'
+import Search from '../page/common/search'
 
 import Home from '../page/home'
 import Order from '../page/order'
@@ -151,6 +152,9 @@ const App = StackNavigator(
         },
         SelectAddressWeb: {
             screen: SelectAddressWeb
+        },
+        Search: {
+            screen: Search
         },
         Login: {
             screen: Login

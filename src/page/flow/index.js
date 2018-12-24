@@ -604,15 +604,19 @@ export default class Flow extends Component {
                                     getItemText={(item, index) => `${item.volmon}m³ (${item.price} 元)`}
                                     iconTintColor='#666'
                                     placeholder='请选择每件商品体积'
-                                    pickerTitle='单件物品超过1m³请选择【整体计算】'
+                                    pickerTitle='单件物品超过1m³请选择【大件发货】'
                                     placeholderTextColor={'#666'}
                                     onSelected={(item, index) => {
-                                        this.setState({
-                                            volumePrice: item.price,
-                                            volume: item.volmon
-                                        }, () => {
-                                            style === 1 && this.getPrices(1, insurance);
-                                        });
+                                        if (item.price > 0) {
+                                            this.setState({
+                                                volumePrice: item.price,
+                                                volume: item.volmon
+                                            }, () => {
+                                                style === 1 && this.getPrices(1, insurance);
+                                            });
+                                        } else {
+                                            toastShort('该体积暂未设定价格无法选择');
+                                        }
                                     }}
                                 /> : <TextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}

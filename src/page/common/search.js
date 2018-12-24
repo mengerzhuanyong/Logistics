@@ -51,11 +51,12 @@ export default class BusinessIndex extends Component {
             errorInfo: "",
             loadMore: false,
             refreshing: false,
-            type: params && params.navItem ? params.navItem.style : '1',
+            type: params && params.navItem.style || '1',
             businessListData: [],
             canBack: false,
             notLimit: false,
             modalVisible: false,
+            emptyTips: '', // 对不起，暂未找到相关商家
         };
         this.netRequest = new NetRequest();
     }
@@ -263,6 +264,9 @@ export default class BusinessIndex extends Component {
 
     renderHeaderView = () => {
         let {notLimit, businessListData} = this.state;
+        if (businessListData.length < 1) {
+            return null;
+        }
         return (
             <View style={styles.shopListViewTitle}>
                 <View style={styles.switchView}>
@@ -280,16 +284,14 @@ export default class BusinessIndex extends Component {
                         }}
                     />
                 </View>
-                
-                {businessListData.length > 0 && 
-                    <TouchableOpacity
-                        style={[GlobalStyles.sortBtnView, styles.sortBtnView]}
-                        ref={(menu) => this.menu = menu}
-                        onPress={() => this.showSortMenu('end')}
-                    >
+                <TouchableOpacity
+                    style={[GlobalStyles.sortBtnView, styles.sortBtnView]}
+                    ref={(menu) => this.menu = menu}
+                    onPress={() => this.showSortMenu('end')}
+                >
                     <Text style={[GlobalStyles.sortBtnName, styles.sortBtnName]}>排序</Text>
                     <Image source={GlobalIcons.icon_arrow_down} style={styles.arrowIcon} />
-                </TouchableOpacity>}
+                </TouchableOpacity>
             </View>
         )
     }
@@ -299,7 +301,8 @@ export default class BusinessIndex extends Component {
     }
 
     renderEmptyView = () => {
-        return <EmptyComponent emptyTips={'对不起，暂未找到相关商家!'} />;
+        let {emptyTips} = this.state;
+        return <EmptyComponent emptyTips={emptyTips} />;
     }
 
     renderSeparator = () => {
@@ -309,13 +312,34 @@ export default class BusinessIndex extends Component {
     renderTitleView = () => {
         const { params } = this.props.navigation.state;
         let { navItem } = params;
-        let titleView = <View style={styles.pageTitleView}>
-            <Text style={styles.pageTitle}>{navItem.name}</Text>
-            {navItem.remark != '' && <Text style={styles.webTips}>({navItem.remark})</Text>}
-        </View>;
-
+        let titleView = (
+            <View style={styles.pageTitleView}>
+                <TextInput
+                    style = {styles.searchInputItem}
+                    placeholder = "商家名称"
+                    placeholderTextColor = '#888'
+                    underlineColorAndroid = {'transparent'}
+                    onChangeText = {(text)=>{
+                        this.setState({
+                            end: text
+                        })
+                    }}
+                />
+            </View>
+        );
         return titleView;
     }
+
+    renderRightButton = () => {
+        return (
+            <TouchableOpacity
+                style = {styles.searchBtnView}
+                onPress = {() => this.onSubmitSearch()}
+            >
+                <Text style={styles.searchBtnItem}>搜索</Text>
+            </TouchableOpacity>
+        );
+    };
 
     render(){
         const { ready, error, refreshing, businessListData, modalVisible, MODALVIEW_CONFIG } = this.state;
@@ -324,8 +348,9 @@ export default class BusinessIndex extends Component {
                 <NavigationBar
                     titleView = {this.renderTitleView()}
                     leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
+                    rightButton = {this.renderRightButton()}
                 />
-                <View style={styles.searchView}>
+                {/*<View style={styles.searchView}>
                     <View style={styles.searchInputView}>
                         <View style={styles.searchInputItemView}>
                             <View style={[GlobalStyles.placeViewIcon, GlobalStyles.placeStartIcon]}>
@@ -367,7 +392,7 @@ export default class BusinessIndex extends Component {
                     >
                         <Text style={styles.searchBtnItem}>确认</Text>
                     </TouchableOpacity>
-                </View>
+                </View>*/}
                 {ready &&  !error ?
                     <FlatList
                         style = {styles.shopListView}
@@ -404,8 +429,12 @@ const styles = StyleSheet.create({
         backgroundColor: GlobalStyles.bgColor,
     },
     pageTitleView: {
+        height: 32,
+        borderRadius: 18,
+        overflow: 'hidden',
         flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: '#fff'
     },
     pageTitle: {
         color: '#fff',
@@ -440,24 +469,26 @@ const styles = StyleSheet.create({
     searchInputItem: {
         flex: 1,
         height: 45,
+        paddingLeft: 10,
     },
     placeText: {
         fontSize: 12,
         color: '#fff',
     },
     searchBtnView: {
-        width: 80,
+        // width: 80,
+        paddingLeft: 10,
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
         // backgroundColor: '#123',
     },
     searchBtnItem: {
-        color: '#666',
+        color: '#fff',
         fontSize: 16,
     },
     shopListView: {
-        marginTop: 10,
+        // marginTop: 10,
         backgroundColor: '#fff',
     },
     shopListViewTitle: {

@@ -486,7 +486,7 @@ export default class Home extends Component {
         return (
             <TouchableOpacity
                 style = {[styles.headMiddleButton, styles.titleSearchView]}
-                onPress = {() => this.onPushNavigator(navigations[2], 'BusinessList')}
+                onPress = {() => this.onPushNavigator('搜索', 'Search')}
             >
                 <Text style={styles.titleSearchPlaceholder}>请输入您要找的关键词...</Text>
             </TouchableOpacity>
