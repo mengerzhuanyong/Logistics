@@ -12,6 +12,7 @@ import {
     Switch,
     Platform,
     FlatList,
+    Keyboard,
     TextInput,
     ScrollView,
     StyleSheet,
@@ -27,6 +28,7 @@ import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
 import ModalView from '../../component/common/shopTagPoup'
 import {Menu, Button} from 'teaset'
+import FlatListView from '../../component/common/flatListView'
 
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
 import BusinessItem from '../../component/common/businessItem'
@@ -45,16 +47,17 @@ export default class BusinessIndex extends Component {
         this.state = {
             ready: false,
             showFoot: 0,
+            store_name: '物流',
             start: '0',
             end: '0',
             error: false,
             errorInfo: "",
             loadMore: false,
             refreshing: false,
-            type: params && params.navItem.style || '1',
+            type: params && params.navItem.style || '4',
             businessListData: [],
             canBack: false,
-            notLimit: false,
+            notLimit: true,
             modalVisible: false,
             emptyTips: '', // 对不起，暂未找到相关商家
         };
@@ -76,7 +79,7 @@ export default class BusinessIndex extends Component {
     refreshing = false;
 
     async componentDidMount(){
-        await this.dropLoadMore();
+        // await this.dropLoadMore();
         this.updateState({
             ready: true,
             showFoot: 0 // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
@@ -133,8 +136,94 @@ export default class BusinessIndex extends Component {
         //     });
     }
 
+    // loadNetData = (sort, page) => {
+    //     let {type, start, end, notLimit, store_name} = this.state;
+    //     let url = NetApi.businessList;
+    //     let data = {
+    //         style: type,
+    //         page: page,
+    //         start: start,
+    //         end: end,
+    //         sort: sort,
+    //         store_name,
+    //         not_limit: notLimit,
+    //     };
+    //     return this.netRequest.fetchPost(url, data, true)
+    //         .then( result => {
+    //             // console.log('服务列表', result);
+    //             this.setState({ready: true});
+    //             return result;
+    //         })
+    //         .catch( error => {
+    //             // console.log('服务列表', error);
+    //             this.updateState({
+    //                 ready: true,
+    //                 error: true,
+    //                 errorInfo: error
+    //             })
+    //         })
+    // }
+
+    // dropLoadMore = async () => {
+    //     //如果是正在加载中或没有更多数据了，则返回
+    //     if (this.state.showFoot != 0) {
+    //         return;
+    //     }
+    //     if ((this.page != 1) && (this.page >= this.totalPage)) {
+    //         return;
+    //     } else {
+    //         this.page++;
+    //     }
+    //     this.updateState({
+    //         showFoot: 2
+    //     })
+    //     let result = await this.loadNetData(this.sortType, this.page);
+    //     // console.log(this.totalPage);
+    //     this.totalPage = result.data.pageSize;
+    //     // // console.log(result);
+    //     let foot = 0;
+    //     if (this.page >= this.totalPage) {
+    //         // console.log(this.totalPage);
+    //         foot = 1; //listView底部显示没有更多数据了
+    //     }
+    //     if (result && result.code ==1) {
+    //         this.updateState({
+    //             showFoot: foot,
+    //             businessListData: this.state.businessListData.concat(result.data.store)
+    //         })
+    //     } else {
+    //         toastShort(result.msg);
+    //         this.updateState({
+    //             showFoot: foot,
+    //             businessListData: this.state.businessListData
+    //         })
+    //     }
+    // }
+
+    // freshNetData = async (sort = `${this.sortType}`) => {
+    //     let result = await this.loadNetData(sort, 0);
+    //     if (result && result.code == 1) {
+    //         this.page = 0;
+    //         this.updateState({
+    //             showFoot: 0,
+    //             businessListData: result.data.store,
+    //         })
+    //     } else {
+    //         toastShort(result.msg);
+    //         this.updateState({
+    //             showFoot: 0,
+    //             businessListData: this.state.businessListData
+    //         })
+    //     }
+    // }
+
     loadNetData = (sort, page) => {
-        let {type, start, end, notLimit} = this.state;
+        // let url = NetApi.index;
+        // let data = {
+        //     page: page,
+        //     pageSize: this.pageSize
+        // };
+        let {type, start, end, notLimit, store_name} = this.state;
         let url = NetApi.businessList;
         let data = {
             style: type,
@@ -142,92 +231,74 @@ export default class BusinessIndex extends Component {
             start: start,
             end: end,
             sort: sort,
+            store_name,
             not_limit: notLimit,
         };
         return this.netRequest.fetchPost(url, data, true)
-            .then( result => {
-                // console.log('服务列表', result);
+            .then(result => {
                 return result;
             })
-            .catch( error => {
-                // console.log('服务列表', error);
-                this.updateState({
-                    ready: true,
-                    error: true,
-                    errorInfo: error
-                })
+            .catch(error => {
+                // toastShort('error');
             })
-    }
-
-    dropLoadMore = async () => {
-        //如果是正在加载中或没有更多数据了，则返回
-        if (this.state.showFoot != 0) {
-            return;
-        }
-        if ((this.page != 1) && (this.page >= this.totalPage)) {
-            return;
-        } else {
-            this.page++;
-        }
-        this.updateState({
-            showFoot: 2
-        })
-        let result = await this.loadNetData(this.sortType, this.page);
-        // console.log(this.totalPage);
-        this.totalPage = result.data.pageSize;
-        // // console.log(result);
-        let foot = 0;
-        if (this.page >= this.totalPage) {
-            // console.log(this.totalPage);
-            foot = 1; //listView底部显示没有更多数据了
-        }
-        if (result && result.code ==1) {
-            this.updateState({
-                showFoot: foot,
-                businessListData: this.state.businessListData.concat(result.data.store)
-            })
-        } else {
-            toastShort(result.msg);
-            this.updateState({
-                showFoot: foot,
-                businessListData: this.state.businessListData
-            })
-        }
-    }
+    };
 
     freshNetData = async (sort = `${this.sortType}`) => {
+        let {businessListData} = this.state;
         let result = await this.loadNetData(sort, 0);
-        if (result && result.code == 1) {
+        this.timer1 = setTimeout(() => {
             this.page = 0;
-            this.updateState({
+            this.setState({
                 showFoot: 0,
-                businessListData: result.data.store,
-            })
-        } else {
-            toastShort(result.msg);
-            this.updateState({
-                showFoot: 0,
-                businessListData: this.state.businessListData
-            })
+            });
+            // 调用停止刷新
+            this.flatList && this.flatList.stopRefresh()
+        }, 600);
+        if (!result) {
+            return;
         }
-    }
+        this.setState({
+            ready: true,
+            showFoot: 0,
+            businessListData: result.data.store,
+        });
+    };
+
+    dropLoadMore = async () => {
+        let {businessListData} = this.state;
+        let result = await this.loadNetData(this.sortType, this.page);
+        if (!result) {
+            return;
+        }
+        let totalPage = result.data.pageSize;
+        this.timer2 = setTimeout(() => {
+            let dataTemp = businessListData;
+            //模拟数据加载完毕,即page > 0,
+            if (this.page < totalPage) {
+                this.setState({
+                    emptyTips: result.msg,
+                    businessListData: dataTemp.concat(result.data.store),
+                });
+            }
+            this.flatList && this.flatList.stopEndReached({
+                allLoad: this.page === totalPage
+            });
+            this.page++;
+            // console.log('page, totalPage',this.page, totalPage)
+        }, 600);
+    };
+
+    _captureRef = (v) => {
+        this.flatList = v
+    };
+
+    _keyExtractor = (item, index) => {
+        return `item_${index}`;
+    };
 
     onSubmitSearch = async () => {
-        let result = await this.loadNetData(this.sortType, 0);
-        // // console.log(result);
-        if (result && result.code == 1) {
-            this.page = 0;
-            this.updateState({
-                showFoot: 0,
-                businessListData: result.data.store,
-            })
-        } else {
-            toastShort(result.msg);
-            this.updateState({
-                showFoot: 0,
-                businessListData: this.state.businessListData
-            })
-        }
+        Keyboard.dismiss();
+        this.freshNetData();
     }
 
     onPushToBusiness = (item) => {
@@ -236,7 +307,7 @@ export default class BusinessIndex extends Component {
         navigate('BusinessDetail', {
             pageTitle: 'pageTitle',
             item: item,
-            reloadData: () => this.loadNetData(),
+            reloadData: () => this.freshNetData(),
         })
     }
 
@@ -321,7 +392,7 @@ export default class BusinessIndex extends Component {
                     underlineColorAndroid = {'transparent'}
                     onChangeText = {(text)=>{
                         this.setState({
-                            end: text
+                            store_name: text
                         })
                     }}
                 />
@@ -343,6 +414,7 @@ export default class BusinessIndex extends Component {
 
     render(){
         const { ready, error, refreshing, businessListData, modalVisible, MODALVIEW_CONFIG } = this.state;
+        console.log('ready---->', ready);
         return (
             <View style={styles.container}>
                 <NavigationBar
@@ -393,23 +465,20 @@ export default class BusinessIndex extends Component {
                         <Text style={styles.searchBtnItem}>确认</Text>
                     </TouchableOpacity>
                 </View>*/}
-                {ready &&  !error ?
-                    <FlatList
-                        style = {styles.shopListView}
-                        keyExtractor = { item => item.id}
-                        data = {businessListData}
-                        extraData = {this.state}
-                        renderItem = {(item) => this.renderCompanyItem(item)}
-                        onEndReachedThreshold = {0.1}
-                        onEndReached = {(info) => this.dropLoadMore(info)}
-                        onRefresh = {this.freshNetData}
-                        refreshing = {refreshing}
+                {ready ?
+                    <FlatListView
+                        ref={this._captureRef}
+                        data={businessListData}
+                        style={styles.shopListView}
+                        renderItem={this.renderCompanyItem}
+                        keyExtractor={this._keyExtractor}
+                        onEndReached={this.dropLoadMore}
+                        onRefresh={this.freshNetData}
                         ItemSeparatorComponent={this.renderSeparator}
                         ListHeaderComponent = {this.renderHeaderView}
-                        ListFooterComponent = {this.renderFooterView}
                         ListEmptyComponent = {this.renderEmptyView}
                     />
-                    : <ActivityIndicatorItem />
+                    : null
                 }
                 {modalVisible &&
                     <ModalView

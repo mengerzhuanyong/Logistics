@@ -294,7 +294,7 @@ export default class Home extends Component {
             page: page,
             pageSize: this.pageSize
         };
-        return this.netRequest.fetchPost(url, data)
+        return this.netRequest.fetchPost(url, data, true)
             .then(result => {
                 return result;
             })

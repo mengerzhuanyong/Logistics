@@ -375,7 +375,7 @@ export default class BusinessIndex extends Component {
                         data = {businessListData}
                         extraData = {this.state}
                         renderItem = {(item) => this.renderCompanyItem(item)}
-                        onEndReachedThreshold = {0.1}
+                        onEndReachedThreshold = {0.2}
                         onEndReached = {(info) => this.dropLoadMore(info)}
                         onRefresh = {this.freshNetData}
                         refreshing = {refreshing}
