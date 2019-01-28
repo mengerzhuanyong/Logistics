@@ -136,93 +136,7 @@ export default class BusinessIndex extends Component {
         //     });
     }
 
-    // loadNetData = (sort, page) => {
-    //     let {type, start, end, notLimit, store_name} = this.state;
-    //     let url = NetApi.businessList;
-    //     let data = {
-    //         style: type,
-    //         page: page,
-    //         start: start,
-    //         end: end,
-    //         sort: sort,
-    //         store_name,
-    //         not_limit: notLimit,
-    //     };
-    //     return this.netRequest.fetchPost(url, data, true)
-    //         .then( result => {
-    //             // console.log('服务列表', result);
-    //             this.setState({ready: true});
-    //             return result;
-    //         })
-    //         .catch( error => {
-    //             // console.log('服务列表', error);
-    //             this.updateState({
-    //                 ready: true,
-    //                 error: true,
-    //                 errorInfo: error
-    //             })
-    //         })
-    // }
-
-    // dropLoadMore = async () => {
-    //     //如果是正在加载中或没有更多数据了，则返回
-    //     if (this.state.showFoot != 0) {
-    //         return;
-    //     }
-    //     if ((this.page != 1) && (this.page >= this.totalPage)) {
-    //         return;
-    //     } else {
-    //         this.page++;
-    //     }
-    //     this.updateState({
-    //         showFoot: 2
-    //     })
-    //     let result = await this.loadNetData(this.sortType, this.page);
-    //     // console.log(this.totalPage);
-    //     this.totalPage = result.data.pageSize;
-    //     // // console.log(result);
-    //     let foot = 0;
-    //     if (this.page >= this.totalPage) {
-    //         // console.log(this.totalPage);
-    //         foot = 1; //listView底部显示没有更多数据了
-    //     }
-    //     if (result && result.code ==1) {
-    //         this.updateState({
-    //             showFoot: foot,
-    //             businessListData: this.state.businessListData.concat(result.data.store)
-    //         })
-    //     } else {
-    //         toastShort(result.msg);
-    //         this.updateState({
-    //             showFoot: foot,
-    //             businessListData: this.state.businessListData
-    //         })
-    //     }
-    // }
-
-    // freshNetData = async (sort = `${this.sortType}`) => {
-    //     let result = await this.loadNetData(sort, 0);
-    //     if (result && result.code == 1) {
-    //         this.page = 0;
-    //         this.updateState({
-    //             showFoot: 0,
-    //             businessListData: result.data.store,
-    //         })
-    //     } else {
-    //         toastShort(result.msg);
-    //         this.updateState({
-    //             showFoot: 0,
-    //             businessListData: this.state.businessListData
-    //         })
-    //     }
-    // }
-
     loadNetData = (sort, page) => {
-        // let url = NetApi.index;
-        // let data = {
-        //     page: page,
-        //     pageSize: this.pageSize
-        // };
         let {type, start, end, notLimit, store_name} = this.state;
         let url = NetApi.businessList;
         let data = {
@@ -245,9 +159,9 @@ export default class BusinessIndex extends Component {
 
     freshNetData = async (sort = `${this.sortType}`) => {
         let {businessListData} = this.state;
+        this.page = 0;
         let result = await this.loadNetData(sort, 0);
         this.timer1 = setTimeout(() => {
-            this.page = 0;
             this.setState({
                 showFoot: 0,
             });
@@ -265,6 +179,7 @@ export default class BusinessIndex extends Component {
     };
 
     dropLoadMore = async () => {
+        this.page++;
         let {businessListData} = this.state;
         let result = await this.loadNetData(this.sortType, this.page);
         if (!result) {
@@ -283,7 +198,7 @@ export default class BusinessIndex extends Component {
             this.flatList && this.flatList.stopEndReached({
                 allLoad: this.page === totalPage
             });
-            this.page++;
+            // this.page++;
             // console.log('page, totalPage',this.page, totalPage)
         }, 600);
     };

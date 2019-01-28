@@ -121,11 +121,11 @@ export default class MineAddressAdd extends Component {
             address_name: addressName,
             longitude,
         };
-        if (name == '') {
+        if (name === '') {
             toastShort('请输入收件人姓名');
             return;
         }
-        if (phone == '') {
+        if (phone === '') {
             toastShort('请输入收件人电话');
             return;
         }
@@ -137,10 +137,10 @@ export default class MineAddressAdd extends Component {
         //     toastShort('请选择所在城市');
         //     return;
         // }
-        if (address == '') {
-            toastShort('请选择地点');
-            return;
-        }
+        // if (address == '') {
+        //     toastShort('请选择地点');
+        //     return;
+        // }
         // // console.log(data);
         this.updateState({
             canPress: false
@@ -243,6 +243,7 @@ export default class MineAddressAdd extends Component {
                             />
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
                             <CustomKeyboard.CustomTextInput
+                                maxLength={11}
                                 style = {styles.inputItemCon}
                                 placeholder = "请输入联系电话"
                                 placeholderTextColor = '#555'
@@ -256,13 +257,16 @@ export default class MineAddressAdd extends Component {
                                 }}
                             />
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
+                                {/*onPress = {() => this.onPressSelectAddress()}
+                            >
+                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择地区(选填)'}</Text>*/}
                             <TouchableOpacity
                                 style = {styles.inputItemConView}
-                                onPress = {() => this.onPressSelectAddress()}
+                                onPress = {() => this.showAreaPicker()}
                             >
-                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择地区(选填)'}</Text>
+                                <Text style={[styles.inputItemCon, {lineHeight: 45}]}>{area.length > 0 ? `${area[0]} ${area[1]} ${area[2]}` : '选择省市区（选填）'}</Text>
                             </TouchableOpacity>
-                            {/*<View style={[GlobalStyles.horLine, styles.horLine]} />
+                            <View style={[GlobalStyles.horLine, styles.horLine]} />
                             <TextInput
                                 style = {styles.inputItemCon}
                                 placeholder = "请输入详细地址"
@@ -274,7 +278,7 @@ export default class MineAddressAdd extends Component {
                                         address: text
                                     })
                                 }}
-                            />*/}
+                            />
                         </View>
                         {/*<TouchableOpacity
                             style = {[styles.addressAddItemView, styles.addressAddTips]}

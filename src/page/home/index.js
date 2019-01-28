@@ -559,12 +559,12 @@ export default class Home extends Component {
                     />
                     : <ActivityIndicatorItem />
                 }
-                <TouchableOpacity
+                {/*<TouchableOpacity
                     style={styles.signBtnView}
                     onPress={() => this.onPressToSign}
                 >
                     <Image source={GlobalIcons.icon_sign_in} style={styles.signBtnIcon} />
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
                 {modalVisible &&
                     <ModalView
                         show = {modalVisible}

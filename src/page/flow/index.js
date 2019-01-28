@@ -15,7 +15,7 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    DeviceEventEmitter,
+    DeviceEventEmitter, Keyboard,
 } from 'react-native'
 import {Select, PullPicker} from 'teaset'
 import Spinner from 'react-native-spinkit'
@@ -142,6 +142,7 @@ export default class Flow extends Component {
         goBack();
     };
     selectContent = (component, type) => {
+        Keyboard.dismiss();
         const {navigate} = this.props.navigation;
         navigate(component, {
             cid: this.state.cid,
@@ -307,6 +308,7 @@ export default class Flow extends Component {
 
     pickerImages = async () => {
         let {img1, img2, img3} = this.state;
+        Keyboard.dismiss();
         if (img1 != '' && img2 != '' && img3 != '') {
             toastShort("超出数量限制，请先删除一些图片");
             return;
@@ -606,6 +608,7 @@ export default class Flow extends Component {
                                     placeholder='请选择每件商品体积'
                                     pickerTitle='单件物品超过1m³请选择【大件发货】'
                                     placeholderTextColor={'#666'}
+                                    // onPress={() => Keyboard.dismiss()}
                                     onSelected={(item, index) => {
                                         if (item.price > 0) {
                                             this.setState({
@@ -662,6 +665,7 @@ export default class Flow extends Component {
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
                             <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
+                            <Text style={styles.textSymbol}>*</Text>
                             <TextInput
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
@@ -810,6 +814,7 @@ export default class Flow extends Component {
                         <View style={styles.paymentMethodItem}>
                             <View style={styles.paymentMethodTitleView}>
                                 <Image source={GlobalIcons.icon_count} style={styles.paymentMethodIcon}/>
+                                <Text style={styles.textSymbol}>*</Text>
                                 <TextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     placeholder="请输入物品数量"
@@ -831,6 +836,7 @@ export default class Flow extends Component {
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
                             <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
+                            <Text style={styles.textSymbol}>*</Text>
                             <TextInput
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"

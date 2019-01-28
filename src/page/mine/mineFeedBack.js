@@ -192,6 +192,7 @@ export default class MineFeedBack extends Component {
                             />
                             <View style={[GlobalStyles.horLine, styles.horLine]} />
                             <CustomKeyboard.CustomTextInput
+                                maxLength={11}
                                 style = {styles.inputItemCon}
                                 placeholder = "联系电话"
                                 placeholderTextColor = '#555'

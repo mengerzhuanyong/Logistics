@@ -202,7 +202,7 @@ export class OrderDetailTab extends Component {
     loadNetData = (status, page) => {
         // console.log(status, this.state.uid);
         let url = NetApi.orderList + status + '/uid/' + this.state.uid + '/page/' + page;
-        return this.netRequest.fetchGet(url)
+        return this.netRequest.fetchGet(url, true)
             .then(result => {
                 // console.log('订单列表', result);
                 return result;

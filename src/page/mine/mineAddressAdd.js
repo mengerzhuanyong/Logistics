@@ -5,33 +5,17 @@
  */
 
 import React, {Component} from 'react'
-import {
-    Text,
-    View,
-    Image,
-    FlatList,
-    TextInput,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity
-} from 'react-native'
+import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import Picker from 'react-native-picker'
-import ScrollableTabView, { ScrollableTabBar, DefaultTabBar } from 'react-native-scrollable-tab-view'
 import * as CustomKeyboard from 'react-native-yusha-customkeyboard'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import NetRequest from '../../util/utilsRequest'
 import NetApi from '../../constant/GlobalApi'
 import GlobalStyles from '../../constant/GlobalStyle'
 import GlobalIcons from '../../constant/GlobalIcon'
 import NavigationBar from '../../component/common/NavigationBar'
 import UtilsView from '../../util/utilsView'
-import { toastShort, consoleLog } from '../../util/utilsToast'
-import { checkPhone } from '../../util/utilsRegularMatch'
-
-
-import OrderItemView from '../../component/order/orderItem'
-import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
-import AddressItem from '../../component/mine/addressItem'
+import {toastShort} from '../../util/utilsToast'
 
 import ShopData from '../../asset/json/homeBusiness.json'
 import area from '../../asset/json/area.json'
@@ -43,7 +27,7 @@ export default class MineAddressAdd extends Component {
 
     constructor(props) {
         super(props);
-        this.state =  {
+        this.state = {
             uid: global.user ? global.user.userData.uid : '',
             style: ',2,',
             phone: '',
@@ -59,11 +43,11 @@ export default class MineAddressAdd extends Component {
             canBack: false,
             addressName: '',
             longitude: '',
-        }
+        };
         this.netRequest = new NetRequest();
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.loadNetData();
         if (global.user) {
             this.updateState({
@@ -77,7 +61,7 @@ export default class MineAddressAdd extends Component {
         }, 1000);
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.backTimer && clearTimeout(this.backTimer);
         this.timer && clearTimeout(this.timer);
     }
@@ -101,7 +85,7 @@ export default class MineAddressAdd extends Component {
 
     doSubmitAdd = () => {
         let url = NetApi.mineAddressAdd;
-        let { uid, phone, style, name, address, other, addressName, longitude } = this.state;
+        let {uid, phone, area, style, name, address, other, addressName, longitude} = this.state;
         let status = other ? ',1,2,' : style;
         let data = {
             uid: uid,
@@ -114,16 +98,12 @@ export default class MineAddressAdd extends Component {
             address_name: addressName,
             longitude,
         };
-        if (name == '') {
+        if (name === '') {
             toastShort('请输入收件人姓名');
             return;
         }
-        if (phone == '') {
+        if (phone === '') {
             toastShort('请输入收件人电话');
-            return;
-        }
-        if (!checkPhone(phone)) {
-            toastShort('手机号格式不正确，请重新输入');
             return;
         }
         // if (area.length == 0) {
@@ -137,15 +117,15 @@ export default class MineAddressAdd extends Component {
         this.updateState({
             canPress: false
         });
-        this.netRequest.fetchPost(url, data)
-            .then( result => {
+        this.netRequest.fetchPost(url, data, true)
+            .then(result => {
                 toastShort('添加成功');
                 this.timer = setTimeout(() => {
                     this.onBack();
                 }, 500);
                 // console.log('地址添加', result);
             })
-            .catch( error => {
+            .catch(error => {
                 toastShort('error');
                 this.updateState({
                     canPress: true
@@ -154,9 +134,11 @@ export default class MineAddressAdd extends Component {
             })
     }
 
-    dropLoadMore = () => {}
+    dropLoadMore = () => {
+    }
 
-    freshNetData = () => {}
+    freshNetData = () => {
+    }
 
     createAreaData = () => {
         let data = [];
@@ -209,62 +191,66 @@ export default class MineAddressAdd extends Component {
             }
         });
         Picker.show();
-    }
+    };
 
-    render(){
-        const { ready, refreshing, companyListData, area, address, canPress } = this.state;
+    render() {
+        const {ready, refreshing, companyListData, area, address, canPress} = this.state;
         return (
             <View style={styles.container}>
                 <NavigationBar
-                    title = {'新增地址'}
-                    leftButton = {UtilsView.getLeftButton(() => { this.state.canBack && this.onBack()})}
+                    title={'新增地址'}
+                    leftButton={UtilsView.getLeftButton(() => {
+                        this.state.canBack && this.onBack()
+                    })}
                 />
                 <KeyboardAwareScrollView>
                     <CustomKeyboard.AwareCusKeyBoardScrollView>
                         <View style={[styles.addressAddItemView]}>
                             <TextInput
-                                style = {styles.inputItemCon}
-                                placeholder = "请输入收件人姓名"
-                                placeholderTextColor = '#555'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
+                                style={styles.inputItemCon}
+                                placeholder="请输入联系人姓名"
+                                placeholderTextColor='#555'
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(text) => {
                                     this.setState({
                                         name: text
                                     })
                                 }}
                             />
-                            <View style={[GlobalStyles.horLine, styles.horLine]} />
-                                <CustomKeyboard.CustomTextInput
-                                    style = {styles.inputItemCon}
-                                    placeholder = "请输入联系电话"
-                                    placeholderTextColor = '#555'
-                                    customKeyboardType = "numberKeyBoard"
-                                    underlineColorAndroid = {'transparent'}
-                                    onChangeText = {(text)=>{
-                                        this.setState({
-                                            phone: text
-                                        })
-                                    }}
-                                />
-                            <View style={[GlobalStyles.horLine, styles.horLine]} />
+                            <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                            <CustomKeyboard.CustomTextInput
+                                maxLength={11}
+                                style={styles.inputItemCon}
+                                placeholder="请输入联系电话"
+                                placeholderTextColor='#555'
+                                customKeyboardType="numberKeyBoard"
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(text) => {
+                                    this.setState({
+                                        phone: text
+                                    })
+                                }}
+                            />
+                            <View style={[GlobalStyles.horLine, styles.horLine]}/>
                             <TouchableOpacity
-                                style = {styles.inputItemConView}
-                                onPress = {() => this.onPressSelectAddress()}
+                                style={styles.inputItemConView}
+                                onPress={() => this.showAreaPicker()}
                             >
-                                <Text style={[styles.inputItemConText,]} numberOfLines={2}>{address || '选择地区(选填)'}</Text>
+                                <Text
+                                    style={[styles.inputItemCon, {lineHeight: 45}]}>{area.length > 0 ? `${area[0]} ${area[1]} ${area[2]}` : '选择省市区（选填）'}</Text>
                             </TouchableOpacity>
-                            {/*<View style={[GlobalStyles.horLine, styles.horLine]} />
+                            <View style={[GlobalStyles.horLine, styles.horLine]}/>
                             <TextInput
-                                style = {styles.inputItemCon}
-                                placeholder = "请输入详细地址"
-                                placeholderTextColor = '#555'
-                                underlineColorAndroid = {'transparent'}
-                                onChangeText = {(text)=>{
+                                style={styles.inputItemCon}
+                                placeholder="请输入详细地址（选填）"
+                                placeholderTextColor='#555'
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(text) => {
                                     this.setState({
                                         address: text
                                     })
                                 }}
-                            />*/}
+                            />
                         </View>
                         {/*<TouchableOpacity
                             style = {[styles.addressAddItemView, styles.addressAddTips]}
@@ -279,8 +265,10 @@ export default class MineAddressAdd extends Component {
                         </TouchableOpacity>*/}
                         <View style={[GlobalStyles.btnView, styles.btnView]}>
                             <TouchableOpacity
-                                style = {GlobalStyles.btnView}
-                                onPress = {() => {canPress && this.doSubmitAdd()}}
+                                style={GlobalStyles.btnView}
+                                onPress={() => {
+                                    canPress && this.doSubmitAdd()
+                                }}
                             >
                                 <Text style={GlobalStyles.btnItem}>立即添加</Text>
                             </TouchableOpacity>

@@ -75,7 +75,7 @@ export default class OrderItem extends Component {
     cancelOrder = () => {
         this.showCancelModal();
         let {item} = this.props;
-        let url = NetApi.orderCancel + item.id;
+        let url = NetApi.orderCancel + item.id + '/account_type/user';
         this.netRequest.fetchGet(url)
             .then(result => {
                     // console.log(result);
