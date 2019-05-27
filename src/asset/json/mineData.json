@@ -1,0 +1,12 @@
+{
+  "code": 1,
+  "msg": "请求成功",
+  "data": {
+    "userInfo": {
+      "uid": 1,
+      "username": "大梦",
+      "avatar": "http://oa.fxshe.com/uploads/userimg/20170814/18d741c14a42ef5c8fa526638bfe8d74.jpg",
+    },
+    "couponNums": "",
+  }
+}

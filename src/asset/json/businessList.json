@@ -1,0 +1,36 @@
+{
+  "code": 1,
+  "msg": "请求成功",
+  "data": [
+    {
+      "id": 2,
+      "logo": "http://192.168.2.120/public/uploads/20171116/67f724fdddf50b7c4997de7a4bb21f17.png",
+      "img": "http://192.168.2.120/public",
+      "name": "门店er",
+      "dress": "252500撒大声收到",
+      "score": "0",
+      "istop": "0",
+      "disinfo": "",
+      "longitude": "116.42188470126,39.938574012986",
+      "sid": 2,
+      "service": [
+        {
+          "id": 1,
+          "router": "青岛 - 济南432432"
+        },
+        {
+          "id": 2,
+          "router": "青岛 - 济南"
+        }
+      ],
+      "tags": [
+        {
+          "name": "2"
+        },
+        {
+          "name": "优"
+        }
+      ]
+    }
+  ]
+}
