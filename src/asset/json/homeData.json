@@ -1,0 +1,59 @@
+{
+  "code": 1,
+  "msg": "请求成功",
+  "data": {
+    "store": [
+      {
+        "id": 1,
+        "logo": "http://192.168.2.120/public/uploads/20171116/2454976b7128393aa6849f4341275c3d.png",
+        "img": "http://192.168.2.120/public/uploads/20180102/6fd3501acdcaa9455f52e93db11ed057.jpg",
+        "name": "门店一",
+        "dress": "山东青岛黄岛区富春江路237号",
+        "score": "   ",
+        "istop": "0",
+        "disinfo": "",
+        "longitude": "120.16911,35.95335",
+        "province": "山东",
+        "city": "青岛",
+        "district": "黄岛区",
+        "service": [],
+        "tags": []
+      },
+      {
+        "id": 2,
+        "logo": "http://192.168.2.120/public/uploads/20171116/67f724fdddf50b7c4997de7a4bb21f17.png",
+        "img": "http://192.168.2.120/public",
+        "name": "门店er",
+        "dress": "252500撒大声收到",
+        "score": "0",
+        "istop": "0",
+        "disinfo": "",
+        "longitude": "116.42188470126,39.938574012986",
+        "province": "2",
+        "city": "52",
+        "district": "500",
+        "service": [
+          {
+            "id": 2,
+            "router": "青岛 - 济南",
+            "time": "11 - 12"
+          },
+          {
+            "id": 1,
+            "router": "青岛 - 济南",
+            "time": "11 - 12"
+          }
+        ],
+        "tags": [
+          {
+            "name": "优质商家"
+          },
+          {
+            "name": "2"
+          }
+        ]
+      }
+    ],
+    "banner": []
+  }
+}
