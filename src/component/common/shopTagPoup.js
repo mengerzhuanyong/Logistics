@@ -128,6 +128,13 @@ export default class PopModel extends Component {
                                     <Image source={GlobalIcons.icon_excellent} style={[styles.shopTagsIcon]} />
                                 </View>
                                 <Text style={[styles.contentText]}>有速芽物流提供的防爆箱，对小件有极高安全系数的商家</Text>
+                                <View style={styles.textIconViewZ}>
+                                  <Text style={[styles.imageText]}>专线</Text>
+                                </View>
+                                <Text style={[styles.contentText]}>商家有直达的线路，中途不需要转车</Text>
+
+
+
                             </View>
                             <View style={styles.horizontalLine}/>
                             <View style={styles.buttonView}>
@@ -208,6 +215,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         // backgroundColor: GlobalStyles.themeColor,
     },
+    textIconViewZ:{
+        borderRadius:3,
+        marginVertical: 3,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor:'#815cfe'
+    },
     textIcon: {
         fontSize: 14,
         color: '#fff',
@@ -261,5 +276,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#3393f2',
         textAlign: 'center',
+    },
+    imageText:{
+        marginHorizontal:5,
+        fontSize:13,
+        color:'#fff'
     },
 });

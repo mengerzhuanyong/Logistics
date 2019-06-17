@@ -148,7 +148,7 @@ export default class MineAddressItem extends Component {
                         style = {styles.addressSelectView}
                         onPress = {() => this.setDefaultAddress(item)}
                     >
-                        <Image source={item.is_default == 1 ? selectedIcon : selectIcon} style={GlobalStyles.checkedIcon} />
+                        {/*<Image source={item.is_default == 1 ? selectedIcon : selectIcon} style={GlobalStyles.checkedIcon} />*/}
                     </TouchableOpacity>
                 }
                 <View style={styles.addressInfoView}>
