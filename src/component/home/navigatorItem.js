@@ -59,14 +59,14 @@ export default class NavigationItem extends Component {
     }
 
     render(){
-        const { onPushNavigator, navigatorName, navigatorIcon } = this.props;
+        const { onPushNavigator, navigatorName, navigatorIcon, style, iconStyle, titleStyle } = this.props;
         return (
             <TouchableOpacity
-                style = {styles.navigationItemView}
+                style = {[styles.navigationItemView, style]}
                 onPress = {onPushNavigator}
             >
-                <Image source={navigatorIcon} style={styles.navigationIcon} />
-                <Text style={styles.navigationName}>{navigatorName}</Text>
+                <Image source={navigatorIcon} style={[styles.navigationIcon, iconStyle]} />
+                <Text style={[styles.navigationName, titleStyle]}>{navigatorName}</Text>
             </TouchableOpacity>
         );
     }
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     navigationItemView: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: (GlobalStyles.width - 30) / 4,
+        width: (GlobalStyles.width - 130) / 3,
         marginTop: 15,
     },
     navigationIcon: {

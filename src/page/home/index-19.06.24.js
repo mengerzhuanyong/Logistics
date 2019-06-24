@@ -372,62 +372,62 @@ export default class Home extends Component {
             <View style={styles.container}>
                 <BannerView bannerData = {bannerData} />
                 <View style={styles.homeNavigationView}>
-                    <View style={[styles.homeNavigationLeftView]}>
-                        <NavigatorItem
-                            style={styles.largeItemView}
-                            iconStyle={styles.largeItemIcon}
-                            titleStyle={styles.largeItemTitle}
-                            navigatorName = {navigations[2].name}
-                            navigatorIcon = {GlobalIcons.icon_logistics}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[2], 'BusinessList');
-                            }}
-                        />
-                    </View>
-                    <View style={[styles.homeNavigationRightView]}>
-                        <NavigatorItem
-                            navigatorName = {navigations[0].name}
-                            navigatorIcon = {GlobalIcons.icon_delivery_now}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[0], 'BusinessList');
-                            }}
-                        />
-                        <NavigatorItem
-                            navigatorName = {navigations[3].name}
-                            navigatorIcon = {GlobalIcons.icon_plane}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[3], 'BusinessList');
-                            }}
-                        />
-                        {navigations.length >= 5 && <NavigatorItem
-                            navigatorName = {navigations[4].name}
-                            navigatorIcon = {GlobalIcons.icon_nav_world}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[4], 'BusinessList');
-                            }}
-                        />}
-                        {navigations.length >= 6 && <NavigatorItem
-                            navigatorName = {navigations[5].name}
-                            navigatorIcon = {GlobalIcons.icon_nav_car}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[5], 'BusinessList');
-                            }}
-                        />}
-                        {navigations.length >= 7 && <NavigatorItem
-                            navigatorName = {navigations[6].name}
-                            navigatorIcon = {GlobalIcons.icon_nav_river}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[6], 'BusinessList');
-                            }}
-                        />}
-                        {navigations.length >= 7 && <NavigatorItem
-                            navigatorName = {navigations[7].name}
-                            navigatorIcon = {GlobalIcons.icon_nav_train}
-                            onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[7], 'BusinessList');
-                            }}
-                        />}
-                    </View>
+                    <NavigatorItem
+                        navigatorName = {navigations[2].name}
+                        navigatorIcon = {GlobalIcons.icon_logistics}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[2], 'BusinessList');
+                        }}
+                    />
+                    <NavigatorItem
+                        navigatorName = {navigations[1].name}
+                        navigatorIcon = {GlobalIcons.icon_delivery_next}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[1], 'BusinessList');
+                        }}
+                    />
+                    <NavigatorItem
+                        navigatorName = {navigations[0].name}
+                        navigatorIcon = {GlobalIcons.icon_delivery_now}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[0], 'BusinessList');
+                        }}
+                    />
+                    <NavigatorItem
+                        navigatorName = {navigations[3].name}
+                        navigatorIcon = {GlobalIcons.icon_plane}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[3], 'BusinessList');
+                        }}
+                    />
+                    {navigations.length >= 5 && <NavigatorItem
+                        navigatorName = {navigations[4].name}
+                        navigatorIcon = {GlobalIcons.icon_nav_world}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[4], 'BusinessList');
+                        }}
+                    />}
+                    {navigations.length >= 6 && <NavigatorItem
+                        navigatorName = {navigations[5].name}
+                        navigatorIcon = {GlobalIcons.icon_nav_car}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[5], 'BusinessList');
+                        }}
+                    />}
+                    {navigations.length >= 7 && <NavigatorItem
+                        navigatorName = {navigations[6].name}
+                        navigatorIcon = {GlobalIcons.icon_nav_river}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[6], 'BusinessList');
+                        }}
+                    />}
+                    {navigations.length >= 7 && <NavigatorItem
+                        navigatorName = {navigations[7].name}
+                        navigatorIcon = {GlobalIcons.icon_nav_train}
+                        onPushNavigator = {() => {
+                            this.onPushNavigator(navigations[7], 'BusinessList');
+                        }}
+                    />}
                 </View>
                 <HotNews hotNewsData = {hotNewsData} />
                 <View style={styles.hotServicesView}>
@@ -647,33 +647,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     homeNavigationView: {
+        flexWrap: 'wrap',
         paddingTop: 10,
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 15,
         backgroundColor: '#fff',
         justifyContent: 'flex-start',
-    },
-    homeNavigationLeftView: {
-        width: 100,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    largeItemView: {
-        width: 80,
-    },
-    largeItemIcon: {
-        width: 60,
-        height: 60,
-    },
-    largeItemTitle: {},
-    homeNavigationRightView: {
-        flex: 1,
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        justifyContent: 'flex-start',        
     },
     shopListView: {
         flex: 1,
