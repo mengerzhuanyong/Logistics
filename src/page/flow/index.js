@@ -624,7 +624,7 @@ export default class Flow extends Component {
                                 /> : <TextInput
                                     style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                     editable={false}
-                                    placeholder="商家还未设置体积规格，无法选择"
+                                    placeholder="商家尚未开通在线支付服务"
                                     keyboardType={'numeric'}
                                     defaultValue={volume}
                                     placeholderTextColor='#666'
@@ -665,7 +665,7 @@ export default class Flow extends Component {
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
                             <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
-                            <Text style={styles.textSymbol}>*</Text>
+
                             <TextInput
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
@@ -750,20 +750,7 @@ export default class Flow extends Component {
         } else {
             return (
                 <View>
-                    {this.state.charteredCar == 0 &&
-                    <View>
-                        <TouchableOpacity
-                            style={styles.paymentMethodItem}
-                            onPress={() => this.makeCall()}
-                        >
-                            <View style={styles.paymentMethodTitleView}>
-                                <Image source={GlobalIcons.icon_phone} style={styles.paymentMethodIcon}/>
-                                <Text style={styles.cargoAttributesTitle}>询价咨询：{this.state.mobile}</Text>
-                            </View>
-                            <Image source={arrowRight} style={styles.arrowRightIcon}/>
-                        </TouchableOpacity>
-                    </View>
-                    }
+
                     <View style={[GlobalStyles.horLine, styles.horLine]}/>
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
@@ -836,7 +823,7 @@ export default class Flow extends Component {
                     <View style={styles.paymentMethodItem}>
                         <View style={styles.paymentMethodTitleView}>
                             <Image source={GlobalIcons.icon_weight} style={styles.paymentMethodIcon}/>
-                            <Text style={styles.textSymbol}>*</Text>
+
                             <TextInput
                                 style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
                                 placeholder="请输入物品重量"
@@ -876,6 +863,21 @@ export default class Flow extends Component {
                             }}
                         />
                     </View>
+                    <View style={[GlobalStyles.horLine, styles.horLine]}/>
+                    {this.state.charteredCar == 0 &&
+                    <View>
+                        <TouchableOpacity
+                            style={styles.paymentMethodItem}
+                            onPress={() => this.makeCall()}
+                        >
+                            <View style={styles.paymentMethodTitleView}>
+                                <Image source={GlobalIcons.icon_phone} style={styles.paymentMethodIcon}/>
+                                <Text style={styles.cargoAttributesTitle}>询价咨询：{this.state.mobile}</Text>
+                            </View>
+                            <Image source={arrowRight} style={styles.arrowRightIcon}/>
+                        </TouchableOpacity>
+                    </View>
+                    }
                     {cate == '1' && <View>
                         <View style={[GlobalStyles.horLine, styles.horLine]}/>
                         <View style={styles.paymentMethodItem}>
@@ -905,7 +907,7 @@ export default class Flow extends Component {
                                     <Text style={styles.textSymbol}>*</Text>
                                     <TextInput
                                         style={[styles.cargoAttributesTitle, styles.cargoAttributesInput]}
-                                        placeholder="输入咨询后的订单价格"
+                                        placeholder="请输入询价金额"
                                         keyboardType={'numeric'}
                                         placeholderTextColor='#666'
                                         underlineColorAndroid={'transparent'}
@@ -1054,7 +1056,7 @@ export default class Flow extends Component {
                                     onPress={() => this.changeOrderStyle(1, 0)}
                                 >
                                     <Text
-                                        style={[styles.cargoTypeItemCon, style == '1' && styles.cargoTypeItemConCur]}>小件发货</Text>
+                                        style={[styles.cargoTypeItemCon, style == '1' && styles.cargoTypeItemConCur]}>自助下单</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -1062,7 +1064,7 @@ export default class Flow extends Component {
                                     onPress={() => this.changeOrderStyle(2, 0)}
                                 >
                                     <Text
-                                        style={[styles.cargoTypeItemCon, style == '2' && styles.cargoTypeItemConCur]}>大件发货</Text>
+                                        style={[styles.cargoTypeItemCon, style == '2' && styles.cargoTypeItemConCur]}>询价下单</Text>
                                 </TouchableOpacity>
 
                                 {/* <TouchableOpacity
