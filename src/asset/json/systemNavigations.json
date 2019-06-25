@@ -29,12 +29,12 @@
             "remark": "780公里以内",
         }, {
             "style": 6,
-            "name": "国际空运",
+            "name": "冷藏运输",
             "navIcon": "require('../../asset/images/icons/icon_delivery_now.png')",
             "remark": "",
         }, {
             "style": 7,
-            "name": "内河运输",
+            "name": "国际物流",
             "navIcon": "require('../../asset/images/icons/icon_plane.png')",
             "remark": "",
         }, {

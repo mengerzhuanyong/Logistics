@@ -379,6 +379,7 @@ export default class Home extends Component {
                             titleStyle={styles.largeItemTitle}
                             navigatorName = {navigations[2].name}
                             navigatorIcon = {GlobalIcons.icon_logistics}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[2], 'BusinessList');
                             }}
@@ -388,6 +389,7 @@ export default class Home extends Component {
                         <NavigatorItem
                             navigatorName = {navigations[0].name}
                             navigatorIcon = {GlobalIcons.icon_delivery_now}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[0], 'BusinessList');
                             }}
@@ -395,6 +397,7 @@ export default class Home extends Component {
                         <NavigatorItem
                             navigatorName = {navigations[3].name}
                             navigatorIcon = {GlobalIcons.icon_plane}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[3], 'BusinessList');
                             }}
@@ -402,20 +405,23 @@ export default class Home extends Component {
                         {navigations.length >= 5 && <NavigatorItem
                             navigatorName = {navigations[4].name}
                             navigatorIcon = {GlobalIcons.icon_nav_world}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[4], 'BusinessList');
                             }}
                         />}
                         {navigations.length >= 6 && <NavigatorItem
                             navigatorName = {navigations[5].name}
-                            navigatorIcon = {GlobalIcons.icon_nav_car}
+                            navigatorIcon = {GlobalIcons.icon_nav_cold}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[5], 'BusinessList');
                             }}
                         />}
                         {navigations.length >= 7 && <NavigatorItem
                             navigatorName = {navigations[6].name}
-                            navigatorIcon = {GlobalIcons.icon_nav_river}
+                            navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[6], 'BusinessList');
                             }}
@@ -423,6 +429,7 @@ export default class Home extends Component {
                         {navigations.length >= 7 && <NavigatorItem
                             navigatorName = {navigations[7].name}
                             navigatorIcon = {GlobalIcons.icon_nav_train}
+                            // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
                                 this.onPushNavigator(navigations[7], 'BusinessList');
                             }}

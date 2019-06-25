@@ -428,10 +428,10 @@ export default class Flow extends Component {
             toastShort('请输入物品数量');
             return false;
         }
-        if (data.weight === '') {
-            toastShort('请输入物品重量');
-            return false;
-        }
+        // if (data.weight === '') {
+        //     toastShort('请输入物品重量');
+        //     return false;
+        // }
         if (!numberRule.test(data.price)) {
             toastShort('订单价格只能输入数字，请重新输入');
             return false;

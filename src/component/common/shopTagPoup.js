@@ -128,13 +128,14 @@ export default class PopModel extends Component {
                                     <Image source={GlobalIcons.icon_excellent} style={[styles.shopTagsIcon]} />
                                 </View>
                                 <Text style={[styles.contentText]}>有速芽物流提供的防爆箱，对小件有极高安全系数的商家</Text>
-                                <View style={styles.textIconViewZ}>
-                                  <Text style={[styles.imageText]}>专线</Text>
+                                <View style={styles.textIconView}>
+                                    <Image source={GlobalIcons.icon_special} style={[styles.shopTagsIcon, {width: 30,}]} />
                                 </View>
                                 <Text style={[styles.contentText]}>商家有直达的线路，中途不需要转车</Text>
-
-
-
+                                <View style={styles.textIconView}>
+                                    <Image source={GlobalIcons.icon_card} style={[styles.shopTagsIcon, {width: 30,}]} />
+                                </View>
+                                <Text style={[styles.contentText]}>平台工作人员对商家信息的真实性进行了认证</Text>
                             </View>
                             <View style={styles.horizontalLine}/>
                             <View style={styles.buttonView}>
