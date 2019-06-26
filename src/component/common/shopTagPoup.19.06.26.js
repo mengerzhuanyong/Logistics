@@ -98,39 +98,44 @@ export default class PopModel extends Component {
                     <TouchableHighlight style={styles.modalStyle} onPress={() => this.modalVisible()}>
                         <View style={[styles.subView, style]}>
                             <View style={[styles.contentView]}>
-                                <View style={[styles.contentItemView, styles.rss]}>
-                                    <View style={styles.textIconView}>
-                                        <Text style={[styles.contentText, styles.contentTextCur]}>安全值</Text>
-                                        <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
-                                    </View>
-                                    <View style={[styles.contentItemConView]}>
-                                        <Text style={[styles.contentText]}>根据商家缴纳保证金的多少分为四个等级，最高四颗钻石。如货物有损伤，平台可用商家的保证金对用户进行强制性赔偿，等级越高赔偿金额越高。</Text>
-                                    </View>
+                                <View style={styles.textIconView}>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                 </View>
-                                <View style={[styles.contentItemView, styles.rss]}>
+                                <Text style={[styles.contentText]}>平台有条件让商家对普通小额损毁货物进行赔偿</Text>
+                                <View style={styles.textIconView}>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                </View>
+                                <Text style={[styles.contentText]}>平台有条件让商家对多数损毁货物进行赔偿</Text>
+                                <View style={styles.textIconView}>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                </View>
+                                <Text style={[styles.contentText]}>平台有条件让商家对大多数损毁货物进行赔偿</Text>
+                                <View style={styles.textIconView}>
+                                    <Text style={[styles.contentText, styles.contentTextCur]}>诚信值</Text>
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                    <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
+                                </View>
+                                <Text style={[styles.contentText]}>平台有条件让商家对绝大多数及特殊、价值高的损毁货物进行赔偿</Text>
                                 <View style={styles.textIconView}>
                                     <Image source={GlobalIcons.icon_excellent} style={[styles.shopTagsIcon]} />
                                 </View>
-                                    <View style={[styles.contentItemConView]}>
-                                    <Text style={[styles.contentText]}>有速芽物流提供的防爆箱，对小件有极高安全系数的商家</Text>
-                                </View>
-                                </View>
-                                <View style={[styles.contentItemView, styles.rss]}>
+                                <Text style={[styles.contentText]}>有速芽物流提供的防爆箱，对小件有极高安全系数的商家</Text>
                                 <View style={styles.textIconView}>
                                     <Image source={GlobalIcons.icon_special} style={[styles.shopTagsIcon, {width: 30,}]} />
                                 </View>
-                                    <View style={[styles.contentItemConView]}>
-                                    <Text style={[styles.contentText]}>商家有直达的线路，中途不需要转车</Text>
-                                </View>
-                                </View>
-                                <View style={[styles.contentItemView, styles.rss]}>
+                                <Text style={[styles.contentText]}>商家有直达的线路，中途不需要转车</Text>
                                 <View style={styles.textIconView}>
                                     <Image source={GlobalIcons.icon_card} style={[styles.shopTagsIcon, {width: 30,}]} />
                                 </View>
-                                    <View style={[styles.contentItemConView]}>
-                                    <Text style={[styles.contentText]}>平台工作人员对商家信息的真实性进行了认证</Text>
-                                </View>
-                                </View>
+                                <Text style={[styles.contentText]}>平台工作人员对商家信息的真实性进行了认证</Text>
                             </View>
                             <View style={styles.horizontalLine}/>
                             <View style={styles.buttonView}>
@@ -164,16 +169,6 @@ export default class PopModel extends Component {
 // 5.visible  bool 控制是否显示
 
 const styles = StyleSheet.create({
-    rcc: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    rss: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
-    },
     container: {
         // flex: 1,
         alignItems: 'center',
@@ -189,17 +184,10 @@ const styles = StyleSheet.create({
     },
 
     contentView: {
-        paddingVertical: 20,
-        paddingHorizontal: 20,
+        padding: 20,
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'center',
-    },
-    contentItemView: {
-        width: GlobalStyles.width - 100,
-    },
-    contentItemConView: {
-        flex: 1,
     },
     // 标题
     titleText: {
@@ -219,11 +207,9 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#555',
         lineHeight: 20,
-        // textAlign: 'center',
+        textAlign: 'center',
     },
     textIconView: {
-        minWidth: 40,
-        marginRight: 10,
         marginVertical: 3,
         flexDirection: 'row',
         alignItems: 'center',

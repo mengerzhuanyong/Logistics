@@ -146,6 +146,7 @@ export default class BusinessIndex extends Component {
             end: end,
             sort: sort,
             store_name,
+            page_type: 'search',
             not_limit: notLimit,
         };
         return this.netRequest.fetchPost(url, data, true)
@@ -302,7 +303,7 @@ export default class BusinessIndex extends Component {
             <View style={styles.pageTitleView}>
                 <TextInput
                     style = {styles.searchInputItem}
-                    placeholder = "商家名称"
+                    placeholder = "请输入商家名称"
                     placeholderTextColor = '#888'
                     underlineColorAndroid = {'transparent'}
                     onChangeText = {(text)=>{

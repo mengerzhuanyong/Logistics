@@ -74,7 +74,7 @@ export default class Login extends Component {
     };
 
     loadNetData = () => {
-        let url = NetApi.onlineStatus;
+        let url = NetApi.onlineStatus + '/version/2.0.0';
         this.netRequest.fetchGet(url)
             .then(result => {
                 if (result && result.code === 1) {
@@ -100,6 +100,10 @@ export default class Login extends Component {
     doLogin = () => {
         let { mobile, password } = this.state;
         let url = NetApi.loginIn;
+        if ((__DEV__ && mobile === '') || mobile === '001') {
+            mobile = '15066886007';
+            password = '123123';
+        }
         let data = {
             mobile: mobile,
             password: password,

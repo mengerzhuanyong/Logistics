@@ -495,7 +495,7 @@ export default class Home extends Component {
                 style = {[styles.headMiddleButton, styles.titleSearchView]}
                 onPress = {() => this.onPushNavigator('搜索', 'Search')}
             >
-                <Text style={styles.titleSearchPlaceholder}>请输入您要找的关键词...</Text>
+                <Text style={styles.titleSearchPlaceholder}>请输入您要找的商家...</Text>
             </TouchableOpacity>
         )
     };

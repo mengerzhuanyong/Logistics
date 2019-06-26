@@ -95,20 +95,19 @@ export default class MineInfoSetting extends Component {
         let url = NetApi.mineEditPwd;
         let data = {
             uid: uid,
-            password: password,
-            repassword: repassword,
-            origin_password: origin_password,
+            password: origin_password,
+            repassword: password,
+            origin_password: repassword,
         };
-        this.netRequest.fetchPost(url, data)
+        this.netRequest.fetchPost(url, data, true)
             .then(result => {
-                if (result && result.code == 1) {
-                    // console.log('用户中心', result);
-                    toastShort('更改成功，请重新登录！');
+                if (result.code == 1) {
+                    toastShort('center', '更改成功，请重新登录！');
                     this.timer = setTimeout(() => {
                         this.removeLoginState();
                     }, 1000);
                 } else {
-                    toastShort(result.msg);
+                    toastShort('center', result.msg);
                     // console.log(result.msg);
                 }
             })
@@ -151,7 +150,7 @@ export default class MineInfoSetting extends Component {
         // phone = 15066660000;
         let url = NetApi.sendPubSMS;
         if (!phone) {
-            toastShort('手机号有误');
+            toastShort('center', '手机号有误');
             return false;
         }
         let data = {
@@ -161,14 +160,14 @@ export default class MineInfoSetting extends Component {
             .then( result => {
                 if (result && result.code == 1) {
                     this.countDownTimer();
-                    toastShort('验证码已发送，请注意查收！');
+                    toastShort('center', '验证码已发送，请注意查收！');
                 }else{
-                    toastShort(result.msg);
+                    toastShort('center', result.msg);
                 }
                 // console.log('验证码', result);
             })
             .catch( error => {
-                toastShort('服务器请求失败，请稍后重试！');
+                toastShort('center', '服务器请求失败，请稍后重试！');
                 // console.log('登录出错', error);
             })
     }
@@ -208,7 +207,7 @@ export default class MineInfoSetting extends Component {
                             secureTextEntry = {true}
                             underlineColorAndroid = {'transparent'}
                             onChangeText = {(text) => {
-                                this.updateState({
+                                this.setState({
                                     origin_password: text
                                 })
                             }}
@@ -223,7 +222,7 @@ export default class MineInfoSetting extends Component {
                             secureTextEntry = {true}
                             underlineColorAndroid = {'transparent'}
                             onChangeText = {(text) => {
-                                this.updateState({
+                                this.setState({
                                     password: text
                                 })
                             }}
@@ -238,7 +237,7 @@ export default class MineInfoSetting extends Component {
                             secureTextEntry = {true}
                             underlineColorAndroid = {'transparent'}
                             onChangeText = {(text) => {
-                                this.updateState({
+                                this.setState({
                                     repassword: text
                                 })
                             }}
