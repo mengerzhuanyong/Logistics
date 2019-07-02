@@ -4,7 +4,7 @@ let toast;
 const loggerTrueColor = 'color: #1ba01b';
 const loggerFalseColor = 'color: #f00';
 
-export const toastShort = (content, position = -100, textStyle, containerStyle) => {
+export const toastShort = (content, position = 'center', textStyle, containerStyle) => {
     textStyle = textStyle ? textStyle : {color: '#000', fontSize: 12};
     containerStyle = containerStyle ? containerStyle : { borderRadius: 10, paddingVertical: 7, backgroundColor: '#ddd'};
     if (content === 'error') {
@@ -31,7 +31,7 @@ export const toastShort = (content, position = -100, textStyle, containerStyle) 
     });
 };
 
-export const toastLong = (content, position = -100, textStyle, containerStyle) => {
+export const toastLong = (content, position = 'center', textStyle, containerStyle) => {
     textStyle = textStyle ? textStyle : {color: '#000', fontSize: 12};
     containerStyle = containerStyle ? containerStyle : { borderRadius: 10, paddingVertical: 7, backgroundColor: '#ddd'};
     if (position === 'center') {
@@ -52,7 +52,7 @@ export const toastLong = (content, position = -100, textStyle, containerStyle) =
     });
 };
 
-export const toastCustom = (content, position = -100, textStyle, containerStyle) => {
+export const toastCustom = (content, position = 'center', textStyle, containerStyle) => {
     textStyle = textStyle ? textStyle : {color: '#000', fontSize: 12};
     containerStyle = containerStyle ? containerStyle : { borderRadius: 10, paddingVertical: 7, backgroundColor: '#ddd'};
     if (position === 'center') {

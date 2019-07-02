@@ -61,7 +61,7 @@ export default class Home extends Component {
             servicesNavigations: [
                 {id: 1, name: '行业动态', link: ''},
                 {id: 2, name: '速芽动态', link: ''},
-                {id: 3, name: '开心一刻', link: ''},
+                {id: 3, name: '名词解析', link: ''},
             ],
             bannerData: [],
             hotNewsData: [],
@@ -377,21 +377,21 @@ export default class Home extends Component {
                             style={styles.largeItemView}
                             iconStyle={styles.largeItemIcon}
                             titleStyle={styles.largeItemTitle}
-                            navigatorName = {navigations[2].name}
+                            navigatorName = {navigations[0].name}
                             navigatorIcon = {GlobalIcons.icon_logistics}
                             // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[2], 'BusinessList');
+                                this.onPushNavigator(navigations[0], 'BusinessList');
                             }}
                         />
                     </View>
                     <View style={[styles.homeNavigationRightView]}>
                         <NavigatorItem
-                            navigatorName = {navigations[0].name}
+                            navigatorName = {navigations[1].name}
                             navigatorIcon = {GlobalIcons.icon_delivery_now}
                             // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[0], 'BusinessList');
+                                this.onPushNavigator(navigations[1], 'BusinessList');
                             }}
                         />
                         <NavigatorItem

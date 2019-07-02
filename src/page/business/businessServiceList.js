@@ -262,7 +262,7 @@ export default class BusinessDetail extends Component {
                         style = {styles.searchBtnView}
                         onPress = {() => this.freshNetData()}
                     >
-                        <Text style={styles.searchBtnItem}>确认</Text>
+                        <Text style={styles.searchBtnItem}>搜索</Text>
                     </TouchableOpacity>
                 </View>
             </View>

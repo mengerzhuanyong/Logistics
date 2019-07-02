@@ -27,6 +27,8 @@ import UtilsView from '../../util/utilsView'
 import { toastShort, consoleLog } from '../../util/utilsToast'
 import ModalView from '../../component/common/shopTagPoup'
 import {Menu, Button} from 'teaset'
+import {Geolocation} from 'react-native-baidu-map'
+import {checkFloat} from '../../util/utilsRegularMatch'
 
 import ActivityIndicatorItem from '../../component/common/ActivityIndicatorItem'
 import BusinessItem from '../../component/common/businessItem'
@@ -56,6 +58,8 @@ export default class BusinessIndex extends Component {
             canBack: false,
             notLimit: false,
             modalVisible: false,
+            lat: global.lat || '',
+            lng: global.lng || '',
         };
         this.netRequest = new NetRequest();
     }
@@ -75,6 +79,7 @@ export default class BusinessIndex extends Component {
     refreshing = false;
 
     async componentDidMount(){
+        this.getLocation();
         await this.dropLoadMore();
         this.updateState({
             ready: true,
@@ -130,6 +135,62 @@ export default class BusinessIndex extends Component {
         //     .catch((err)=>{
         //         // console.log('An error occurred', err)
         //     });
+    }
+
+    getLocation = async () => {
+        let {lat, lng} = this.state;
+        if (lat !== '' || lng !== '') {
+            console.log('已获取---->', '已获取');
+            return;
+        }
+        this.setState({
+            canPress: false
+        });
+        let data = await Geolocation.getCurrentPosition();
+        this.timer5 = setTimeout(() =>{
+            this.setState({
+                canPress: true
+            });
+        }, 1000);
+        if (!data) {
+            toastShort('定位失败，请稍后重试');
+            return;
+        }
+        let location = checkFloat(data.latitude);
+        if (location) {
+            global.lat = data.latitude;
+            global.lng = data.longitude;
+            this.setState({
+                lat: data.latitude,
+                lng: data.longitude,
+            });
+            this.postLocation(data.latitude, data.longitude);
+        }
+    };
+
+    postLocation = async (lat = this.state.lat, lng = this.state.lng) => {
+        // console.log(lat, lng);
+        if (this.state.lat !== '') {
+            lat = this.state.lat;
+            lng = this.state.lng;
+        }
+        let url = NetApi.postLongitude;
+        lng = lng < 0 ? -lng : lng;
+        let data = {
+            lat: lat,
+            lng: lng,
+        };
+        this.netRequest.fetchPost(url, data, true)
+            .then( result => {
+                this.setState({
+                    ready: true,
+                    address: result.data.address || '无法解析该地点',
+                    addressLine: result.data.addressLine,
+                })
+            })
+            .catch( error => {
+                // console.log('网络请求失败', error);
+            })
     }
 
     loadNetData = (sort, page) => {
@@ -195,6 +256,7 @@ export default class BusinessIndex extends Component {
     }
 
     freshNetData = async (sort = `${this.sortType}`) => {
+        this.getLocation();
         let result = await this.loadNetData(sort, 0);
         if (result && result.code == 1) {
             this.page = 0;
@@ -212,6 +274,15 @@ export default class BusinessIndex extends Component {
     }
 
     onSubmitSearch = async () => {
+        let {type, start, end, notLimit} = this.state;
+        if (start === '0' || !start) {
+            toastShort('请输入出发地');
+            return;
+        }
+        if (end === '0' || !end) {
+            toastShort('请输入目的地');
+            return;
+        }
         let result = await this.loadNetData(this.sortType, 0);
         // // console.log(result);
         if (result && result.code == 1) {
@@ -365,7 +436,7 @@ export default class BusinessIndex extends Component {
                         style = {styles.searchBtnView}
                         onPress = {() => this.onSubmitSearch()}
                     >
-                        <Text style={styles.searchBtnItem}>确认</Text>
+                        <Text style={styles.searchBtnItem}>搜索</Text>
                     </TouchableOpacity>
                 </View>
                 {ready &&  !error ?

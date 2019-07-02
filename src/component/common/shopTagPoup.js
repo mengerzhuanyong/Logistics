@@ -100,32 +100,32 @@ export default class PopModel extends Component {
                             <View style={[styles.contentView]}>
                                 <View style={[styles.contentItemView, styles.rss]}>
                                     <View style={styles.textIconView}>
-                                        <Text style={[styles.contentText, styles.contentTextCur]}>安全值</Text>
+                                        {/*<Text style={[styles.contentText, styles.contentTextCur]}>安全值</Text>*/}
                                         <Image source={GlobalIcons.icon_diamond} style={[styles.shopTagsIcon, styles.diamondIcon]} />
                                     </View>
                                     <View style={[styles.contentItemConView]}>
-                                        <Text style={[styles.contentText]}>根据商家缴纳保证金的多少分为四个等级，最高四颗钻石。如货物有损伤，平台可用商家的保证金对用户进行强制性赔偿，等级越高赔偿金额越高。</Text>
+                                        <Text style={[styles.contentText]}>商家缴纳保证金的多少分为四个等级，最高四颗钻石。如货物有损伤，平台可用商家的保证金对用户进行强制性赔偿，等级越高赔偿金额越高。</Text>
                                     </View>
                                 </View>
                                 <View style={[styles.contentItemView, styles.rss]}>
                                 <View style={styles.textIconView}>
-                                    <Image source={GlobalIcons.icon_excellent} style={[styles.shopTagsIcon]} />
+                                    <Image source={GlobalIcons.icon_excellent} style={[styles.shopTagsIcon, {width: 16, height: 16,}]} />
                                 </View>
                                     <View style={[styles.contentItemConView]}>
-                                    <Text style={[styles.contentText]}>有速芽物流提供的防爆箱，对小件有极高安全系数的商家</Text>
+                                    <Text style={[styles.contentText]}>商家有平台提供的小件专用纸箱，对小件货物有极好的安全保障</Text>
                                 </View>
                                 </View>
-                                <View style={[styles.contentItemView, styles.rss]}>
+                                {/*<View style={[styles.contentItemView, styles.rss]}>
                                 <View style={styles.textIconView}>
-                                    <Image source={GlobalIcons.icon_special} style={[styles.shopTagsIcon, {width: 30,}]} />
+                                    <Image source={GlobalIcons.icon_special} style={[styles.shopTagsIcon]} />
                                 </View>
                                     <View style={[styles.contentItemConView]}>
                                     <Text style={[styles.contentText]}>商家有直达的线路，中途不需要转车</Text>
                                 </View>
-                                </View>
+                                </View>*/}
                                 <View style={[styles.contentItemView, styles.rss]}>
                                 <View style={styles.textIconView}>
-                                    <Image source={GlobalIcons.icon_card} style={[styles.shopTagsIcon, {width: 30,}]} />
+                                    <Image source={GlobalIcons.icon_card} style={[styles.shopTagsIcon]} />
                                 </View>
                                     <View style={[styles.contentItemConView]}>
                                     <Text style={[styles.contentText]}>平台工作人员对商家信息的真实性进行了认证</Text>
@@ -244,14 +244,13 @@ const styles = StyleSheet.create({
         marginVertical: 3,
     },
     shopTagsIcon: {
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         resizeMode: 'contain',
     },
     diamondIcon: {
         width: 18,
         height: 18,
-        marginLeft: 6,
     },
 
     // modal上子View的样式
