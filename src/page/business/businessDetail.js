@@ -158,7 +158,7 @@ export default class BusinessDetail extends Component {
         //     error: false,
         // });
         this.loadingTimer = setTimeout(() => {
-            this.netRequest.fetchGet(url)
+            this.netRequest.fetchGet(url, true)
                 .then( result => {
                     if (result && result.code === 1) {
                         this.updateState({
@@ -690,6 +690,7 @@ export default class BusinessDetail extends Component {
                                 </View>
                                 <View style={styles.remarkConView}>
                                     <Text style={styles.remarkConText}>{businessInfo.reminder}</Text>
+                                    {businessInfo.reminder_pic !== '' ? <Image style={styles.remarkConImage} source={{uri: businessInfo.reminder_pic}} /> : null}
                                 </View>
                             </View>
                             {ready ?
@@ -991,6 +992,11 @@ const styles = StyleSheet.create({
     remarkConText: {
         color: '#555',
         lineHeight: 20,
+    },
+    remarkConImage: {
+        resizeMode: 'contain',
+        width: GlobalStyles.width - 30,
+        height: GlobalStyles.width / 2,
     },
     separatorStyle: {
         marginLeft: 15,

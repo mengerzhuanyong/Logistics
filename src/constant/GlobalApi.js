@@ -60,6 +60,7 @@ module.exports = {
     mine: 'user/personal/index/uid/',
     mineCoupon: 'user/order/coupon/uid/',
     mineCouponList: 'user/personal/coupon/uid/',
+    deleteCoupon: 'user/personal/coupon_delete',
     mineFeedback: 'user/index/message',
     mineFeedbackReward: 'user/index/getMessage',
     mineAbout: 'user/index/getAbout',

@@ -19,10 +19,17 @@ import NetApi from '../../constant/GlobalApi'
 import NetRequest from '../../util/utilsRequest'
 import GlobalStyles from '../../constant/GlobalStyle'
 import GlobalIcons from '../../constant/GlobalIcon'
+import ActionSheet from 'react-native-actionsheet'
 
 const newCouponBg = GlobalIcons.images_coupon_nouse;
 const oldCouponBg = GlobalIcons.images_coupon_used;
 
+const ACTION_CONFIG = {
+    CANCEL_INDEX: 0,
+    DESTRUCTIVE_INDEX: 1,
+    options: ['取消', '确定'],
+    title: '您确定要删除该优惠券吗？',
+};
 
 export default class MineCouponItem extends Component {
 
@@ -43,6 +50,7 @@ export default class MineCouponItem extends Component {
         cid: '',
         item: {},
         PAGE_FLAG: '',
+        canDelete: false,
         PAGE_FLAG_TYPE: '',
         orderPrice: '',
         updateContent: () => {}
@@ -61,12 +69,31 @@ export default class MineCouponItem extends Component {
         
     }
 
+    deleteCouponItem = async (item, index) => {
+        if (index === 1) {
+            let url = NetApi.deleteCoupon;
+            let data = {
+                id: item.id,
+                uid: this.props.uid,
+            };
+            let result = await this.netRequest.fetchPost(url, data, true);
+            toastShort(result.msg);
+            if (result.code === 1) {
+                this.props.freshNetData && this.props.freshNetData();
+            }
+        }
+    };
+
+    showActionSheet() {
+        this.ActionSheet.show()
+    }
+
     render(){
         const { item, PAGE_FLAG, PAGE_FLAG_TYPE, updateContent, orderPrice } = this.state;
+        let {onLongPress, canDelete} = this.props;
         return (
             <TouchableOpacity
                 style = {styles.container}
-                activeOpacity = {PAGE_FLAG == "FLOW" ? 0.5 : 1}
                 onPress = {() => {
                     let orderPrices = parseInt(orderPrice);
                     let couponFullPrice = parseInt(item.full);
@@ -86,6 +113,8 @@ export default class MineCouponItem extends Component {
                         }
                     }
                 }}
+                // onLongPress={() => this.props.onLongPress()}
+                onLongPress={() => canDelete && this.showActionSheet()}
             >
                 <Image source={item.isuse == 0 ? newCouponBg : oldCouponBg} style={styles.couponBackgroundImg} />
                 <View style={[styles.couponInfoItemView, styles.couponInfoTopView]}>
@@ -95,6 +124,16 @@ export default class MineCouponItem extends Component {
                 <View style={[styles.couponInfoItemView, styles.couponInfoBottomView]}>
                     <Text style={styles.couponInfoDetail}>订单满<Text style={styles.couponFullPrice}>{parseFloat(item.full).toFixed(2)}</Text>元使用</Text>
                     <Text style={styles.couponInfoDetail}>有效期至{item.time}</Text>
+                </View>
+                <View style = {styles.wrapper}>
+                    <ActionSheet
+                        ref = {o => this.ActionSheet = o}
+                        title = {ACTION_CONFIG.title}
+                        options = {ACTION_CONFIG.options}
+                        cancelButtonIndex = {ACTION_CONFIG.CANCEL_INDEX}
+                        destructiveButtonIndex = {ACTION_CONFIG.DESTRUCTIVE_INDEX}
+                        onPress = {(index) => this.deleteCouponItem(item, index)}
+                    />
                 </View>
             </TouchableOpacity>
         );

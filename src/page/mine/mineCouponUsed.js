@@ -105,7 +105,7 @@ export default class MineCouponUsed extends Component {
     loadNetData = (page) => {
         let { uid } = this.state;
         let url = NetApi.mineCouponList + uid + '/style/2/page/' + page;
-        return this.netRequest.fetchGet(url)
+        return this.netRequest.fetchGet(url, true)
             .then( result => {
                 // console.log('优惠券信息', result);
                 return result;
@@ -166,10 +166,32 @@ export default class MineCouponUsed extends Component {
     renderListItem = (item) => {
         return (
             <MineCouponItem
+                canDelete={true}
                 item = {item.item}
+                uid={this.state.uid}
+                freshNetData={() => this.freshNetData()}
+                {...this.props}
             />
         )
     }
+
+    deleteCouponItem = async (item) => {
+        alert(123);
+        console.log('item---->', item);
+        return;
+
+        let url = NetApi.deleteCoupon;
+        let data = {
+            id: item.id,
+            uid: this.state.uid,
+        };
+        let result = await this.netRequest.fetchPost(url, data, true);
+        toastShort(result.msg);
+        if (result.code === 1) {
+            this.freshNetData();
+        }
+    };
+
     renderHeaderView = () => {
         return (
             <View style={styles.shopListViewTitle}>

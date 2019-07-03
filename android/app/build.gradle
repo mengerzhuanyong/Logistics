@@ -89,6 +89,14 @@ apply from: "../../node_modules/react-native/react.gradle"
 def enableSeparateBuildPerCPUArchitecture = false
 
 /**
+ * 生成打包时间
+ * @return
+ */
+def releaseTime() {
+    return new Date().format("yyMMddHHmm", TimeZone.getDefault())
+}
+
+/**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
 def enableProguardInReleaseBuilds = false
@@ -98,12 +106,17 @@ android {
     dexOptions {
         jumboMode true
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "com.suyalogistics"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -152,6 +165,11 @@ android {
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+            }
+
+            // Android 修改打包文件名
+            variant.outputs.all {
+                outputFileName = "sy-${variant.name}-${variant.versionName}-${releaseTime()}.apk"
             }
         }
     }

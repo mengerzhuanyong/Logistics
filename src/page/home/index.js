@@ -198,6 +198,7 @@ export default class Home extends Component {
         }, 1000);
         if (!data) {
             toastShort('定位失败，请稍后重试');
+            this.getLocation();
             return;
         }
         let location = checkFloat(data.latitude);
@@ -377,21 +378,21 @@ export default class Home extends Component {
                             style={styles.largeItemView}
                             iconStyle={styles.largeItemIcon}
                             titleStyle={styles.largeItemTitle}
-                            navigatorName = {navigations[0].name}
+                            navigatorName = {navigations[2].name}
                             navigatorIcon = {GlobalIcons.icon_logistics}
                             // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[0], 'BusinessList');
+                                this.onPushNavigator(navigations[2], 'BusinessList');
                             }}
                         />
                     </View>
                     <View style={[styles.homeNavigationRightView]}>
                         <NavigatorItem
-                            navigatorName = {navigations[1].name}
+                            navigatorName = {navigations[0].name}
                             navigatorIcon = {GlobalIcons.icon_delivery_now}
                             // navigatorIcon = {GlobalIcons.icon_nav_world_logistics}
                             onPushNavigator = {() => {
-                                this.onPushNavigator(navigations[1], 'BusinessList');
+                                this.onPushNavigator(navigations[0], 'BusinessList');
                             }}
                         />
                         <NavigatorItem
@@ -522,8 +523,8 @@ export default class Home extends Component {
             <TouchableOpacity
                 style = {styles.headRightButton}
                 onPress = {() => {
-                    let page = global.user.loginState ? 'MineFeedBackReward' : 'Login';
-                    let pageTitle = global.user.loginState ? '有奖反馈' : '登录';
+                    let page = !global.user.loginState ? 'Login' : 'MineFeedBackReward';
+                    let pageTitle = !global.user.loginState ? '登录' : '有奖反馈';
                     this.onPushToNextPage(pageTitle, page);
                 }}
             >

@@ -74,7 +74,7 @@ export default class Login extends Component {
     };
 
     loadNetData = () => {
-        let url = NetApi.onlineStatus + '/version/2.0.0';
+        let url = NetApi.onlineStatus + '/version/2.0.0/type/user';
         this.netRequest.fetchGet(url)
             .then(result => {
                 if (result && result.code === 1) {

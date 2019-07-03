@@ -176,9 +176,27 @@ export default class MineCoupon extends Component {
                 PAGE_FLAG = {this.state.PAGE_FLAG}
                 PAGE_FLAG_TYPE = {this.state.PAGE_FLAG_TYPE}
                 updateContent = {this.state.updateContent}
+                onLongPress={() => this.deleteCouponItem(item)}
             />
         )
     }
+
+    deleteCouponItem = async (item) => {
+        console.log('item---->', item);
+        return;
+
+        let url = NetApi.deleteCoupon;
+        let data = {
+            id: item.id,
+            uid: this.state.uid,
+        };
+        let result = await this.netRequest.fetchPost(url, data, true);
+        toastShort(result.msg);
+        if (result.code === 1) {
+            this.freshNetData();
+        }
+    };
+
     renderHeaderView = () => {
         return (
             <View style={styles.shopListViewTitle}>
